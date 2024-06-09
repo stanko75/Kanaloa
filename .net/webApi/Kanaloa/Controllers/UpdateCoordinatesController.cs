@@ -63,7 +63,6 @@ public class UpdateCoordinatesController(
 
     [HttpPost]
     [Route("UploadImage")]
-
     public async Task<IActionResult> UploadImage([FromBody] JObject data)
     {
         string folderName = GetValue(data, "folderName");
