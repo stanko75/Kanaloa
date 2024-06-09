@@ -1,8 +1,7 @@
-﻿using Common;
-using ImageHandling;
-using System.Text.Json;
+﻿using System.Text.Json;
+using Common;
 
-namespace PreparePicturesAndHtmlAndUploadToWebsite;
+namespace ImageHandling;
 
 public class UpdateJsonIfExistsOrCreateNewIfNot : ICommandHandler<UpdateJsonIfExistsOrCreateNewIfNotCommand>
 {
