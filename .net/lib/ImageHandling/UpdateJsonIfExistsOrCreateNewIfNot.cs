@@ -6,11 +6,11 @@ namespace PreparePicturesAndHtmlAndUploadToWebsite;
 
 public class UpdateJsonIfExistsOrCreateNewIfNot : ICommandHandler<UpdateJsonIfExistsOrCreateNewIfNotCommand>
 {
-    public void Execute(string jsonFileName, LatLngFileNameModel latLngFileNameModel)
+    public void Execute(string jsonFileName, LatLngModel latLngFileNameModel)
     {
         string latLngFileName;
 
-        List<LatLngFileNameModel>? latLngFileNameModels = new List<LatLngFileNameModel>();
+        List<LatLngModel>? latLngFileNameModels = new List<LatLngModel>();
 
         if (File.Exists(jsonFileName))
         {
@@ -18,14 +18,14 @@ public class UpdateJsonIfExistsOrCreateNewIfNot : ICommandHandler<UpdateJsonIfEx
             try
             {
                 latLngFileNameModels =
-                    JsonSerializer.Deserialize<List<LatLngFileNameModel>>(jsonString);
+                    JsonSerializer.Deserialize<List<LatLngModel>>(jsonString);
                 latLngFileNameModels?.Add(latLngFileNameModel);
                 latLngFileName = JsonSerializer.Serialize(latLngFileNameModels);
             }
             catch
             {
-                LatLngFileNameModel? latLngFileNameModelToSave =
-                    JsonSerializer.Deserialize<LatLngFileNameModel>(jsonString);
+                LatLngModel? latLngFileNameModelToSave =
+                    JsonSerializer.Deserialize<LatLngModel>(jsonString);
                 if (latLngFileNameModelToSave is not null) latLngFileNameModels?.Add(latLngFileNameModelToSave);
                 latLngFileNameModels?.Add(latLngFileNameModel);
                 latLngFileName = JsonSerializer.Serialize(latLngFileNameModels);
