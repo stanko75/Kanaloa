@@ -23,12 +23,12 @@ public class WriteConfigurationToJsonFile : ICommandHandlerAsync<WriteConfigurat
         }
 
         liveExistingConfigModel.LiveImageMarkersJsonUrl =
-            CommonStatic.ConvertRelativeWindowsPathToUri($"{command.FolderName}",
+            CommonStatic.ConvertRelativeWindowsPathToUri($"{command.WebFolderName}",
                     $"{Path.GetFileNameWithoutExtension(command.KmlFileName)}Thumbs.json")
                 .AbsoluteUri;
 
         liveExistingConfigModel.KmlFileName =
-            CommonStatic.ConvertRelativeWindowsPathToUri(command.FolderName, command.KmlFileName)
+            CommonStatic.ConvertRelativeWindowsPathToUri(command.WebFolderName, command.KmlFileName)
                 .AbsoluteUri;
 
         if (!string.IsNullOrWhiteSpace(command.CurrentLocationFileName))

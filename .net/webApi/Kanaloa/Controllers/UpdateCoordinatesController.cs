@@ -42,7 +42,7 @@ public class UpdateCoordinatesController(
             {
                 RootUrl = _kanaloaSettings.RootUrl,
                 KmlFileName = kmlFileName,
-                FolderName = folderName
+                WebFolderName = folderName
             };
 
             var updateKmlIfExistsOrCreateNewIfNotCommand = new UpdateKmlIfExistsOrCreateNewIfNotCommand

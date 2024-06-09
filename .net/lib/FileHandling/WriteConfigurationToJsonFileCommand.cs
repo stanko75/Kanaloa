@@ -6,7 +6,7 @@ public class WriteConfigurationToJsonFileCommand: CommandBase
     string _folderName = string.Empty;
     string _kmlFileName = string.Empty;
 
-    public string FolderName
+    public string WebFolderName
     {
         get
         {
@@ -29,7 +29,7 @@ public class WriteConfigurationToJsonFileCommand: CommandBase
         {
             _kmlFileName = string.IsNullOrWhiteSpace(_kmlFileName) ? "default" : _kmlFileName;
             _kmlFileName = Path.ChangeExtension(_kmlFileName, "kml");
-            return Path.Combine(FolderName, _kmlFileName);
+            return Path.Combine(WebFolderName, _kmlFileName);
         }
         set => _kmlFileName = value;
     }
