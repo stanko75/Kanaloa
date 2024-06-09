@@ -9,12 +9,12 @@ public class ResizeImage: ICommandHandler<ResizeImageCommand>
 {
     public void Execute(ResizeImageCommand command)
     {
-        if (command.OriginalFilename is null || command.SaveTo is null)
+        if (command.OriginalFileName is null || command.SaveTo is null)
         {
-            throw new NullReferenceException("OriginalFilename or SaveTo is null");
+            throw new NullReferenceException("OriginalFileName or SaveTo is null");
         }
 
-        using Image image = Image.FromFile(command.OriginalFilename);
+        using Image image = Image.FromFile(command.OriginalFileName);
         using Image thumbnail = new Bitmap(command.CanvasWidth, command.CanvasHeight);
         using Graphics graphic = Graphics.FromImage(thumbnail);
         graphic.InterpolationMode = InterpolationMode.HighQualityBicubic;

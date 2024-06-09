@@ -93,7 +93,7 @@ public class UpdateCoordinatesController(
             {
                 CanvasHeight = 200,
                 CanvasWidth = 200,
-                OriginalFilename = imageOriginalFileName,
+                OriginalFileName = imageOriginalFileName,
                 SaveTo = imageThumbsFileName
             };
 
