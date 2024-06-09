@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.10.34928.147
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Kanaloa", "Kanaloa.csproj", "{01A618F7-14A8-409E-80AF-61824649BEAD}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{01A618F7-14A8-409E-80AF-61824649BEAD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{01A618F7-14A8-409E-80AF-61824649BEAD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{01A618F7-14A8-409E-80AF-61824649BEAD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{01A618F7-14A8-409E-80AF-61824649BEAD}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {F14E0F7B-CFAC-4ECD-AD23-58DCFAE99DEE}
+	EndGlobalSection
+EndGlobal
