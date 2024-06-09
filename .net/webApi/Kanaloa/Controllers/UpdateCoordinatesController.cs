@@ -73,36 +73,27 @@ public class UpdateCoordinatesController(
             string folderName = GetValue(data, "folderName");
             string imageFileName = data["imageFileName"]?.ToString() ?? "default.jpg";
 
-            string imageOriginalFolderName = Path.Join(folderName, "pics");
-            Directory.CreateDirectory(imageOriginalFolderName);
-            string imageOriginalFileName = Path.Join(imageOriginalFolderName, imageFileName);
+            var resizeImageCommand = new ResizeImageCommand
+            {
+                FolderName = folderName,
+                CanvasHeight = 200,
+                CanvasWidth = 200,
+                OriginalFileName = imageFileName,
+                SaveTo = imageFileName
+            };
 
-            string thumbsFolder = "thumbs";
-            string imageThumbsFolderName = Path.Join(folderName, thumbsFolder);
-            Directory.CreateDirectory(imageThumbsFolderName);
-
-            string imageThumbsFileName = $"{imageThumbsFolderName}\\{imageFileName}";
+            string nameOfFileForJson = $"{_kanaloaSettings.RootUrl}/{resizeImageCommand.SaveTo.Replace('\\', '/')}/{imageFileName}";
 
             string base64Image = data["base64Image"]?.ToString() ?? string.Empty;
             byte[] imageBytes = Convert.FromBase64String(base64Image);
-            await System.IO.File.WriteAllBytesAsync(imageOriginalFileName, imageBytes);
-
-            string nameOfFileForJson = $"{_kanaloaSettings.RootUrl}/{imageThumbsFolderName.Replace('\\', '/')}/{imageFileName}";
-
-            var resizeImageCommand = new ResizeImageCommand
-            {
-                CanvasHeight = 200,
-                CanvasWidth = 200,
-                OriginalFileName = imageOriginalFileName,
-                SaveTo = imageThumbsFileName
-            };
+            await System.IO.File.WriteAllBytesAsync(resizeImageCommand.OriginalFileName, imageBytes);
 
             resizeImage.Execute(resizeImageCommand);
 
             return Ok(new
             {
                 message =
-                    $"Image uploaded to {Path.GetFullPath(imageOriginalFileName)}" +
+                    $"Image uploaded to {Path.GetFullPath(resizeImageCommand.OriginalFileName)}" +
                     $"{Environment.NewLine}" +
                     $"***" +
                     $"{Environment.NewLine}" +
@@ -112,7 +103,7 @@ public class UpdateCoordinatesController(
                     //$"***" +
 
                     $"{Environment.NewLine}" +
-                    $"ImageThumbsFileName file saved in {Path.GetFullPath(imageThumbsFileName)}"
+                    $"ImageThumbsFileName file saved in {Path.GetFullPath(resizeImageCommand.SaveTo)}"
             });
         }
         catch (Exception e)
