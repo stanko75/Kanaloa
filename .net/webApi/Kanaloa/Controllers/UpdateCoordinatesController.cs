@@ -40,12 +40,16 @@ public class UpdateCoordinatesController(
 
             var writeConfigurationToJsonFileCommand = new WriteConfigurationToJsonFileCommand
             {
-                RootUrl = _kanaloaSettings.RootUrl, KmlFileName = kmlFileName, FolderName = folderName
+                RootUrl = _kanaloaSettings.RootUrl,
+                KmlFileName = kmlFileName,
+                FolderName = folderName
             };
 
             var updateKmlIfExistsOrCreateNewIfNotCommand = new UpdateKmlIfExistsOrCreateNewIfNotCommand
             {
-                KmlFileName = kmlFileName, Coordinates = coordinates, FolderName = folderName
+                KmlFileName = kmlFileName,
+                Coordinates = coordinates,
+                FolderName = folderName
             };
 
             await saveKmlUpdateLivePositionSaveConfigFile.Execute(updateKmlIfExistsOrCreateNewIfNotCommand
@@ -64,33 +68,33 @@ public class UpdateCoordinatesController(
     [Route("UploadImage")]
     public async Task<IActionResult> UploadImage([FromBody] JObject data)
     {
-        string folderName = GetValue(data, "folderName");
-        string imageFileName = data["imageFileName"]?.ToString() ?? "default.jpg";
-
-        string imageOriginalFolderName = Path.Join(folderName, "pics");
-        Directory.CreateDirectory(imageOriginalFolderName);
-        string imageOriginalFileName = Path.Join(imageOriginalFolderName, imageFileName);
-
-        string thumbsFolder = "thumbs";
-        string imageThumbsFolderName = Path.Join(folderName, thumbsFolder);
-        Directory.CreateDirectory(imageThumbsFolderName);
-
-        string imageThumbsFileName = $"{imageThumbsFolderName}\\{imageFileName}";
-
-        string base64Image = data["base64Image"]?.ToString() ?? string.Empty;
-        byte[]  imageBytes = Convert.FromBase64String(base64Image);
-        await System.IO.File.WriteAllBytesAsync(imageOriginalFileName, imageBytes);
-
-        string nameOfFileForJson = $"{_kanaloaSettings.RootUrl}/{imageThumbsFolderName.Replace('\\', '/')}/{imageFileName}";
-
         try
         {
+            string folderName = GetValue(data, "folderName");
+            string imageFileName = data["imageFileName"]?.ToString() ?? "default.jpg";
+
+            string imageOriginalFolderName = Path.Join(folderName, "pics");
+            Directory.CreateDirectory(imageOriginalFolderName);
+            string imageOriginalFileName = Path.Join(imageOriginalFolderName, imageFileName);
+
+            string thumbsFolder = "thumbs";
+            string imageThumbsFolderName = Path.Join(folderName, thumbsFolder);
+            Directory.CreateDirectory(imageThumbsFolderName);
+
+            string imageThumbsFileName = $"{imageThumbsFolderName}\\{imageFileName}";
+
+            string base64Image = data["base64Image"]?.ToString() ?? string.Empty;
+            byte[] imageBytes = Convert.FromBase64String(base64Image);
+            await System.IO.File.WriteAllBytesAsync(imageOriginalFileName, imageBytes);
+
+            string nameOfFileForJson = $"{_kanaloaSettings.RootUrl}/{imageThumbsFolderName.Replace('\\', '/')}/{imageFileName}";
+
             var resizeImageCommand = new ResizeImageCommand
             {
-                CanvasHeight = 200
-                , CanvasWidth = 200
-                , OriginalFilename = imageOriginalFileName
-                , SaveTo = imageThumbsFileName
+                CanvasHeight = 200,
+                CanvasWidth = 200,
+                OriginalFilename = imageOriginalFileName,
+                SaveTo = imageThumbsFileName
             };
 
             resizeImage.Execute(resizeImageCommand);
