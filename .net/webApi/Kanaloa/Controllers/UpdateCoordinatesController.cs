@@ -3,7 +3,6 @@ using FileHandling;
 using ImageHandling;
 using KmlHandling;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json.Linq;
 
