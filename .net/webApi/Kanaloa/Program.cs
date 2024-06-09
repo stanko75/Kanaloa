@@ -4,6 +4,7 @@ using KmlHandling;
 using Microsoft.Extensions.FileProviders;
 using System.Runtime;
 using Kanaloa;
+using ImageHandling;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -15,6 +16,8 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddMvc().AddNewtonsoftJson();
 
+builder.Services.Configure<KanaloaSettings>(builder.Configuration.GetSection("KanaloaSettings"));
+
 builder.Services.AddSingleton<IUpdateKml, UpdateKml>();
 builder.Services.AddSingleton<IKmlSerializer>(_ => new KmlSerializerTextWriter(typeof(KmlModel.Kml)));
 builder.Services.AddSingleton<ICreateKml>(_ => new CreateKml("test", "test"));
@@ -24,7 +27,7 @@ builder.Services.AddSingleton<ICommandHandlerAsync<AddFileWithLastKnownGpsPositi
 builder.Services.AddSingleton<ICommandHandlerAsync<WriteConfigurationToJsonFileCommand>, WriteConfigurationToJsonFile>();
 builder.Services.AddSingleton<ISaveKmlUpdateLivePositionSaveConfigFile, SaveKmlUpdateLivePositionSaveConfigFile>();
 
-builder.Services.Configure<KanaloaSettings>(builder.Configuration.GetSection("KanaloaSettings"));
+builder.Services.AddSingleton<ICommandHandler<ResizeImageCommand>, ResizeImage>();
 
 var app = builder.Build();
 
