@@ -73,6 +73,8 @@ public class UpdateCoordinatesController(
         try
         {
             string folderName = GetValue(data, "folderName");
+            string kmlFileName = GetValue(data, "kmlFileName");
+
             string imageFileName = data["imageFileName"]?.ToString() ?? "default.jpg";
 
             var resizeImageCommand = new ResizeImageCommand
@@ -98,11 +100,24 @@ public class UpdateCoordinatesController(
             };
             extractGpsInfoFromImage.Execute(extractGpsInfoFromImageCommand);
 
+            string jsonFileName = Path.GetFileNameWithoutExtension(kmlFileName);
+            jsonFileName = string.IsNullOrWhiteSpace(kmlFileName) ? "default" : jsonFileName;
+            jsonFileName = Path.ChangeExtension(jsonFileName, "json");
+            jsonFileName = Path.Join(folderName, jsonFileName);
+
             UpdateJsonIfExistsOrCreateNewIfNotCommand updateJsonIfExistsOrCreateNewIfNotCommand = new UpdateJsonIfExistsOrCreateNewIfNotCommand
             {
-                JsonFileName = resizeImageCommand.SaveTo,
+                JsonFileName = jsonFileName,
                 LatLngModel = extractGpsInfoFromImageCommand.LatLngModel
             };
+            updateJsonIfExistsOrCreateNewIfNot.Execute(updateJsonIfExistsOrCreateNewIfNotCommand);
+
+            string jsonThumbsFileName = Path.GetFileNameWithoutExtension(kmlFileName);
+            jsonThumbsFileName = string.IsNullOrWhiteSpace(kmlFileName) ? "default" : jsonThumbsFileName;
+            jsonThumbsFileName = Path.ChangeExtension($"{jsonThumbsFileName}Thumbs", "json");
+            jsonThumbsFileName = Path.Join(folderName, jsonThumbsFileName);
+
+            updateJsonIfExistsOrCreateNewIfNotCommand.JsonFileName = jsonThumbsFileName;
             updateJsonIfExistsOrCreateNewIfNot.Execute(updateJsonIfExistsOrCreateNewIfNotCommand);
 
             return Ok(new
