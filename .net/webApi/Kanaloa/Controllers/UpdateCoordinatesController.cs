@@ -75,12 +75,12 @@ public class UpdateCoordinatesController(
 
             var resizeImageCommand = new ResizeImageCommand
             {
-                FolderName = folderName,
                 CanvasHeight = 200,
                 CanvasWidth = 200,
                 OriginalFileName = imageFileName,
                 SaveTo = imageFileName
             };
+            resizeImageCommand.CreateDirectories(folderName);
 
             string nameOfFileForJson = $"{_kanaloaSettings.RootUrl}/{resizeImageCommand.SaveTo.Replace('\\', '/')}/{imageFileName}";
 
