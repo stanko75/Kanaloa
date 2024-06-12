@@ -14,6 +14,8 @@ public class UpdateCoordinatesController(
     IOptions<KanaloaSettings> kanaloaSettings
     , ISaveKmlUpdateLivePositionSaveConfigFile saveKmlUpdateLivePositionSaveConfigFile
     , ICommandHandler<ResizeImageCommand> resizeImage
+    , ICommandHandler<ExtractGpsInfoFromImageCommand> extractGpsInfoFromImage
+    , ICommandHandler<UpdateJsonIfExistsOrCreateNewIfNotCommand> updateJsonIfExistsOrCreateNewIfNot
     )
     : ControllerBase
 {
@@ -89,6 +91,19 @@ public class UpdateCoordinatesController(
             await System.IO.File.WriteAllBytesAsync(resizeImageCommand.OriginalFileName, imageBytes);
 
             resizeImage.Execute(resizeImageCommand);
+
+            var extractGpsInfoFromImageCommand = new ExtractGpsInfoFromImageCommand
+            {
+                ImageFileNameToReadGpsFrom = resizeImageCommand.OriginalFileName
+            };
+            extractGpsInfoFromImage.Execute(extractGpsInfoFromImageCommand);
+
+            UpdateJsonIfExistsOrCreateNewIfNotCommand updateJsonIfExistsOrCreateNewIfNotCommand = new UpdateJsonIfExistsOrCreateNewIfNotCommand
+            {
+                JsonFileName = resizeImageCommand.SaveTo,
+                LatLngModel = extractGpsInfoFromImageCommand.LatLngModel
+            };
+            updateJsonIfExistsOrCreateNewIfNot.Execute(updateJsonIfExistsOrCreateNewIfNotCommand);
 
             return Ok(new
             {

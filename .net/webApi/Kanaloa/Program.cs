@@ -28,6 +28,8 @@ builder.Services.AddSingleton<ICommandHandlerAsync<WriteConfigurationToJsonFileC
 builder.Services.AddSingleton<ISaveKmlUpdateLivePositionSaveConfigFile, SaveKmlUpdateLivePositionSaveConfigFile>();
 
 builder.Services.AddSingleton<ICommandHandler<ResizeImageCommand>, ResizeImage>();
+builder.Services.AddSingleton<ICommandHandler<ExtractGpsInfoFromImageCommand>, ExtractGpsInfoFromImage>();
+builder.Services.AddSingleton<ICommandHandler<UpdateJsonIfExistsOrCreateNewIfNotCommand>, UpdateJsonIfExistsOrCreateNewIfNot>();
 
 var app = builder.Build();
 
