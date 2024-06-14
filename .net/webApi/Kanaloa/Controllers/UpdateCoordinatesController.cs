@@ -100,24 +100,16 @@ public class UpdateCoordinatesController(
             };
             extractGpsInfoFromImage.Execute(extractGpsInfoFromImageCommand);
 
-            string jsonFileName = Path.GetFileNameWithoutExtension(kmlFileName);
-            jsonFileName = string.IsNullOrWhiteSpace(kmlFileName) ? "default" : jsonFileName;
-            jsonFileName = Path.ChangeExtension(jsonFileName, "json");
-            jsonFileName = Path.Join(folderName, jsonFileName);
 
             UpdateJsonIfExistsOrCreateNewIfNotCommand updateJsonIfExistsOrCreateNewIfNotCommand = new UpdateJsonIfExistsOrCreateNewIfNotCommand
             {
-                JsonFileName = jsonFileName,
                 LatLngModel = extractGpsInfoFromImageCommand.LatLngModel
             };
+
+            updateJsonIfExistsOrCreateNewIfNotCommand.SetJsonFileName(kmlFileName, folderName);
             updateJsonIfExistsOrCreateNewIfNot.Execute(updateJsonIfExistsOrCreateNewIfNotCommand);
 
-            string jsonThumbsFileName = Path.GetFileNameWithoutExtension(kmlFileName);
-            jsonThumbsFileName = string.IsNullOrWhiteSpace(kmlFileName) ? "default" : jsonThumbsFileName;
-            jsonThumbsFileName = Path.ChangeExtension($"{jsonThumbsFileName}Thumbs", "json");
-            jsonThumbsFileName = Path.Join(folderName, jsonThumbsFileName);
-
-            updateJsonIfExistsOrCreateNewIfNotCommand.JsonFileName = jsonThumbsFileName;
+            updateJsonIfExistsOrCreateNewIfNotCommand.SetThumbJsonFileName(kmlFileName, folderName);
             updateJsonIfExistsOrCreateNewIfNot.Execute(updateJsonIfExistsOrCreateNewIfNotCommand);
 
             return Ok(new
