@@ -14,7 +14,7 @@ public class UpdateJsonIfExistsOrCreateNewIfNotCommand
         JsonFileName = Path.ChangeExtension(JsonFileName, "json");
         JsonFileName = Path.Join(folderName, JsonFileName);
 
-        ImageFileName = $"{rootUrl}/{folderName.Replace('\\', '/')}/{imageFileName}";
+        ImageFileName = $"../../{folderName.Replace('\\', '/')}/{imageFileName}";
     }
 
     public void SetThumbJsonAndImageFileName(string kmlFileName, string folderName, string rootUrl, string imageFileName)
@@ -25,6 +25,6 @@ public class UpdateJsonIfExistsOrCreateNewIfNotCommand
         JsonFileName = Path.Join(folderName, JsonFileName);
 
         string imageThumbsFolderName = Path.Join(folderName, "thumbs");
-        ImageFileName = $"{rootUrl}/{imageThumbsFolderName.Replace('\\', '/')}/{imageFileName}";
+        ImageFileName = $"../../{imageThumbsFolderName.Replace('\\', '/')}/{imageFileName}";
     }
 }
