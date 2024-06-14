@@ -10,33 +10,40 @@ public class UpdateJsonIfExistsOrCreateNewIfNot : ICommandHandler<UpdateJsonIfEx
         if (command.LatLngModel is null) throw new NullReferenceException("LatLngModel is null!");
         if (command.JsonFileName is null) throw new NullReferenceException("JsonFileName is null!");
 
+        var latLngFileModel = new LatLngFileNameModel
+        {
+            Latitude = command.LatLngModel.Latitude,
+            Longitude = command.LatLngModel.Longitude,
+            FileName = command.ImageFileName
+        };
+
         string latLngFileName;
 
-        List<LatLngModel>? latLngModels = new List<LatLngModel>();
+        List<LatLngFileNameModel>? latLngFileModels = new List<LatLngFileNameModel>();
 
         if (File.Exists(command.JsonFileName))
         {
             string jsonString = File.ReadAllText(command.JsonFileName);
             try
             {
-                latLngModels =
-                    JsonSerializer.Deserialize<List<LatLngModel>>(jsonString);
-                latLngModels?.Add(command.LatLngModel);
-                latLngFileName = JsonSerializer.Serialize(latLngModels);
+                latLngFileModels =
+                    JsonSerializer.Deserialize<List<LatLngFileNameModel>>(jsonString);
+                latLngFileModels?.Add(latLngFileModel);
+                latLngFileName = JsonSerializer.Serialize(latLngFileModels);
             }
             catch
             {
-                LatLngModel? latLngFileNameModelToSave =
-                    JsonSerializer.Deserialize<LatLngModel>(jsonString);
-                if (latLngFileNameModelToSave is not null) latLngModels?.Add(latLngFileNameModelToSave);
-                latLngModels?.Add(command.LatLngModel);
-                latLngFileName = JsonSerializer.Serialize(latLngModels);
+                LatLngFileNameModel? latLngFileNameModelToSave =
+                    JsonSerializer.Deserialize<LatLngFileNameModel>(jsonString);
+                if (latLngFileNameModelToSave is not null) latLngFileModels?.Add(latLngFileNameModelToSave);
+                latLngFileModels?.Add(latLngFileModel);
+                latLngFileName = JsonSerializer.Serialize(latLngFileModels);
             }
         }
         else
         {
-            latLngModels.Add(command.LatLngModel);
-            latLngFileName = JsonSerializer.Serialize(latLngModels);
+            latLngFileModels.Add(latLngFileModel);
+            latLngFileName = JsonSerializer.Serialize(latLngFileModels);
         }
 
         if (!string.IsNullOrEmpty(latLngFileName))

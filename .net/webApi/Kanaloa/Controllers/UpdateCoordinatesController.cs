@@ -104,6 +104,7 @@ public class UpdateCoordinatesController(
             UpdateJsonIfExistsOrCreateNewIfNotCommand updateJsonIfExistsOrCreateNewIfNotCommand = new UpdateJsonIfExistsOrCreateNewIfNotCommand
             {
                 LatLngModel = extractGpsInfoFromImageCommand.LatLngModel
+                , ImageFileName = imageFileName
             };
 
             updateJsonIfExistsOrCreateNewIfNotCommand.SetJsonFileName(kmlFileName, folderName);
