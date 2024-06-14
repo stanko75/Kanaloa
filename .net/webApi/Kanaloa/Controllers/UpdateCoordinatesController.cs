@@ -15,7 +15,7 @@ public class UpdateCoordinatesController(
     , ISaveKmlUpdateLivePositionSaveConfigFile saveKmlUpdateLivePositionSaveConfigFile
     , ICommandHandler<ResizeImageCommand> resizeImage
     , ICommandHandler<ExtractGpsInfoFromImageCommand> extractGpsInfoFromImage
-    , ICommandHandler<UpdateJsonIfExistsOrCreateNewIfNotCommand> updateJsonIfExistsOrCreateNewIfNot
+    , ICommandHandler<UpdateOrCreateJsonFileWithListOfImagesForThumbsCommand> updateOrCreateJsonFileWithListOfImagesForThumbs
     )
     : ControllerBase
 {
@@ -87,7 +87,7 @@ public class UpdateCoordinatesController(
             resizeImageCommand.CreateDirectories(folderName);
 
             string nameOfFileForJson = $"{_kanaloaSettings.RootUrl}/{resizeImageCommand.SaveTo.Replace('\\', '/')}/{imageFileName}";
-
+            //ToDo decorate
             string base64Image = data["base64Image"]?.ToString() ?? string.Empty;
             byte[] imageBytes = Convert.FromBase64String(base64Image);
             await System.IO.File.WriteAllBytesAsync(resizeImageCommand.OriginalFileName, imageBytes);
@@ -100,18 +100,13 @@ public class UpdateCoordinatesController(
             };
             extractGpsInfoFromImage.Execute(extractGpsInfoFromImageCommand);
 
-
-            UpdateJsonIfExistsOrCreateNewIfNotCommand updateJsonIfExistsOrCreateNewIfNotCommand = new UpdateJsonIfExistsOrCreateNewIfNotCommand
+            var updateOrCreateJsonFileWithListOfImagesForThumbsCommand = new UpdateOrCreateJsonFileWithListOfImagesForThumbsCommand
             {
+                KmlFileName = kmlFileName,
+                FolderName = folderName,
                 LatLngModel = extractGpsInfoFromImageCommand.LatLngModel
             };
-
-            //ToDo make with decorator
-            updateJsonIfExistsOrCreateNewIfNotCommand.SetJsonAndImageFileName(kmlFileName, folderName, _kanaloaSettings.RootUrl, imageFileName);
-            updateJsonIfExistsOrCreateNewIfNot.Execute(updateJsonIfExistsOrCreateNewIfNotCommand);
-
-            updateJsonIfExistsOrCreateNewIfNotCommand.SetThumbJsonAndImageFileName(kmlFileName, folderName, _kanaloaSettings.RootUrl, imageFileName);
-            updateJsonIfExistsOrCreateNewIfNot.Execute(updateJsonIfExistsOrCreateNewIfNotCommand);
+            updateOrCreateJsonFileWithListOfImagesForThumbs.Execute(updateOrCreateJsonFileWithListOfImagesForThumbsCommand);
 
             return Ok(new
             {

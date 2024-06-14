@@ -29,7 +29,10 @@ builder.Services.AddSingleton<ISaveKmlUpdateLivePositionSaveConfigFile, SaveKmlU
 
 builder.Services.AddSingleton<ICommandHandler<ResizeImageCommand>, ResizeImage>();
 builder.Services.AddSingleton<ICommandHandler<ExtractGpsInfoFromImageCommand>, ExtractGpsInfoFromImage>();
-builder.Services.AddSingleton<ICommandHandler<UpdateJsonIfExistsOrCreateNewIfNotCommand>, UpdateJsonIfExistsOrCreateNewIfNot>();
+
+
+builder.Services.AddSingleton<ICommandHandler<UpdateOrCreateJsonFileWithListOfImagesForThumbsCommand>, UpdateOrCreateJsonFileWithListOfImagesForThumbs>();
+//builder.Services.AddSingleton<ICommandHandler<UpdateJsonIfExistsOrCreateNewIfNotCommand>, UpdateJsonIfExistsOrCreateNewIfNot>();
 
 var app = builder.Build();
 
