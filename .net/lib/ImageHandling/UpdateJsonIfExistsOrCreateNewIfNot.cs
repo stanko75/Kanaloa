@@ -35,7 +35,7 @@ public class UpdateJsonIfExistsOrCreateNewIfNot : ICommandHandler<UpdateJsonIfEx
         }
         else
         {
-            latLngModels?.Add(command.LatLngModel);
+            latLngModels.Add(command.LatLngModel);
             latLngFileName = JsonSerializer.Serialize(latLngModels);
         }
 
