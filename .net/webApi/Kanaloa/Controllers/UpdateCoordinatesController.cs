@@ -104,13 +104,13 @@ public class UpdateCoordinatesController(
             UpdateJsonIfExistsOrCreateNewIfNotCommand updateJsonIfExistsOrCreateNewIfNotCommand = new UpdateJsonIfExistsOrCreateNewIfNotCommand
             {
                 LatLngModel = extractGpsInfoFromImageCommand.LatLngModel
-                , ImageFileName = imageFileName
             };
 
-            updateJsonIfExistsOrCreateNewIfNotCommand.SetJsonFileName(kmlFileName, folderName);
+            //ToDo make with decorator
+            updateJsonIfExistsOrCreateNewIfNotCommand.SetJsonAndImageFileName(kmlFileName, folderName, _kanaloaSettings.RootUrl, imageFileName);
             updateJsonIfExistsOrCreateNewIfNot.Execute(updateJsonIfExistsOrCreateNewIfNotCommand);
 
-            updateJsonIfExistsOrCreateNewIfNotCommand.SetThumbJsonFileName(kmlFileName, folderName);
+            updateJsonIfExistsOrCreateNewIfNotCommand.SetThumbJsonAndImageFileName(kmlFileName, folderName, _kanaloaSettings.RootUrl, imageFileName);
             updateJsonIfExistsOrCreateNewIfNot.Execute(updateJsonIfExistsOrCreateNewIfNotCommand);
 
             return Ok(new

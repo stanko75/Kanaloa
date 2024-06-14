@@ -7,19 +7,24 @@ public class UpdateJsonIfExistsOrCreateNewIfNotCommand
 
     public LatLngModel? LatLngModel { get; set; }
 
-    public void SetJsonFileName(string kmlFileName, string folderName)
+    public void SetJsonAndImageFileName(string kmlFileName, string folderName, string rootUrl, string imageFileName)
     {
         JsonFileName = Path.GetFileNameWithoutExtension(kmlFileName);
         JsonFileName = string.IsNullOrWhiteSpace(kmlFileName) ? "default" : JsonFileName;
         JsonFileName = Path.ChangeExtension(JsonFileName, "json");
         JsonFileName = Path.Join(folderName, JsonFileName);
+
+        ImageFileName = $"{rootUrl}/{folderName.Replace('\\', '/')}/{imageFileName}";
     }
 
-    public void SetThumbJsonFileName(string kmlFileName, string folderName)
+    public void SetThumbJsonAndImageFileName(string kmlFileName, string folderName, string rootUrl, string imageFileName)
     {
         JsonFileName = Path.GetFileNameWithoutExtension(kmlFileName);
         JsonFileName = string.IsNullOrWhiteSpace(kmlFileName) ? "default" : JsonFileName;
         JsonFileName = Path.ChangeExtension($"{JsonFileName}Thumbs", "json");
         JsonFileName = Path.Join(folderName, JsonFileName);
+
+        string imageThumbsFolderName = Path.Join(folderName, "thumbs");
+        ImageFileName = $"{rootUrl}/{imageThumbsFolderName.Replace('\\', '/')}/{imageFileName}";
     }
 }
