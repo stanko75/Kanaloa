@@ -104,7 +104,8 @@ public class UpdateCoordinatesController(
             {
                 KmlFileName = kmlFileName,
                 FolderName = folderName,
-                LatLngModel = extractGpsInfoFromImageCommand.LatLngModel
+                LatLngModel = extractGpsInfoFromImageCommand.LatLngModel,
+                ImageFileName = imageFileName
             };
             updateOrCreateJsonFileWithListOfImagesForThumbs.Execute(updateOrCreateJsonFileWithListOfImagesForThumbsCommand);
 
