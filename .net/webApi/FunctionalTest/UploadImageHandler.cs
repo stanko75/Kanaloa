@@ -1,6 +1,7 @@
 ﻿using Newtonsoft.Json.Linq;
 using System.Net.Http.Headers;
 using FunctionalTest.Log;
+using Newtonsoft.Json;
 
 namespace FunctionalTest;
 
@@ -25,6 +26,7 @@ public class UploadImageHandler(ILogger logger) : ICommandHandler<UploadImageCom
 
             if (Directory.Exists(imagesPath))
             {
+                int jsonIndex = 0;
                 foreach (string imageFile in Directory.GetFiles(imagesPath))
                 {
                     cancellationToken.ThrowIfCancellationRequested();
@@ -87,6 +89,13 @@ public class UploadImageHandler(ILogger logger) : ICommandHandler<UploadImageCom
                         throw new Exception(message);
                     }
 
+                    JArray jsonArray = JArray.Parse(liveImageMarkersJsonString);
+                    if (jsonArray[jsonIndex]["FileName"]?.ToString() != $@"..\..\{folderName}\thumbs\{Path.GetFileName(imageFile)}")
+                    {
+                        string message = $"'{jsonArray[0]["FileName"]}' is wrong path! It should be '..\\..\\{folderName}\\thumbs\\{Path.GetFileName(imageFile)}'";
+                        logger.Log(message);
+                    }
+                    jsonIndex += 1;
                 }
             }
         }
