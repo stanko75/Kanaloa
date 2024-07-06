@@ -16,6 +16,7 @@ public class UpdateCoordinatesController(
     , ICommandHandler<ResizeImageCommand> resizeImage
     , ICommandHandler<ExtractGpsInfoFromImageCommand> extractGpsInfoFromImage
     , ICommandHandler<UpdateOrCreateJsonFileWithListOfImagesForThumbsCommand> updateOrCreateJsonFileWithListOfImagesForThumbs
+    , ICommandHandler<UpdateOrCreateJsonFileWithListOfImagesCommand> updateOrCreateJsonFileWithListOfImages
     )
     : ControllerBase
 {
@@ -108,6 +109,15 @@ public class UpdateCoordinatesController(
                 ImageFileName = imageFileName
             };
             updateOrCreateJsonFileWithListOfImagesForThumbs.Execute(updateOrCreateJsonFileWithListOfImagesForThumbsCommand);
+
+            var updateOrCreateJsonFileWithListOfImagesCommand = new UpdateOrCreateJsonFileWithListOfImagesCommand
+            {
+                KmlFileName = kmlFileName,
+                FolderName = folderName,
+                LatLngModel = extractGpsInfoFromImageCommand.LatLngModel,
+                ImageFileName = imageFileName
+            };
+            updateOrCreateJsonFileWithListOfImages.Execute(updateOrCreateJsonFileWithListOfImagesCommand);
 
             return Ok(new
             {

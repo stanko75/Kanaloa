@@ -32,7 +32,8 @@ builder.Services.AddSingleton<ICommandHandler<ExtractGpsInfoFromImageCommand>, E
 
 
 builder.Services.AddSingleton<ICommandHandler<UpdateOrCreateJsonFileWithListOfImagesForThumbsCommand>, UpdateOrCreateJsonFileWithListOfImagesForThumbs>();
-//builder.Services.AddSingleton<ICommandHandler<UpdateJsonIfExistsOrCreateNewIfNotCommand>, UpdateJsonIfExistsOrCreateNewIfNot>();
+builder.Services.AddSingleton<ICommandHandler<UpdateOrCreateJsonFileWithListOfImagesCommand>, UpdateOrCreateJsonFileWithListOfImages>();
+builder.Services.AddSingleton<ICommandHandler<UpdateJsonIfExistsOrCreateNewIfNotCommand>, UpdateJsonIfExistsOrCreateNewIfNot>();
 
 var app = builder.Build();
 
