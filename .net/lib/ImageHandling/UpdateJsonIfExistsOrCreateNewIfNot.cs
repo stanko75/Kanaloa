@@ -1,5 +1,5 @@
-﻿using System.Text.Json;
-using Common;
+﻿using Common;
+using JsonSerializer = System.Text.Json.JsonSerializer;
 
 namespace ImageHandling;
 
@@ -46,7 +46,12 @@ public class UpdateJsonIfExistsOrCreateNewIfNot : ICommandHandler<UpdateJsonIfEx
             latLngFileName = JsonSerializer.Serialize(latLngFileModels);
         }
 
-        if (!string.IsNullOrEmpty(latLngFileName))
-            File.WriteAllText(command.JsonFileName, latLngFileName);
+        if (string.IsNullOrEmpty(latLngFileName)) return;
+        string? folder = Path.GetDirectoryName(command.JsonFileName);
+        if (!string.IsNullOrWhiteSpace(folder) && !Directory.Exists(folder))
+        {
+            Directory.CreateDirectory(folder);
+        }
+        File.WriteAllText(command.JsonFileName, latLngFileName);
     }
 }

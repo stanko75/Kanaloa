@@ -12,7 +12,7 @@ public class UpdateOrCreateJsonFileWithListOfImagesForThumbs(ICommandHandler<Upd
         jsonFileName = Path.Join(command.FolderName, jsonFileName);
 
         string imageThumbsFolderName = Path.Join(command.FolderName, "thumbs");
-        string imageFileName = $"../../{imageThumbsFolderName.Replace('\\', '/')}/{command.ImageFileName}";
+        string imageFileName = $@"..\..\{imageThumbsFolderName}\{command.ImageFileName}";
 
         UpdateJsonIfExistsOrCreateNewIfNotCommand updateJsonIfExistsOrCreateNewIfNotCommand = new UpdateJsonIfExistsOrCreateNewIfNotCommand
         {
