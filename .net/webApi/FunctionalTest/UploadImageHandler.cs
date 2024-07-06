@@ -42,7 +42,7 @@ public class UploadImageHandler(ILogger logger) : ICommandHandler<UploadImageCom
                     StringContent content = new StringContent(jsonContent);
                     content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
 
-                    string requestUri = Path.Combine(addressText, @"api/UpdateCoordinates/UploadImage");
+                    string requestUri = Path.Combine(addressText, @"api/UploadImages/UploadImage");
                     logger.Log("Sending");
 
                     try
