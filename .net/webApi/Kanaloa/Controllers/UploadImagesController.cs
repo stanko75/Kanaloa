@@ -3,7 +3,6 @@ using ImageHandling;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json.Linq;
-using static Kanaloa.Common;
 
 namespace Kanaloa.Controllers;
 
@@ -11,7 +10,7 @@ namespace Kanaloa.Controllers;
 [ApiController]
 public class UploadImagesController(
     IOptions<KanaloaSettings> kanaloaSettings
-    , ICommandHandler<ResizeImageCommand> resizeImage
+    , ICommandHandlerAsync<PrepareToResizeImageDecoratorCommand> prepareToResizeImageDecorator
     , ICommandHandler<ExtractGpsInfoFromImageCommand> extractGpsInfoFromImage
     , ICommandHandler<UpdateOrCreateJsonFileWithListOfImagesForThumbsCommand> updateOrCreateJsonFileWithListOfImagesForThumbs
     , ICommandHandler<UpdateOrCreateJsonFileWithListOfImagesCommand> updateOrCreateJsonFileWithListOfImages)
@@ -26,32 +25,17 @@ public class UploadImagesController(
     {
         try
         {
-            string folderName = GetValue(data, "folderName");
-            string kmlFileName = GetValue(data, "kmlFileName");
+            string kmlFileName = CommonStaticMethods.GetValue(data, "kmlFileName");
 
-            string imageFileName = data["imageFileName"]?.ToString() ?? "default.jpg";
-
-            var resizeImageCommand = new ResizeImageCommand
+            var prepareToResizeImageDecoratorCommand = new PrepareToResizeImageDecoratorCommand
             {
-                CanvasHeight = 200,
-                CanvasWidth = 200,
-                OriginalFileName = imageFileName,
-                SaveTo = imageFileName
+                Data = data
             };
-            resizeImageCommand.CreateDirectories(folderName);
-
-            string nameOfFileForJson =
-                $"{_kanaloaSettings.RootUrl}/{resizeImageCommand.SaveTo.Replace('\\', '/')}/{imageFileName}";
-            //ToDo decorate
-            string base64Image = data["base64Image"]?.ToString() ?? string.Empty;
-            byte[] imageBytes = Convert.FromBase64String(base64Image);
-            await System.IO.File.WriteAllBytesAsync(resizeImageCommand.OriginalFileName, imageBytes);
-
-            resizeImage.Execute(resizeImageCommand);
+            await prepareToResizeImageDecorator.Execute(prepareToResizeImageDecoratorCommand);
 
             var extractGpsInfoFromImageCommand = new ExtractGpsInfoFromImageCommand
             {
-                ImageFileNameToReadGpsFrom = resizeImageCommand.OriginalFileName
+                ImageFileNameToReadGpsFrom = prepareToResizeImageDecoratorCommand.ImageFileNameWithFullPath
             };
             extractGpsInfoFromImage.Execute(extractGpsInfoFromImageCommand);
 
@@ -59,9 +43,9 @@ public class UploadImagesController(
                 new UpdateOrCreateJsonFileWithListOfImagesForThumbsCommand
                 {
                     KmlFileName = kmlFileName,
-                    FolderName = folderName,
+                    FolderName = prepareToResizeImageDecoratorCommand.FolderName,
                     LatLngModel = extractGpsInfoFromImageCommand.LatLngModel,
-                    ImageFileName = imageFileName
+                    ImageFileName = prepareToResizeImageDecoratorCommand.ImageFileName
                 };
             updateOrCreateJsonFileWithListOfImagesForThumbs.Execute(
                 updateOrCreateJsonFileWithListOfImagesForThumbsCommand);
@@ -69,16 +53,16 @@ public class UploadImagesController(
             var updateOrCreateJsonFileWithListOfImagesCommand = new UpdateOrCreateJsonFileWithListOfImagesCommand
             {
                 KmlFileName = kmlFileName,
-                FolderName = folderName,
+                FolderName = prepareToResizeImageDecoratorCommand.FolderName,
                 LatLngModel = extractGpsInfoFromImageCommand.LatLngModel,
-                ImageFileName = imageFileName
+                ImageFileName = prepareToResizeImageDecoratorCommand.ImageFileName
             };
             updateOrCreateJsonFileWithListOfImages.Execute(updateOrCreateJsonFileWithListOfImagesCommand);
 
             return Ok(new
             {
                 message =
-                    $"Image uploaded to {Path.GetFullPath(resizeImageCommand.OriginalFileName)}" +
+                    $"Image uploaded to {Path.GetFullPath(prepareToResizeImageDecoratorCommand.ImageFileNameWithFullPath)}" +
                     $"{Environment.NewLine}" +
                     $"***" +
                     $"{Environment.NewLine}" +
@@ -88,7 +72,7 @@ public class UploadImagesController(
                     //$"***" +
 
                     $"{Environment.NewLine}" +
-                    $"ImageThumbsFileName file saved in {Path.GetFullPath(resizeImageCommand.SaveTo)}"
+                    $"ImageThumbsFileName file saved in {Path.GetFullPath(prepareToResizeImageDecoratorCommand.ImageFileNameWithFullPath)}"
             });
         }
         catch (Exception e)

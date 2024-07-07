@@ -27,9 +27,9 @@ builder.Services.AddSingleton<ICommandHandlerAsync<AddFileWithLastKnownGpsPositi
 builder.Services.AddSingleton<ICommandHandlerAsync<WriteConfigurationToJsonFileCommand>, WriteConfigurationToJsonFile>();
 builder.Services.AddSingleton<ISaveKmlUpdateLivePositionSaveConfigFile, SaveKmlUpdateLivePositionSaveConfigFile>();
 
+builder.Services.AddSingleton<ICommandHandlerAsync<PrepareToResizeImageDecoratorCommand>, PrepareToResizeImageDecorator>();
 builder.Services.AddSingleton<ICommandHandler<ResizeImageCommand>, ResizeImage>();
 builder.Services.AddSingleton<ICommandHandler<ExtractGpsInfoFromImageCommand>, ExtractGpsInfoFromImage>();
-
 
 builder.Services.AddSingleton<ICommandHandler<UpdateOrCreateJsonFileWithListOfImagesForThumbsCommand>, UpdateOrCreateJsonFileWithListOfImagesForThumbs>();
 builder.Services.AddSingleton<ICommandHandler<UpdateOrCreateJsonFileWithListOfImagesCommand>, UpdateOrCreateJsonFileWithListOfImages>();

@@ -1,9 +1,9 @@
-﻿using FileHandling;
+﻿using Common;
+using FileHandling;
 using KmlHandling;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json.Linq;
-using static Kanaloa.Common;
 
 namespace Kanaloa.Controllers;
 
@@ -23,10 +23,10 @@ public class UpdateCoordinatesController(
     {
         try
         {
-            string kmlFileName = GetValue(data, "kmlFileName");
-            string folderName = GetValue(data, "folderName");
-            string latitude = GetValue(data, "Latitude");
-            string longitude = GetValue(data, "Longitude");
+            string kmlFileName = CommonStaticMethods.GetValue(data, "kmlFileName");
+            string folderName = CommonStaticMethods.GetValue(data, "folderName");
+            string latitude = CommonStaticMethods.GetValue(data, "Latitude");
+            string longitude = CommonStaticMethods.GetValue(data, "Longitude");
             string coordinates = string.Join(',', longitude, latitude, "2357");
 
             var gps = new GpsCommand(latitude, longitude);
