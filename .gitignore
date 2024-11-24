@@ -73,3 +73,7 @@ html/templateForBlog/index.html
 .net/webApi/FunctionalTest/jsconfigForTests.json
 /.net/webApi/Kanaloa/html
 /.net/webApi/Kanaloa/Properties/PublishProfiles
+/html/live/json/liveImageMarkers.json
+/html/live/script/config.json
+/html/live/config.json
+/html/live/test.json
