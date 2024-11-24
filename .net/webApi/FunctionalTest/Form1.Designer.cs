@@ -51,6 +51,7 @@
             UploadImage = new Button();
             UploadToBlog = new Button();
             btnCancel = new Button();
+            linkLabel1 = new LinkLabel();
             panel1.SuspendLayout();
             panel2.SuspendLayout();
             SuspendLayout();
@@ -58,7 +59,7 @@
             // PostGpsPositionsFromFilesWithFileName
             // 
             PostGpsPositionsFromFilesWithFileName.Dock = DockStyle.Bottom;
-            PostGpsPositionsFromFilesWithFileName.Location = new Point(0, 358);
+            PostGpsPositionsFromFilesWithFileName.Location = new Point(0, 343);
             PostGpsPositionsFromFilesWithFileName.Name = "PostGpsPositionsFromFilesWithFileName";
             PostGpsPositionsFromFilesWithFileName.Size = new Size(800, 23);
             PostGpsPositionsFromFilesWithFileName.TabIndex = 0;
@@ -72,7 +73,7 @@
             panel1.Dock = DockStyle.Fill;
             panel1.Location = new Point(0, 260);
             panel1.Name = "panel1";
-            panel1.Size = new Size(800, 98);
+            panel1.Size = new Size(800, 83);
             panel1.TabIndex = 1;
             // 
             // log
@@ -82,7 +83,7 @@
             log.Multiline = true;
             log.Name = "log";
             log.ScrollBars = ScrollBars.Both;
-            log.Size = new Size(800, 98);
+            log.Size = new Size(800, 83);
             log.TabIndex = 0;
             // 
             // panel2
@@ -240,7 +241,7 @@
             // UploadImage
             // 
             UploadImage.Dock = DockStyle.Bottom;
-            UploadImage.Location = new Point(0, 381);
+            UploadImage.Location = new Point(0, 366);
             UploadImage.Name = "UploadImage";
             UploadImage.Size = new Size(800, 23);
             UploadImage.TabIndex = 3;
@@ -251,7 +252,7 @@
             // UploadToBlog
             // 
             UploadToBlog.Dock = DockStyle.Bottom;
-            UploadToBlog.Location = new Point(0, 404);
+            UploadToBlog.Location = new Point(0, 389);
             UploadToBlog.Name = "UploadToBlog";
             UploadToBlog.Size = new Size(800, 23);
             UploadToBlog.TabIndex = 4;
@@ -262,13 +263,25 @@
             // btnCancel
             // 
             btnCancel.Dock = DockStyle.Bottom;
-            btnCancel.Location = new Point(0, 427);
+            btnCancel.Location = new Point(0, 412);
             btnCancel.Name = "btnCancel";
             btnCancel.Size = new Size(800, 23);
             btnCancel.TabIndex = 5;
             btnCancel.Text = "Cancel";
             btnCancel.UseVisualStyleBackColor = true;
             btnCancel.Click += btnCancel_Click;
+            // 
+            // linkLabel1
+            // 
+            linkLabel1.AutoSize = true;
+            linkLabel1.Dock = DockStyle.Bottom;
+            linkLabel1.Location = new Point(0, 435);
+            linkLabel1.Name = "linkLabel1";
+            linkLabel1.Size = new Size(298, 15);
+            linkLabel1.TabIndex = 7;
+            linkLabel1.TabStop = true;
+            linkLabel1.Text = "https://kanaloa.azurewebsites.net/html/live/index.html";
+            linkLabel1.LinkClicked += linkLabel1_LinkClicked;
             // 
             // Form1
             // 
@@ -281,6 +294,7 @@
             Controls.Add(UploadImage);
             Controls.Add(UploadToBlog);
             Controls.Add(btnCancel);
+            Controls.Add(linkLabel1);
             Name = "Form1";
             Text = "Form1";
             FormClosed += Form1_FormClosed;
@@ -289,6 +303,7 @@
             panel2.ResumeLayout(false);
             panel2.PerformLayout();
             ResumeLayout(false);
+            PerformLayout();
         }
 
         #endregion
@@ -316,5 +331,6 @@
         private Label label6;
         private TextBox tbFtpUser;
         private Button btnCancel;
+        private LinkLabel linkLabel1;
     }
 }

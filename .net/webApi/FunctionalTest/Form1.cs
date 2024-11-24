@@ -2,6 +2,7 @@ using FunctionalTest.Log;
 using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using System.Diagnostics;
 
 namespace FunctionalTest;
 
@@ -121,5 +122,22 @@ public partial class Form1 : Form
         _cancellationDecoratorUploadImage.CancelOperation();
         _cancellationDecoratorPostGpsPositionsFromFiles.CancelOperation();
         _cancellationDecoratorUploadToBlog.CancelOperation();
+    }
+
+    private void linkLabel1_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+    {
+        string url = e.Link.LinkData?.ToString() ?? string.Empty;
+
+        try
+        {
+            Process.Start(new ProcessStartInfo(url)
+            {
+                UseShellExecute = true
+            });
+        }
+        catch (Exception ex)
+        {
+            MessageBox.Show(ex.Message);
+        }
     }
 }
