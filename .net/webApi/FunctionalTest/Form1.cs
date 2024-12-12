@@ -19,6 +19,8 @@ public partial class Form1 : Form
     {
         InitializeComponent();
 
+        linkLabel1.Links.Add(0, linkLabel1.Text.Length, "https://kanaloa.azurewebsites.net/html/live/index.html");
+
         _cancellationDecoratorPostGpsPositionsFromFiles = new CancellationDecorator<PostGpsPositionsFromFilesWithFileNameCommand>(new PostGpsPositionsFromFilesWithFileNameHandler(new TextBoxLogger(log)), new TextBoxLogger(log));
         _cancellationDecoratorUploadToBlog = new CancellationDecorator<UploadToBlogCommand>(new UploadToBlogHandler(new TextBoxLogger(log)), new TextBoxLogger(log));
         _cancellationDecoratorUploadImage = new CancellationDecorator<UploadImageCommand>(new UploadImageHandler(new TextBoxLogger(log)), new TextBoxLogger(log));
