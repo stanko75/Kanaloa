@@ -1,4 +1,4 @@
-package com.example.kanaloa
+package com.milosev.kanaloa
 
 import android.os.Bundle
 import android.view.Menu
@@ -11,7 +11,7 @@ import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.appcompat.app.AppCompatActivity
-import com.example.kanaloa.databinding.ActivityMainBinding
+import com.milosev.kanaloa.databinding.ActivityMainBinding
 
 class MainActivity : AppCompatActivity() {
 

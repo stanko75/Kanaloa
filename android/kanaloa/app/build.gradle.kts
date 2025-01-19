@@ -5,11 +5,11 @@ plugins {
 }
 
 android {
-    namespace = "com.example.kanaloa"
+    namespace = "com.milosev.kanaloa"
     compileSdk = 35
 
     defaultConfig {
-        applicationId = "com.example.kanaloa"
+        applicationId = "com.milosev.kanaloa"
         minSdk = 24
         targetSdk = 34
         versionCode = 1

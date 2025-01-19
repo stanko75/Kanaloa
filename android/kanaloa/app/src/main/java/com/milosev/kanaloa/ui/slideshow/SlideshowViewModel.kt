@@ -1,4 +1,4 @@
-package com.example.kanaloa.ui.slideshow
+package com.milosev.kanaloa.ui.slideshow
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData

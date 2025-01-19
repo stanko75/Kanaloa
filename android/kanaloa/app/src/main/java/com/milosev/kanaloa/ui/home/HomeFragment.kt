@@ -1,4 +1,4 @@
-package com.example.kanaloa.ui.home
+package com.milosev.kanaloa.ui.home
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -7,8 +7,8 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
-import com.example.kanaloa.R
-import com.example.kanaloa.databinding.FragmentHomeBinding
+import com.milosev.kanaloa.R
+import com.milosev.kanaloa.databinding.FragmentHomeBinding
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.MapView
@@ -38,7 +38,7 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
         googleMap = map
 
         // Initialize map settings and move the camera to a default location
-        val defaultLocation = LatLng(37.7749, -122.4194) // San Francisco, for example
+        val defaultLocation = LatLng(37.7749, -122.4194) // San Francisco, for milosev
         googleMap.addMarker(MarkerOptions().position(defaultLocation).title("Marker in San Francisco"))
         googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(defaultLocation, 10f))
     }
