@@ -1,0 +1,12 @@
+{
+  "/*galleryName*/": "GalleryNameTest",
+  "/*gapikey*/": "GapiKeyTest",
+  "/*ogTitle*/": "OgTitleTest",
+  "/*ogDescription*/": "OgDescriptionTest",
+  "/*ogImage*/": "OgImageTest",
+  "/*ogUrl*/": "OgUrlTest",
+  "/*picsJson*/": "PicsJsonTest",
+  "/*zoom*/": "ZoomTest",
+  "/*joomlaThumbsPath*/": "JoomlaThumbsPath",
+  "/*joomlaImgSrcPath*/": "JoomlaImgSrcPath"
+}

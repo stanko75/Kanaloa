@@ -1,25 +1,24 @@
 ﻿using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using System.Collections.Concurrent;
 
 namespace HtmlHandling;
 
-public class PrepareTemplates : IPrepareTemplates
+public class PrepareTemplates //: IPrepareTemplates
 {
-    public void ReplaceKeysInTemplateFilesWithProperValues(string listOfFilesToReplaceJson
+    public ConcurrentBag<string>? ReplaceKeysInTemplateFilesWithProperValues(string listOfFilesToReplaceJson
         , string listOfKeyValuesToReplaceInFilesJson
         , string templatesFolder
         , string saveToPath)
     {
+        ConcurrentBag<string> listOfSavedFiles = new ConcurrentBag<string>();
+        listOfSavedFiles.Add($"Loading from: {Path.GetFullPath(listOfFilesToReplaceJson)}");
         List<string>? listOfFilesToReplace = LoadJsonFileAndConvertToList(listOfFilesToReplaceJson);
         JObject listOfKeyValuesToReplaceInFilesObject =
             LoadJsonFileAndConvertToObject(listOfKeyValuesToReplaceInFilesJson);
 
-        //string templatesFolder = @"C:\projects\.net\ConvertHtmlTemplates\template";
-
-        //string saveToPath = "replacedTemplate\\test";
-
-        if (listOfFilesToReplace is null) return;
-        foreach (string fileToReplace in listOfFilesToReplace)
+        if (listOfFilesToReplace is null) return null;
+        Parallel.ForEach(listOfFilesToReplace, fileToReplace =>
         {
             string fileToReplaceInFolder = Path.Join(templatesFolder, fileToReplace);
             if (File.Exists(fileToReplaceInFolder))
@@ -52,12 +51,11 @@ public class PrepareTemplates : IPrepareTemplates
 
                 string saveToFileNameWithPath = Path.Join(saveToPath, fileToReplace);
                 File.WriteAllText(saveToFileNameWithPath, fileContent);
+                listOfSavedFiles.Add(Path.GetFullPath(saveToFileNameWithPath));
             }
-            //else
-            //{
-            //    throw new Exception($"File: {Path.GetFullPath(fileToReplaceInFolder)} not found!");
-            //}
-        }
+        });
+
+        return listOfSavedFiles;
     }
 
     private static List<string>? LoadJsonFileAndConvertToList(string fileName)

@@ -1,0 +1,1 @@
+window.milosev = window.milosev || {};
