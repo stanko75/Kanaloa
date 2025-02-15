@@ -43,8 +43,7 @@ public partial class Form1 : Form
         }
         catch (Exception ex)
         {
-            Console.WriteLine(ex.Message);
-            throw;
+            tbLog.AppendText(ex.Message);
         }
 
     }

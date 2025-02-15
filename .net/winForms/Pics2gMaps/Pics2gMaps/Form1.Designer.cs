@@ -167,10 +167,11 @@
             // tbLog
             // 
             tbLog.Dock = DockStyle.Fill;
-            tbLog.Location = new Point(0, 78);
+            tbLog.Location = new Point(0, 238);
             tbLog.Multiline = true;
             tbLog.Name = "tbLog";
-            tbLog.Size = new Size(800, 326);
+            tbLog.ScrollBars = ScrollBars.Both;
+            tbLog.Size = new Size(800, 166);
             tbLog.TabIndex = 3;
             // 
             // panel7
@@ -253,9 +254,9 @@
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(800, 450);
+            Controls.Add(tbLog);
             Controls.Add(splitter1);
             Controls.Add(dgvGalleryConfiguration);
-            Controls.Add(tbLog);
             Controls.Add(btnLoadOld);
             Controls.Add(panel7);
             Controls.Add(panel4);
