@@ -75,8 +75,6 @@ public class PrepareTemplates(ReplaceInFilesObject replaceInFilesObject) : IComm
                     , fileToReplaceInFolder
                     , fileToReplace));
             }
-
-            Console.WriteLine("Array"); //Further Manipulations
         }
         else
         {

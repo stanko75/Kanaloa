@@ -45,7 +45,7 @@ public partial class Form1 : Form
                     FolderName = folderName,
                     LatLngModel = extractGpsInfoFromImageCommand.LatLngModel,
                     ImageFileName = imageFileName,
-                    KmlFileName = "mariaLaach.kml"
+                    JsonFileName = @"C:\projects\KanaloaGalleryTest\mariaLaach\www\mariaLaachThumbs.json"
                 };
                 UpdateOrCreateJsonFileWithListOfImages updateOrCreateJsonFileWithListOfImages =
                     new UpdateOrCreateJsonFileWithListOfImages(new UpdateJsonIfExistsOrCreateNewIfNot());
@@ -90,6 +90,7 @@ public partial class Form1 : Form
         catch (Exception ex)
         {
             tbLog.AppendText(ex.Message);
+            tbLog.AppendText(Environment.NewLine);
         }
     }
 
