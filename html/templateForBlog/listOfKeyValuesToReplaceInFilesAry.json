@@ -1,5 +1,6 @@
 [{
   "/*galleryName*/": "GalleryNameTest1",
+  "/*webPath*/"="http://www.milosev.com/gallery/allWithPics/"
   "/*gapikey*/": "GapiKeyTest",
   "/*ogTitle*/": "OgTitleTest",
   "/*ogDescription*/": "OgDescriptionTest",

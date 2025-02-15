@@ -54,6 +54,8 @@ public partial class Form1 : Form
         DataTable dtGalleryConfiguration = new DataTable();
 
         dtGalleryConfiguration.Columns.Add("galleryName");
+        dtGalleryConfiguration.Columns.Add("rootGalleryFolder");
+        dtGalleryConfiguration.Columns.Add("webPath");
         dtGalleryConfiguration.Columns.Add("gapikey");
         dtGalleryConfiguration.Columns.Add("ogTitle");
         dtGalleryConfiguration.Columns.Add("ogDescription");
@@ -61,6 +63,7 @@ public partial class Form1 : Form
         dtGalleryConfiguration.Columns.Add("ogUrl");
         dtGalleryConfiguration.Columns.Add("picsJson");
         dtGalleryConfiguration.Columns.Add("zoom");
+        dtGalleryConfiguration.Columns.Add("resizeImages");
         dtGalleryConfiguration.Columns.Add("joomlaThumbsPath");
         dtGalleryConfiguration.Columns.Add("joomlaImgSrcPath");
 
@@ -91,13 +94,16 @@ public partial class Form1 : Form
             {
                 DataRow drGalleryConfiguration = dtGalleryConfiguration.NewRow();
                 drGalleryConfiguration["galleryName"] = setting.GalleryName;
+                drGalleryConfiguration["rootGalleryFolder"] = setting.RootGalleryFolder;
+                drGalleryConfiguration["webPath"] = setting.WebPath;
                 //drGalleryConfiguration["gapikey"] = setting.
                 drGalleryConfiguration["ogTitle"] = setting.OgTitle;
                 drGalleryConfiguration["ogDescription"] = setting.OgDescription;
                 drGalleryConfiguration["ogImage"] = setting.OgImage;
-                //drGalleryConfiguration["ogUrl"] = setting.;
+                drGalleryConfiguration["ogUrl"] = $"{setting.WebPath}{setting.GalleryName}/www/index.html";
                 //drGalleryConfiguration["picsJson"] = setting.P;
                 drGalleryConfiguration["zoom"] = setting.Zoom;
+                drGalleryConfiguration["resizeImages"] = setting.ResizeImages;
                 drGalleryConfiguration["joomlaThumbsPath"] = setting.JoomlaThumbsPath;
                 drGalleryConfiguration["joomlaImgSrcPath"] = setting.JoomlaImgSrcPath;
                 dtGalleryConfiguration.Rows.Add(drGalleryConfiguration);
