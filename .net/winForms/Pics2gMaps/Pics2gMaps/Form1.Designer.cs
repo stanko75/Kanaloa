@@ -48,6 +48,7 @@
             btnLoadOld = new Button();
             splitter1 = new Splitter();
             dgvGalleryConfiguration = new DataGridView();
+            btnSaveConfig = new Button();
             panel1.SuspendLayout();
             panel3.SuspendLayout();
             panel2.SuspendLayout();
@@ -171,7 +172,7 @@
             tbLog.Multiline = true;
             tbLog.Name = "tbLog";
             tbLog.ScrollBars = ScrollBars.Both;
-            tbLog.Size = new Size(800, 166);
+            tbLog.Size = new Size(800, 143);
             tbLog.TabIndex = 3;
             // 
             // panel7
@@ -249,12 +250,24 @@
             dgvGalleryConfiguration.Size = new Size(800, 150);
             dgvGalleryConfiguration.TabIndex = 7;
             // 
+            // btnSaveConfig
+            // 
+            btnSaveConfig.Dock = DockStyle.Bottom;
+            btnSaveConfig.Location = new Point(0, 381);
+            btnSaveConfig.Name = "btnSaveConfig";
+            btnSaveConfig.Size = new Size(800, 23);
+            btnSaveConfig.TabIndex = 8;
+            btnSaveConfig.Text = "Save configuration";
+            btnSaveConfig.UseVisualStyleBackColor = true;
+            btnSaveConfig.Click += btnSaveConfig_Click;
+            // 
             // Form1
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(800, 450);
             Controls.Add(tbLog);
+            Controls.Add(btnSaveConfig);
             Controls.Add(splitter1);
             Controls.Add(dgvGalleryConfiguration);
             Controls.Add(btnLoadOld);
@@ -303,5 +316,6 @@
         private Button btnLoadOld;
         private Splitter splitter1;
         private DataGridView dgvGalleryConfiguration;
+        private Button btnSaveConfig;
     }
 }

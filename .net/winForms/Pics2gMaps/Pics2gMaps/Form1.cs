@@ -8,6 +8,8 @@ namespace Pics2gMaps;
 
 public partial class Form1 : Form
 {
+    private readonly DataTable _dtGalleryConfiguration = new();
+
     public Form1()
     {
         InitializeComponent();
@@ -112,23 +114,21 @@ public partial class Form1 : Form
 
     private void btnLoadOld_Click(object sender, EventArgs e)
     {
-        DataTable dtGalleryConfiguration = new DataTable();
+        _dtGalleryConfiguration.Columns.Add(DataTableConfigColumns.GalleryName);
+        _dtGalleryConfiguration.Columns.Add(DataTableConfigColumns.RootGalleryFolder);
+        _dtGalleryConfiguration.Columns.Add(DataTableConfigColumns.WebPath);
+        _dtGalleryConfiguration.Columns.Add(DataTableConfigColumns.Gapikey);
+        _dtGalleryConfiguration.Columns.Add(DataTableConfigColumns.OgTitle);
+        _dtGalleryConfiguration.Columns.Add(DataTableConfigColumns.OgDescription);
+        _dtGalleryConfiguration.Columns.Add(DataTableConfigColumns.OgImage);
+        _dtGalleryConfiguration.Columns.Add(DataTableConfigColumns.OgUrl);
+        _dtGalleryConfiguration.Columns.Add(DataTableConfigColumns.PicsJson);
+        _dtGalleryConfiguration.Columns.Add(DataTableConfigColumns.Zoom);
+        _dtGalleryConfiguration.Columns.Add(DataTableConfigColumns.ResizeImages);
+        _dtGalleryConfiguration.Columns.Add(DataTableConfigColumns.JoomlaThumbsPath);
+        _dtGalleryConfiguration.Columns.Add(DataTableConfigColumns.JoomlaImgSrcPath);
 
-        dtGalleryConfiguration.Columns.Add("galleryName");
-        dtGalleryConfiguration.Columns.Add("rootGalleryFolder");
-        dtGalleryConfiguration.Columns.Add("webPath");
-        dtGalleryConfiguration.Columns.Add("gapikey");
-        dtGalleryConfiguration.Columns.Add("ogTitle");
-        dtGalleryConfiguration.Columns.Add("ogDescription");
-        dtGalleryConfiguration.Columns.Add("ogImage");
-        dtGalleryConfiguration.Columns.Add("ogUrl");
-        dtGalleryConfiguration.Columns.Add("picsJson");
-        dtGalleryConfiguration.Columns.Add("zoom");
-        dtGalleryConfiguration.Columns.Add("resizeImages");
-        dtGalleryConfiguration.Columns.Add("joomlaThumbsPath");
-        dtGalleryConfiguration.Columns.Add("joomlaImgSrcPath");
-
-        dgvGalleryConfiguration.DataSource = dtGalleryConfiguration;
+        dgvGalleryConfiguration.DataSource = _dtGalleryConfiguration;
 
         XDocument xmlDoc = XDocument.Load(@"C:\projects\Kanaloa\.net\winForms\Pics2gMaps\Pics2gMaps\app.config");
         var galleries = xmlDoc.Descendants("galleries")
@@ -136,16 +136,16 @@ public partial class Form1 : Form
             .Descendants("add")
             .Select(gallery => new
             {
-                GalleryName = (string)gallery.Attribute("galleryName"),
-                RootGalleryFolder = (string)gallery.Attribute("rootGalleryFolder"),
-                WebPath = (string)gallery.Attribute("webPath"),
-                OgTitle = (string)gallery.Attribute("ogTitle"),
-                OgDescription = (string)gallery.Attribute("ogDescription"),
-                OgImage = (string)gallery.Attribute("ogImage"),
-                Zoom = (int?)gallery.Attribute("zoom") ?? 0,
-                ResizeImages = (bool?)gallery.Attribute("resizeImages") ?? false,
-                JoomlaThumbsPath = (string)gallery.Attribute("joomlaThumbsPath"),
-                JoomlaImgSrcPath = (string)gallery.Attribute("joomlaImgSrcPath")
+                GalleryName = (string)gallery.Attribute(DataTableConfigColumns.GalleryName),
+                RootGalleryFolder = (string)gallery.Attribute(DataTableConfigColumns.RootGalleryFolder),
+                WebPath = (string)gallery.Attribute(DataTableConfigColumns.WebPath),
+                OgTitle = (string)gallery.Attribute(DataTableConfigColumns.OgTitle),
+                OgDescription = (string)gallery.Attribute(DataTableConfigColumns.OgDescription),
+                OgImage = (string)gallery.Attribute(DataTableConfigColumns.OgImage),
+                Zoom = (int?)gallery.Attribute(DataTableConfigColumns.Zoom) ?? 0,
+                ResizeImages = (bool?)gallery.Attribute(DataTableConfigColumns.ResizeImages) ?? false,
+                JoomlaThumbsPath = (string)gallery.Attribute(DataTableConfigColumns.JoomlaThumbsPath),
+                JoomlaImgSrcPath = (string)gallery.Attribute(DataTableConfigColumns.JoomlaImgSrcPath)
             })
             .ToList();
 
@@ -153,22 +153,30 @@ public partial class Form1 : Form
         {
             foreach (var setting in galleries)
             {
-                DataRow drGalleryConfiguration = dtGalleryConfiguration.NewRow();
-                drGalleryConfiguration["galleryName"] = setting.GalleryName;
-                drGalleryConfiguration["rootGalleryFolder"] = setting.RootGalleryFolder;
-                drGalleryConfiguration["webPath"] = setting.WebPath;
+                DataRow drGalleryConfiguration = _dtGalleryConfiguration.NewRow();
+                drGalleryConfiguration[DataTableConfigColumns.GalleryName] = setting.GalleryName;
+                drGalleryConfiguration[DataTableConfigColumns.RootGalleryFolder] = setting.RootGalleryFolder;
+                drGalleryConfiguration[DataTableConfigColumns.WebPath] = setting.WebPath;
                 //drGalleryConfiguration["gapikey"] = setting.
-                drGalleryConfiguration["ogTitle"] = setting.OgTitle;
-                drGalleryConfiguration["ogDescription"] = setting.OgDescription;
-                drGalleryConfiguration["ogImage"] = setting.OgImage;
-                drGalleryConfiguration["ogUrl"] = $"{setting.WebPath}{setting.GalleryName}/www/index.html";
+                drGalleryConfiguration[DataTableConfigColumns.OgTitle] = setting.OgTitle;
+                drGalleryConfiguration[DataTableConfigColumns.OgDescription] = setting.OgDescription;
+                drGalleryConfiguration[DataTableConfigColumns.OgImage] = setting.OgImage;
+                drGalleryConfiguration[DataTableConfigColumns.OgUrl] = $"{setting.WebPath}{setting.GalleryName}/www/index.html";
                 //drGalleryConfiguration["picsJson"] = setting.P;
-                drGalleryConfiguration["zoom"] = setting.Zoom;
-                drGalleryConfiguration["resizeImages"] = setting.ResizeImages;
-                drGalleryConfiguration["joomlaThumbsPath"] = setting.JoomlaThumbsPath;
-                drGalleryConfiguration["joomlaImgSrcPath"] = setting.JoomlaImgSrcPath;
-                dtGalleryConfiguration.Rows.Add(drGalleryConfiguration);
+                drGalleryConfiguration[DataTableConfigColumns.Zoom] = setting.Zoom;
+                drGalleryConfiguration[DataTableConfigColumns.ResizeImages] = setting.ResizeImages;
+                drGalleryConfiguration[DataTableConfigColumns.JoomlaThumbsPath] = setting.JoomlaThumbsPath;
+                drGalleryConfiguration[DataTableConfigColumns.JoomlaImgSrcPath] = setting.JoomlaImgSrcPath;
+                _dtGalleryConfiguration.Rows.Add(drGalleryConfiguration);
             }
+        }
+    }
+
+    private void btnSaveConfig_Click(object sender, EventArgs e)
+    {
+        foreach (DataRow dataRow in _dtGalleryConfiguration.Rows)
+        {
+            tbLog.AppendText(dataRow[DataTableConfigColumns.GalleryName].ToString());
         }
     }
 }
