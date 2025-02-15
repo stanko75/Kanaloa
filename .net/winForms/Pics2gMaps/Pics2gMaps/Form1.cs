@@ -17,7 +17,7 @@ public partial class Form1 : Form
         string saveToPath = tbSaveToPath.Text;
 
         string listOfFilesToReplaceJson = Path.Join(templateRootFolder, "listOfFilesToReplaceAndCopy.json");
-        string listOfKeyValuesToReplaceInFilesJson = Path.Join(templateRootFolder, tbJsonFile.Text);
+        string listOfKeyValuesToReplaceInFilesJson = tbJsonFile.Text;
 
         try
         {
