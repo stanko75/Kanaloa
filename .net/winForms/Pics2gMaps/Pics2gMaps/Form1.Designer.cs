@@ -45,6 +45,9 @@
             tbJsonFile = new TextBox();
             panel9 = new Panel();
             label3 = new Label();
+            btnLoadOld = new Button();
+            splitter1 = new Splitter();
+            dgvGalleryConfiguration = new DataGridView();
             panel1.SuspendLayout();
             panel3.SuspendLayout();
             panel2.SuspendLayout();
@@ -54,6 +57,7 @@
             panel7.SuspendLayout();
             panel8.SuspendLayout();
             panel9.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)dgvGalleryConfiguration).BeginInit();
             SuspendLayout();
             // 
             // btnStart
@@ -166,7 +170,7 @@
             tbLog.Location = new Point(0, 78);
             tbLog.Multiline = true;
             tbLog.Name = "tbLog";
-            tbLog.Size = new Size(800, 349);
+            tbLog.Size = new Size(800, 326);
             tbLog.TabIndex = 3;
             // 
             // panel7
@@ -215,12 +219,44 @@
             label3.TabIndex = 0;
             label3.Text = "Json file with keys:";
             // 
+            // btnLoadOld
+            // 
+            btnLoadOld.Dock = DockStyle.Bottom;
+            btnLoadOld.Location = new Point(0, 404);
+            btnLoadOld.Name = "btnLoadOld";
+            btnLoadOld.Size = new Size(800, 23);
+            btnLoadOld.TabIndex = 4;
+            btnLoadOld.Text = "Load old configuration";
+            btnLoadOld.UseVisualStyleBackColor = true;
+            btnLoadOld.Click += btnLoadOld_Click;
+            // 
+            // splitter1
+            // 
+            splitter1.Dock = DockStyle.Top;
+            splitter1.Location = new Point(0, 228);
+            splitter1.Name = "splitter1";
+            splitter1.Size = new Size(800, 10);
+            splitter1.TabIndex = 6;
+            splitter1.TabStop = false;
+            // 
+            // dgvGalleryConfiguration
+            // 
+            dgvGalleryConfiguration.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            dgvGalleryConfiguration.Dock = DockStyle.Top;
+            dgvGalleryConfiguration.Location = new Point(0, 78);
+            dgvGalleryConfiguration.Name = "dgvGalleryConfiguration";
+            dgvGalleryConfiguration.Size = new Size(800, 150);
+            dgvGalleryConfiguration.TabIndex = 7;
+            // 
             // Form1
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(800, 450);
+            Controls.Add(splitter1);
+            Controls.Add(dgvGalleryConfiguration);
             Controls.Add(tbLog);
+            Controls.Add(btnLoadOld);
             Controls.Add(panel7);
             Controls.Add(panel4);
             Controls.Add(panel1);
@@ -239,6 +275,7 @@
             panel8.ResumeLayout(false);
             panel8.PerformLayout();
             panel9.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)dgvGalleryConfiguration).EndInit();
             ResumeLayout(false);
             PerformLayout();
         }
@@ -262,5 +299,8 @@
         private TextBox tbJsonFile;
         private Panel panel9;
         private Label label3;
+        private Button btnLoadOld;
+        private Splitter splitter1;
+        private DataGridView dgvGalleryConfiguration;
     }
 }
