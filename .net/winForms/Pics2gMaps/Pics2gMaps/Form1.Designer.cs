@@ -40,12 +40,20 @@
             panel6 = new Panel();
             label2 = new Label();
             tbLog = new TextBox();
+            panel7 = new Panel();
+            panel8 = new Panel();
+            tbJsonFile = new TextBox();
+            panel9 = new Panel();
+            label3 = new Label();
             panel1.SuspendLayout();
             panel3.SuspendLayout();
             panel2.SuspendLayout();
             panel4.SuspendLayout();
             panel5.SuspendLayout();
             panel6.SuspendLayout();
+            panel7.SuspendLayout();
+            panel8.SuspendLayout();
+            panel9.SuspendLayout();
             SuspendLayout();
             // 
             // btnStart
@@ -155,11 +163,57 @@
             // tbLog
             // 
             tbLog.Dock = DockStyle.Fill;
-            tbLog.Location = new Point(0, 52);
+            tbLog.Location = new Point(0, 78);
             tbLog.Multiline = true;
             tbLog.Name = "tbLog";
-            tbLog.Size = new Size(800, 375);
+            tbLog.Size = new Size(800, 349);
             tbLog.TabIndex = 3;
+            // 
+            // panel7
+            // 
+            panel7.Controls.Add(panel8);
+            panel7.Controls.Add(panel9);
+            panel7.Dock = DockStyle.Top;
+            panel7.Location = new Point(0, 52);
+            panel7.Name = "panel7";
+            panel7.Size = new Size(800, 26);
+            panel7.TabIndex = 3;
+            // 
+            // panel8
+            // 
+            panel8.Controls.Add(tbJsonFile);
+            panel8.Dock = DockStyle.Fill;
+            panel8.Location = new Point(124, 0);
+            panel8.Name = "panel8";
+            panel8.Size = new Size(676, 26);
+            panel8.TabIndex = 1;
+            // 
+            // tbJsonFile
+            // 
+            tbJsonFile.Dock = DockStyle.Fill;
+            tbJsonFile.Location = new Point(0, 0);
+            tbJsonFile.Name = "tbJsonFile";
+            tbJsonFile.Size = new Size(676, 23);
+            tbJsonFile.TabIndex = 0;
+            tbJsonFile.Text = "listOfKeyValuesToReplaceInFilesAry.json";
+            // 
+            // panel9
+            // 
+            panel9.Controls.Add(label3);
+            panel9.Dock = DockStyle.Left;
+            panel9.Location = new Point(0, 0);
+            panel9.Name = "panel9";
+            panel9.Size = new Size(124, 26);
+            panel9.TabIndex = 0;
+            // 
+            // label3
+            // 
+            label3.Dock = DockStyle.Fill;
+            label3.Location = new Point(0, 0);
+            label3.Name = "label3";
+            label3.Size = new Size(124, 26);
+            label3.TabIndex = 0;
+            label3.Text = "Json file with keys:";
             // 
             // Form1
             // 
@@ -167,6 +221,7 @@
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(800, 450);
             Controls.Add(tbLog);
+            Controls.Add(panel7);
             Controls.Add(panel4);
             Controls.Add(panel1);
             Controls.Add(btnStart);
@@ -180,6 +235,10 @@
             panel5.ResumeLayout(false);
             panel5.PerformLayout();
             panel6.ResumeLayout(false);
+            panel7.ResumeLayout(false);
+            panel8.ResumeLayout(false);
+            panel8.PerformLayout();
+            panel9.ResumeLayout(false);
             ResumeLayout(false);
             PerformLayout();
         }
@@ -198,5 +257,10 @@
         private Panel panel6;
         private Label label2;
         private TextBox tbLog;
+        private Panel panel7;
+        private Panel panel8;
+        private TextBox tbJsonFile;
+        private Panel panel9;
+        private Label label3;
     }
 }

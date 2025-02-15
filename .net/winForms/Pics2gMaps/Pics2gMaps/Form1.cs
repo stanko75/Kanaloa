@@ -15,23 +15,19 @@ public partial class Form1 : Form
         string saveToPath = @"html\blog\www";
 
         string listOfFilesToReplaceJson = Path.Join(templateRootFolder, "listOfFilesToReplaceAndCopy.json");
-        string listOfKeyValuesToReplaceInFilesJson = Path.Join(templateRootFolder, "listOfKeyValuesToReplaceInFiles.json");
+        string listOfKeyValuesToReplaceInFilesJson = Path.Join(templateRootFolder, tbJsonFile.Text);
 
         try
         {
             ReplaceInFilesObject replaceInFilesObject = new ReplaceInFilesObject();
-
-            PrepareTemplatesCommand prepareTemplatesCommand = new PrepareTemplatesCommand();
-
-
+            PrepareTemplatesCommand prepareTemplatesCommand = new PrepareTemplatesCommand
+            {
+                ListOfFilesToReplaceJson = listOfFilesToReplaceJson,
+                ListOfKeyValuesToReplaceInFilesJson = listOfKeyValuesToReplaceInFilesJson,
+                SaveToPath = saveToPath,
+                TemplatesFolder = templateRootFolder
+            };
             PrepareTemplates prepareTemplates = new PrepareTemplates(replaceInFilesObject);
-            prepareTemplatesCommand.ListOfFilesToReplaceJson = listOfFilesToReplaceJson;
-            prepareTemplatesCommand.ListOfKeyValuesToReplaceInFilesJson = listOfKeyValuesToReplaceInFilesJson;
-            prepareTemplatesCommand.SaveToPath = saveToPath;
-            prepareTemplatesCommand.TemplatesFolder = templateRootFolder;
-
-            prepareTemplates.Execute(prepareTemplatesCommand);
-
             prepareTemplates.Execute(prepareTemplatesCommand);
 
             if (prepareTemplatesCommand.ListOfSavedFiles is not null)
