@@ -13,11 +13,12 @@ public partial class Form1 : Form
 
     private void btnStart_Click(object sender, EventArgs e)
     {
-        string templateRootFolder = tbTemplateRootFolder.Text;
-        string saveToPath = tbSaveToPath.Text;
+        PrepareHtmlFolder(tbTemplateRootFolder.Text, tbSaveToPath.Text, tbJsonFile.Text);
+    }
 
+    private void PrepareHtmlFolder(string templateRootFolder, string saveToPath, string listOfKeyValuesToReplaceInFilesJson)
+    {
         string listOfFilesToReplaceJson = Path.Join(templateRootFolder, "listOfFilesToReplaceAndCopy.json");
-        string listOfKeyValuesToReplaceInFilesJson = tbJsonFile.Text;
 
         try
         {
@@ -45,7 +46,6 @@ public partial class Form1 : Form
         {
             tbLog.AppendText(ex.Message);
         }
-
     }
 
     private void btnLoadOld_Click(object sender, EventArgs e)
