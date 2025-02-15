@@ -3,6 +3,7 @@ using System.Xml.Linq;
 using Common;
 using HtmlHandling;
 using ImageHandling;
+using Newtonsoft.Json;
 
 namespace Pics2gMaps;
 
@@ -156,12 +157,13 @@ public partial class Form1 : Form
                 DataRow drGalleryConfiguration = _dtGalleryConfiguration.NewRow();
                 drGalleryConfiguration[DataTableConfigColumns.GalleryName] = setting.GalleryName;
                 drGalleryConfiguration[DataTableConfigColumns.RootGalleryFolder] = setting.RootGalleryFolder;
-                drGalleryConfiguration[DataTableConfigColumns.WebPath] = setting.WebPath;
+                drGalleryConfiguration[DataTableConfigColumns.WebPath] = string.IsNullOrWhiteSpace(setting.WebPath) ? "http://www.milosev.com/gallery/allWithPics/travelBuddies/" : setting.WebPath;
                 //drGalleryConfiguration["gapikey"] = setting.
                 drGalleryConfiguration[DataTableConfigColumns.OgTitle] = setting.OgTitle;
                 drGalleryConfiguration[DataTableConfigColumns.OgDescription] = setting.OgDescription;
                 drGalleryConfiguration[DataTableConfigColumns.OgImage] = setting.OgImage;
-                drGalleryConfiguration[DataTableConfigColumns.OgUrl] = $"{setting.WebPath}{setting.GalleryName}/www/index.html";
+                drGalleryConfiguration[DataTableConfigColumns.OgUrl] =
+                    $"{setting.WebPath}{setting.GalleryName}/www/index.html";
                 //drGalleryConfiguration["picsJson"] = setting.P;
                 drGalleryConfiguration[DataTableConfigColumns.Zoom] = setting.Zoom;
                 drGalleryConfiguration[DataTableConfigColumns.ResizeImages] = setting.ResizeImages;
@@ -174,9 +176,26 @@ public partial class Form1 : Form
 
     private void btnSaveConfig_Click(object sender, EventArgs e)
     {
-        foreach (DataRow dataRow in _dtGalleryConfiguration.Rows)
+        List<Dictionary<string, string>> jsonList = new List<Dictionary<string, string>>();
+        foreach (DataRow row in _dtGalleryConfiguration.Rows)
         {
-            tbLog.AppendText(dataRow[DataTableConfigColumns.GalleryName].ToString());
+            var jsonObj = new Dictionary<string, string>
+            {
+                { "/*galleryName*/", row["GalleryName"].ToString() },
+                { "/*gapikey*/", row["Gapikey"].ToString() },
+                { "/*ogTitle*/", row["OgTitle"].ToString() },
+                { "/*ogDescription*/", row["OgDescription"].ToString() },
+                { "/*ogImage*/", row["OgImage"].ToString() },
+                { "/*ogUrl*/", row["OgUrl"].ToString() },
+                { "/*picsJson*/", row["PicsJson"].ToString() },
+                { "/*zoom*/", row["Zoom"].ToString() },
+                { "/*joomlaThumbsPath*/", row["JoomlaThumbsPath"].ToString() },
+                { "/*joomlaImgSrcPath*/", row["JoomlaImgSrcPath"].ToString() }
+            };
+
+            jsonList.Add(jsonObj);
         }
+        string jsonString = JsonConvert.SerializeObject(jsonList, Formatting.Indented);
+        File.WriteAllText("gallery_config.json", jsonString);
     }
 }
