@@ -36,41 +36,58 @@ public class PrepareTemplates(ReplaceInFilesObject replaceInFilesObject) : IComm
             string fileToReplaceInFolder = Path.Join(templatesFolder, fileToReplace);
             if (File.Exists(fileToReplaceInFolder))
             {
-                listOfSavedFiles.Add(ReplaceInFiles(listOfKeyValuesToReplaceInFilesJson
+                ReplaceInFiles(listOfKeyValuesToReplaceInFilesJson
                     , listOfFilesToReplaceJson
                     , templatesFolder
                     , saveToPath
                     , fileToReplaceInFolder
-                    , fileToReplace));
+                    , fileToReplace
+                    , listOfSavedFiles);
             }
         });
 
         return listOfSavedFiles;
     }
 
-    private string ReplaceInFiles(string fileName
+    private void ReplaceInFiles(string fileName
         , string listOfFilesToReplaceJson
         , string templatesFolder
         , string saveToPath
         , string fileToReplaceInFolder
-        , string fileToReplace)
+        , string fileToReplace
+        , ConcurrentBag<string> listOfSavedFiles)
     {
         string jsonFileContent = File.ReadAllText(fileName);
         JToken jToken = JToken.Parse(jsonFileContent);
+        JObject? listOfKeyValuesToReplaceInFilesObject;
 
         if (jToken.Type == JTokenType.Array)
         {
-            Console.WriteLine("Array"); //Further Manipulations
-            return null;
-        }
+            JArray? listOfKeyValuesToReplaceInFilesObjectAry = jToken.ToObject<JArray>();
 
-        JObject? listOfKeyValuesToReplaceInFilesObject = jToken.ToObject<JObject>();
-        return ReplaceInFilesObjectCommand(listOfFilesToReplaceJson
-            , listOfKeyValuesToReplaceInFilesObject
-            , templatesFolder
-            , saveToPath
-            , fileToReplaceInFolder
-            , fileToReplace);
+            foreach (JToken token in listOfKeyValuesToReplaceInFilesObjectAry)
+            {
+                listOfKeyValuesToReplaceInFilesObject = token.ToObject<JObject>();
+                listOfSavedFiles.Add(ReplaceInFilesObjectCommand(listOfFilesToReplaceJson
+                    , listOfKeyValuesToReplaceInFilesObject
+                    , templatesFolder
+                    , saveToPath
+                    , fileToReplaceInFolder
+                    , fileToReplace));
+            }
+
+            Console.WriteLine("Array"); //Further Manipulations
+        }
+        else
+        {
+            listOfKeyValuesToReplaceInFilesObject = jToken.ToObject<JObject>();
+            listOfSavedFiles.Add(ReplaceInFilesObjectCommand(listOfFilesToReplaceJson
+                , listOfKeyValuesToReplaceInFilesObject
+                , templatesFolder
+                , saveToPath
+                , fileToReplaceInFolder
+                , fileToReplace));
+        }
     }
 
     private static List<string>? LoadJsonFileAndConvertToList(string fileName)

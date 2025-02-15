@@ -1,5 +1,5 @@
 [{
-  "/*galleryName*/": "GalleryNameTest",
+  "/*galleryName*/": "GalleryNameTest1",
   "/*gapikey*/": "GapiKeyTest",
   "/*ogTitle*/": "OgTitleTest",
   "/*ogDescription*/": "OgDescriptionTest",
@@ -11,7 +11,7 @@
   "/*joomlaImgSrcPath*/": "JoomlaImgSrcPath"
 }
 ,{
-  "/*galleryName*/": "GalleryNameTest",
+  "/*galleryName*/": "GalleryNameTest2",
   "/*gapikey*/": "GapiKeyTest",
   "/*ogTitle*/": "OgTitleTest",
   "/*ogDescription*/": "OgDescriptionTest",
