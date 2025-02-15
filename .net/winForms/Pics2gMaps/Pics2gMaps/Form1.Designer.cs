@@ -140,7 +140,7 @@
             tbSaveToPath.Name = "tbSaveToPath";
             tbSaveToPath.Size = new Size(676, 23);
             tbSaveToPath.TabIndex = 0;
-            tbSaveToPath.Text = "html\\blog\\www";
+            tbSaveToPath.Text = "html\\blog";
             // 
             // panel6
             // 

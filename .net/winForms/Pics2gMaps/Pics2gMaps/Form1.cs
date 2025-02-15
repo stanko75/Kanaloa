@@ -11,8 +11,8 @@ public partial class Form1 : Form
 
     private void btnStart_Click(object sender, EventArgs e)
     {
-        string templateRootFolder = @"..\..\..\..\..\..\..\html\templateForBlog";
-        string saveToPath = @"html\blog\www";
+        string templateRootFolder = tbTemplateRootFolder.Text;
+        string saveToPath = tbSaveToPath.Text;
 
         string listOfFilesToReplaceJson = Path.Join(templateRootFolder, "listOfFilesToReplaceAndCopy.json");
         string listOfKeyValuesToReplaceInFilesJson = Path.Join(templateRootFolder, tbJsonFile.Text);

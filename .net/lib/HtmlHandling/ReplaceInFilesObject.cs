@@ -34,6 +34,12 @@ public class ReplaceInFilesObject: ICommandHandler<ReplaceInFilesObjectCommand>
                 fileContent = fileContent.Replace(keyValuesToReplaceInFiles.Key,
                     keyValuesToReplaceInFiles.Value.Value<string>());
 
+                if (keyValuesToReplaceInFiles.Key == "/*galleryName*/")
+                {
+                    saveToPath = Path.Join(saveToPath, keyValuesToReplaceInFiles.Value.Value<string>());
+                    saveToPath = Path.Join(saveToPath, "www");
+                }
+
                 if (!Directory.Exists(saveToPath))
                 {
                     Directory.CreateDirectory(saveToPath);
