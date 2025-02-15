@@ -1,18 +1,29 @@
-﻿using Newtonsoft.Json;
+﻿using Common;
+using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System.Collections.Concurrent;
 
 namespace HtmlHandling;
 
-public class PrepareTemplates //: IPrepareTemplates
+public class PrepareTemplates(ReplaceInFilesObject replaceInFilesObject) : ICommandHandler<PrepareTemplatesCommand>
 {
-    public ConcurrentBag<string>? ReplaceKeysInTemplateFilesWithProperValues(string listOfFilesToReplaceJson
+    public void Execute(PrepareTemplatesCommand command)
+    {
+        command.ListOfSavedFiles = ReplaceKeysInTemplateFilesWithProperValues(command.ListOfFilesToReplaceJson
+            , command.ListOfKeyValuesToReplaceInFilesJson
+            , command.TemplatesFolder
+            , command.SaveToPath);
+    }
+
+    private ConcurrentBag<string>? ReplaceKeysInTemplateFilesWithProperValues(string listOfFilesToReplaceJson
         , string listOfKeyValuesToReplaceInFilesJson
         , string templatesFolder
         , string saveToPath)
     {
-        ConcurrentBag<string> listOfSavedFiles = new ConcurrentBag<string>();
-        listOfSavedFiles.Add($"Loading from: {Path.GetFullPath(listOfFilesToReplaceJson)}");
+        ConcurrentBag<string> listOfSavedFiles =
+        [
+            $"Loading from: {Path.GetFullPath(listOfFilesToReplaceJson)}"
+        ];
         List<string>? listOfFilesToReplace = LoadJsonFileAndConvertToList(listOfFilesToReplaceJson);
         JObject listOfKeyValuesToReplaceInFilesObject =
             LoadJsonFileAndConvertToObject(listOfKeyValuesToReplaceInFilesJson);
@@ -23,35 +34,17 @@ public class PrepareTemplates //: IPrepareTemplates
             string fileToReplaceInFolder = Path.Join(templatesFolder, fileToReplace);
             if (File.Exists(fileToReplaceInFolder))
             {
-                string fileContent = File.ReadAllText(fileToReplaceInFolder);
-                foreach (KeyValuePair<string, JToken?> keyValuesToReplaceInFiles in
-                         listOfKeyValuesToReplaceInFilesObject)
+                var command = new ReplaceInFilesObjectCommand
                 {
-                    if (keyValuesToReplaceInFiles.Value is not null)
-                    {
-                        fileContent = fileContent.Replace(keyValuesToReplaceInFiles.Key,
-                            keyValuesToReplaceInFiles.Value.Value<string>());
-
-                        if (!Directory.Exists(saveToPath))
-                        {
-                            Directory.CreateDirectory(saveToPath);
-                        }
-
-                        string fileToReplaceDir = Path.GetDirectoryName(fileToReplace) ?? string.Empty;
-                        if (!string.IsNullOrWhiteSpace(fileToReplaceDir))
-                        {
-                            fileToReplaceDir = Path.Join(saveToPath, fileToReplaceDir);
-                            if (!Directory.Exists(fileToReplaceDir))
-                            {
-                                Directory.CreateDirectory(fileToReplaceDir);
-                            }
-                        }
-                    }
-                }
-
-                string saveToFileNameWithPath = Path.Join(saveToPath, fileToReplace);
-                File.WriteAllText(saveToFileNameWithPath, fileContent);
-                listOfSavedFiles.Add(Path.GetFullPath(saveToFileNameWithPath));
+                    ListOfFilesToReplaceJson = listOfFilesToReplaceJson,
+                    ListOfKeyValuesToReplaceInFilesObject = listOfKeyValuesToReplaceInFilesObject,
+                    TemplatesFolder = templatesFolder,
+                    SaveToPath = saveToPath,
+                    FileToReplaceInFolder = fileToReplaceInFolder,
+                    FileToReplace = fileToReplace
+                };
+                replaceInFilesObject.Execute(command);
+                listOfSavedFiles.Add(command.SavedFile);
             }
         });
 

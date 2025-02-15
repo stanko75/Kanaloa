@@ -17,18 +17,31 @@ public partial class Form1 : Form
         string listOfFilesToReplaceJson = Path.Join(templateRootFolder, "listOfFilesToReplaceAndCopy.json");
         string listOfKeyValuesToReplaceInFilesJson = Path.Join(templateRootFolder, "listOfKeyValuesToReplaceInFiles.json");
 
-        PrepareTemplates prepareTemplates = new PrepareTemplates();
         try
         {
-            foreach (string savedFile in prepareTemplates.ReplaceKeysInTemplateFilesWithProperValues(listOfFilesToReplaceJson
-                         , listOfKeyValuesToReplaceInFilesJson
-                         , templateRootFolder
-                         , saveToPath))
-            {
-                tbLog.AppendText(savedFile);
-                tbLog.AppendText(Environment.NewLine);
-            }
+            ReplaceInFilesObject replaceInFilesObject = new ReplaceInFilesObject();
 
+            PrepareTemplatesCommand prepareTemplatesCommand = new PrepareTemplatesCommand();
+
+
+            PrepareTemplates prepareTemplates = new PrepareTemplates(replaceInFilesObject);
+            prepareTemplatesCommand.ListOfFilesToReplaceJson = listOfFilesToReplaceJson;
+            prepareTemplatesCommand.ListOfKeyValuesToReplaceInFilesJson = listOfKeyValuesToReplaceInFilesJson;
+            prepareTemplatesCommand.SaveToPath = saveToPath;
+            prepareTemplatesCommand.TemplatesFolder = templateRootFolder;
+
+            prepareTemplates.Execute(prepareTemplatesCommand);
+
+            prepareTemplates.Execute(prepareTemplatesCommand);
+
+            if (prepareTemplatesCommand.ListOfSavedFiles is not null)
+            {
+                foreach (string savedFile in prepareTemplatesCommand.ListOfSavedFiles)
+                {
+                    tbLog.AppendText(savedFile);
+                    tbLog.AppendText(Environment.NewLine);
+                }
+            }
         }
         catch (Exception ex)
         {

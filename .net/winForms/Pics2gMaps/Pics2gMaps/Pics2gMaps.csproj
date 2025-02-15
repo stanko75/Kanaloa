@@ -13,6 +13,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Reference Include="Common">
+      <HintPath>..\..\..\lib\HtmlHandling\bin\Debug\net9.0\Common.dll</HintPath>
+    </Reference>
     <Reference Include="HtmlHandling">
       <HintPath>..\..\..\lib\HtmlHandling\bin\Debug\net9.0\HtmlHandling.dll</HintPath>
     </Reference>
