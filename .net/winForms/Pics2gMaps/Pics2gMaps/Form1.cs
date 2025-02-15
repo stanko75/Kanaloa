@@ -1,6 +1,8 @@
 using System.Data;
 using System.Xml.Linq;
+using Common;
 using HtmlHandling;
+using ImageHandling;
 
 namespace Pics2gMaps;
 
@@ -13,10 +15,53 @@ public partial class Form1 : Form
 
     private void btnStart_Click(object sender, EventArgs e)
     {
+        string folderName = @"C:\projects\KanaloaGalleryTest\mariaLaach\";
+        foreach (string imageFileName in Directory.GetFiles(Path.Join(folderName, "pics")))
+        {
+            try
+            {
+                var resizeImageCommand = new ResizeImageCommand
+                {
+                    CanvasHeight = 200,
+                    CanvasWidth = 200,
+                    OriginalFileName = Path.GetFileName(imageFileName),
+                    //SaveTo = Path.Join(@"C:\projects\KanaloaGalleryTest\mariaLaach\thumbs", imageFileName)
+                    SaveTo = Path.GetFileName(imageFileName)
+                };
+                resizeImageCommand.CreateDirectories(folderName);
+
+                ResizeImage resizeImage = new ResizeImage();
+                resizeImage.Execute(resizeImageCommand);
+
+                ExtractGpsInfoFromImage extractGpsInfoFromImage = new ExtractGpsInfoFromImage();
+                var extractGpsInfoFromImageCommand = new ExtractGpsInfoFromImageCommand
+                {
+                    ImageFileNameToReadGpsFrom = imageFileName
+                };
+                extractGpsInfoFromImage.Execute(extractGpsInfoFromImageCommand);
+
+                var updateOrCreateJsonFileWithListOfImagesCommand = new UpdateOrCreateJsonFileWithListOfImagesCommand
+                {
+                    FolderName = folderName,
+                    LatLngModel = extractGpsInfoFromImageCommand.LatLngModel,
+                    ImageFileName = imageFileName,
+                    KmlFileName = "mariaLaach.kml"
+                };
+                UpdateOrCreateJsonFileWithListOfImages updateOrCreateJsonFileWithListOfImages =
+                    new UpdateOrCreateJsonFileWithListOfImages(new UpdateJsonIfExistsOrCreateNewIfNot());
+                updateOrCreateJsonFileWithListOfImages.Execute(updateOrCreateJsonFileWithListOfImagesCommand);
+            }
+            catch (Exception ex)
+            {
+                tbLog.AppendText(ex.Message);
+            }
+        }
+
         PrepareHtmlFolder(tbTemplateRootFolder.Text, tbSaveToPath.Text, tbJsonFile.Text);
     }
 
-    private void PrepareHtmlFolder(string templateRootFolder, string saveToPath, string listOfKeyValuesToReplaceInFilesJson)
+    private void PrepareHtmlFolder(string templateRootFolder, string saveToPath,
+        string listOfKeyValuesToReplaceInFilesJson)
     {
         string listOfFilesToReplaceJson = Path.Join(templateRootFolder, "listOfFilesToReplaceAndCopy.json");
 
