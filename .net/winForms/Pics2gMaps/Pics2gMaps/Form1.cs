@@ -16,6 +16,19 @@ public partial class Form1 : Form
     private void btnStart_Click(object sender, EventArgs e)
     {
         string folderName = @"C:\projects\KanaloaGalleryTest\mariaLaach\";
+        string jsonThumbsFileName = @"C:\projects\KanaloaGalleryTest\mariaLaach\www\mariaLaachThumbs.json";
+        string jsonPicsFileName = @"C:\projects\KanaloaGalleryTest\mariaLaach\www\mariaLaach.json";
+
+        if (File.Exists(jsonThumbsFileName))
+        {
+            File.Delete(jsonThumbsFileName);
+        }
+
+        if (File.Exists(jsonPicsFileName))
+        {
+            File.Delete(jsonPicsFileName);
+        }
+
         foreach (string imageFileName in Directory.GetFiles(Path.Join(folderName, "pics")))
         {
             try
@@ -42,11 +55,13 @@ public partial class Form1 : Form
 
                 var updateOrCreateJsonFileWithListOfImagesCommand = new UpdateOrCreateJsonFileWithListOfImagesCommand
                 {
-                    FolderName = folderName,
+                    FolderName = string.Empty,
                     LatLngModel = extractGpsInfoFromImageCommand.LatLngModel,
-                    ImageFileName = imageFileName,
-                    JsonFileName = @"C:\projects\KanaloaGalleryTest\mariaLaach\www\mariaLaachThumbs.json"
+                    ImageFileName = Path.GetFileName(imageFileName),
+                    JsonThumbsFileName = @"C:\projects\KanaloaGalleryTest\mariaLaach\www\mariaLaachThumbs.json",
+                    JsonPicsFileName = @"C:\projects\KanaloaGalleryTest\mariaLaach\www\mariaLaach.json"
                 };
+
                 UpdateOrCreateJsonFileWithListOfImages updateOrCreateJsonFileWithListOfImages =
                     new UpdateOrCreateJsonFileWithListOfImages(new UpdateJsonIfExistsOrCreateNewIfNot());
                 updateOrCreateJsonFileWithListOfImages.Execute(updateOrCreateJsonFileWithListOfImagesCommand);
@@ -54,6 +69,7 @@ public partial class Form1 : Form
             catch (Exception ex)
             {
                 tbLog.AppendText(ex.Message);
+                tbLog.AppendText(Environment.NewLine);
             }
         }
 

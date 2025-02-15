@@ -6,29 +6,44 @@ public class UpdateOrCreateJsonFileWithListOfImages(ICommandHandler<UpdateJsonIf
 {
     public void Execute(UpdateOrCreateJsonFileWithListOfImagesCommand command)
     {
+        string imageThumbsFolderName = Path.Join(command.FolderName, "thumbs");
+        string imagePicsFolderName = Path.Join(command.FolderName, "pics");
+        string imageThumbsFileName;
+        string imagePicsFileName = string.Empty;
+
         string jsonFileName;
-        if (command.JsonFileName is null)
+        if (command.JsonThumbsFileName is null) //live
         {
             jsonFileName = Path.GetFileNameWithoutExtension(command.KmlFileName);
             jsonFileName = string.IsNullOrWhiteSpace(command.KmlFileName) ? "default" : jsonFileName;
             jsonFileName = Path.ChangeExtension(jsonFileName, "json");
             jsonFileName = Path.Join(command.FolderName, jsonFileName);
+            imageThumbsFileName = $"../../{imageThumbsFolderName.Replace('\\', '/')}/{command.ImageFileName}";
         }
-        else
+        else //desktop
         {
-            jsonFileName = command.JsonFileName;
+            jsonFileName = command.JsonThumbsFileName;
+            imageThumbsFileName = $"../{imageThumbsFolderName.Replace('\\', '/')}/{command.ImageFileName}";
+            imagePicsFileName = $"../{imagePicsFolderName.Replace('\\', '/')}/{command.ImageFileName}";
         }
 
-        string imageThumbsFolderName = Path.Join(command.FolderName, "pics");
-        string imageFileName = $"../../{imageThumbsFolderName.Replace('\\', '/')}/{command.ImageFileName}";
-
-        UpdateJsonIfExistsOrCreateNewIfNotCommand updateJsonIfExistsOrCreateNewIfNotCommand = new UpdateJsonIfExistsOrCreateNewIfNotCommand
+        UpdateJsonIfExistsOrCreateNewIfNotCommand updateJsonIfExistsOrCreateNewIfNotCommandThumbs = new UpdateJsonIfExistsOrCreateNewIfNotCommand
         {
             LatLngModel = command.LatLngModel,
             JsonFileName = jsonFileName,
-            ImageFileName = imageFileName
+            ImageFileName = imageThumbsFileName
         };
+        updateJsonIfExistsOrCreateNewIfNot.Execute(updateJsonIfExistsOrCreateNewIfNotCommandThumbs);
 
-        updateJsonIfExistsOrCreateNewIfNot.Execute(updateJsonIfExistsOrCreateNewIfNotCommand);
+        if (command.JsonPicsFileName is not null) //desktop
+        {
+            UpdateJsonIfExistsOrCreateNewIfNotCommand updateJsonIfExistsOrCreateNewIfNotCommandPics = new UpdateJsonIfExistsOrCreateNewIfNotCommand
+            {
+                LatLngModel = command.LatLngModel,
+                JsonFileName = command.JsonPicsFileName,
+                ImageFileName = imagePicsFileName
+            };
+            updateJsonIfExistsOrCreateNewIfNot.Execute(updateJsonIfExistsOrCreateNewIfNotCommandPics);
+        }
     }
 }
