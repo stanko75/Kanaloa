@@ -225,7 +225,7 @@ public partial class Form1 : Form
         }
 
         string jsonString = JsonConvert.SerializeObject(jsonList, Formatting.Indented);
-        File.WriteAllText("gallery_config.json", jsonString);
+        File.WriteAllText(tbJsonFile.Text, jsonString);
     }
 
     private void btnLoadNew_Click(object sender, EventArgs e)
@@ -236,7 +236,7 @@ public partial class Form1 : Form
         }
         dgvGalleryConfiguration.DataSource = _dtGalleryConfiguration;
 
-        var galleries = JsonConvert.DeserializeObject<List<Dictionary<string, string>>>(File.ReadAllText("gallery_config.json"));
+        var galleries = JsonConvert.DeserializeObject<List<Dictionary<string, string>>>(File.ReadAllText(tbJsonFile.Text));
         foreach (Dictionary<string, string> setting in galleries)
         {
             DataRow drGalleryConfiguration = _dtGalleryConfiguration.NewRow();
