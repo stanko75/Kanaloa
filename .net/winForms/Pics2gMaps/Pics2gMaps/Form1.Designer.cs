@@ -203,6 +203,7 @@
             tbJsonFile.Size = new Size(676, 23);
             tbJsonFile.TabIndex = 0;
             tbJsonFile.Text = "listOfKeyValuesToReplaceInFilesAry.json";
+            tbJsonFile.Leave += tbJsonFile_Leave;
             // 
             // panel9
             // 
@@ -290,6 +291,7 @@
             Controls.Add(btnStart);
             Name = "Form1";
             Text = "Form1";
+            Load += Form1_Load;
             panel1.ResumeLayout(false);
             panel3.ResumeLayout(false);
             panel3.PerformLayout();
