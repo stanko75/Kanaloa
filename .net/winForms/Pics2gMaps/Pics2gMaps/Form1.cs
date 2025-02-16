@@ -157,7 +157,6 @@ public partial class Form1 : Form
                 drGalleryConfiguration[DataTableConfigColumns.OgImage] = setting.OgImage;
                 drGalleryConfiguration[DataTableConfigColumns.OgUrl] =
                     $"{setting.WebPath}{setting.GalleryName}/www/index.html";
-                //drGalleryConfiguration["picsJson"] = setting.P;
                 drGalleryConfiguration[DataTableConfigColumns.Zoom] = setting.Zoom;
                 drGalleryConfiguration[DataTableConfigColumns.ResizeImages] = setting.ResizeImages;
                 drGalleryConfiguration[DataTableConfigColumns.JoomlaThumbsPath] = setting.JoomlaThumbsPath;
@@ -177,7 +176,6 @@ public partial class Form1 : Form
         _dtGalleryConfiguration.Columns.Add(DataTableConfigColumns.OgDescription);
         _dtGalleryConfiguration.Columns.Add(DataTableConfigColumns.OgImage);
         _dtGalleryConfiguration.Columns.Add(DataTableConfigColumns.OgUrl);
-        _dtGalleryConfiguration.Columns.Add(DataTableConfigColumns.PicsJson);
         _dtGalleryConfiguration.Columns.Add(DataTableConfigColumns.Zoom);
         _dtGalleryConfiguration.Columns.Add(DataTableConfigColumns.ResizeImages);
         _dtGalleryConfiguration.Columns.Add(DataTableConfigColumns.JoomlaThumbsPath);
@@ -199,8 +197,8 @@ public partial class Form1 : Form
                 { "/*ogDescription*/", row[DataTableConfigColumns.OgDescription].ToString() },
                 { "/*ogImage*/", row[DataTableConfigColumns.OgImage].ToString() },
                 { "/*ogUrl*/", row[DataTableConfigColumns.OgUrl].ToString() },
-                { "/*picsJson*/", row[DataTableConfigColumns.PicsJson].ToString() },
                 { "/*zoom*/", row[DataTableConfigColumns.Zoom].ToString() },
+                { "/*resizeImages*/", row[DataTableConfigColumns.ResizeImages].ToString() },
                 { "/*joomlaThumbsPath*/", row[DataTableConfigColumns.JoomlaThumbsPath].ToString() },
                 { "/*joomlaImgSrcPath*/", row[DataTableConfigColumns.JoomlaImgSrcPath].ToString() }
             };
@@ -232,8 +230,8 @@ public partial class Form1 : Form
             drGalleryConfiguration[DataTableConfigColumns.OgDescription] = setting["/*ogDescription*/"];
             drGalleryConfiguration[DataTableConfigColumns.OgImage] = setting["/*ogImage*/"];
             drGalleryConfiguration[DataTableConfigColumns.OgUrl] = setting["/*ogUrl*/"];
-            drGalleryConfiguration[DataTableConfigColumns.PicsJson] = setting["/*picsJson*/"];
             drGalleryConfiguration[DataTableConfigColumns.Zoom] = setting["/*zoom*/"];
+            drGalleryConfiguration[DataTableConfigColumns.ResizeImages] = setting["/*resizeImages*/"];
             drGalleryConfiguration[DataTableConfigColumns.JoomlaThumbsPath] = setting["/*joomlaThumbsPath*/"];
             drGalleryConfiguration[DataTableConfigColumns.JoomlaImgSrcPath] = setting["/*joomlaImgSrcPath*/"];
             _dtGalleryConfiguration.Rows.Add(drGalleryConfiguration);

@@ -10,7 +10,6 @@ public readonly struct DataTableConfigColumns
     public static readonly string OgDescription = "ogDescription";
     public static readonly string OgImage = "ogImage";
     public static readonly string OgUrl = "ogUrl";
-    public static readonly string PicsJson = "picsJson";
     public static readonly string Zoom = "zoom";
     public static readonly string ResizeImages = "resizeImages";
     public static readonly string JoomlaThumbsPath = "joomlaThumbsPath";
