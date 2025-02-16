@@ -131,6 +131,7 @@ public partial class Form1 : Form
 
     private void btnLoadOld_Click(object sender, EventArgs e)
     {
+        _dtGalleryConfiguration.Clear();
         if (_dtGalleryConfiguration.Columns.Count == 0)
         {
             AddColumnsToDt();
@@ -230,6 +231,7 @@ public partial class Form1 : Form
 
     private void btnLoadNew_Click(object sender, EventArgs e)
     {
+        _dtGalleryConfiguration.Clear();
         if (_dtGalleryConfiguration.Columns.Count == 0)
         {
             AddColumnsToDt();
