@@ -181,16 +181,16 @@ public partial class Form1 : Form
         {
             var jsonObj = new Dictionary<string, string>
             {
-                { "/*galleryName*/", row["GalleryName"].ToString() },
-                { "/*gapikey*/", row["Gapikey"].ToString() },
-                { "/*ogTitle*/", row["OgTitle"].ToString() },
-                { "/*ogDescription*/", row["OgDescription"].ToString() },
-                { "/*ogImage*/", row["OgImage"].ToString() },
-                { "/*ogUrl*/", row["OgUrl"].ToString() },
-                { "/*picsJson*/", row["PicsJson"].ToString() },
-                { "/*zoom*/", row["Zoom"].ToString() },
-                { "/*joomlaThumbsPath*/", row["JoomlaThumbsPath"].ToString() },
-                { "/*joomlaImgSrcPath*/", row["JoomlaImgSrcPath"].ToString() }
+                { "/*galleryName*/", row[DataTableConfigColumns.GalleryName].ToString() },
+                { "/*gapikey*/", row[DataTableConfigColumns.Gapikey].ToString() },
+                { "/*ogTitle*/", row[DataTableConfigColumns.OgTitle].ToString() },
+                { "/*ogDescription*/", row[DataTableConfigColumns.OgDescription].ToString() },
+                { "/*ogImage*/", row[DataTableConfigColumns.OgImage].ToString() },
+                { "/*ogUrl*/", row[DataTableConfigColumns.OgUrl].ToString() },
+                { "/*picsJson*/", row[DataTableConfigColumns.PicsJson].ToString() },
+                { "/*zoom*/", row[DataTableConfigColumns.Zoom].ToString() },
+                { "/*joomlaThumbsPath*/", row[DataTableConfigColumns.JoomlaThumbsPath].ToString() },
+                { "/*joomlaImgSrcPath*/", row[DataTableConfigColumns.JoomlaImgSrcPath].ToString() }
             };
 
             jsonList.Add(jsonObj);
