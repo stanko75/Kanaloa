@@ -185,18 +185,18 @@ public partial class Form1 : Form
     private void AddColumnsToDt()
     {
         _dtGalleryConfiguration.Columns.Add(DataTableConfigColumns.GalleryName);
-        _dtGalleryConfiguration.Columns.Add(DataTableConfigColumns.RootGalleryFolder);
-        _dtGalleryConfiguration.Columns.Add(DataTableConfigColumns.WebPath);
-        _dtGalleryConfiguration.Columns.Add(DataTableConfigColumns.Gapikey);
-        _dtGalleryConfiguration.Columns.Add(DataTableConfigColumns.OgTitle);
-        _dtGalleryConfiguration.Columns.Add(DataTableConfigColumns.OgDescription);
-        _dtGalleryConfiguration.Columns.Add(DataTableConfigColumns.OgImage);
-        _dtGalleryConfiguration.Columns.Add(DataTableConfigColumns.OgUrl);
-        _dtGalleryConfiguration.Columns.Add(DataTableConfigColumns.PicsJson);
-        _dtGalleryConfiguration.Columns.Add(DataTableConfigColumns.Zoom);
-        _dtGalleryConfiguration.Columns.Add(DataTableConfigColumns.ResizeImages);
-        _dtGalleryConfiguration.Columns.Add(DataTableConfigColumns.JoomlaThumbsPath);
-        _dtGalleryConfiguration.Columns.Add(DataTableConfigColumns.JoomlaImgSrcPath);
+        _dtGalleryConfiguration.Columns.Add(DataTableConfigColumns.RootGalleryFolder, typeof(string));
+        _dtGalleryConfiguration.Columns.Add(DataTableConfigColumns.WebPath, typeof(string));
+        _dtGalleryConfiguration.Columns.Add(DataTableConfigColumns.Gapikey, typeof(string));
+        _dtGalleryConfiguration.Columns.Add(DataTableConfigColumns.OgTitle, typeof(string));
+        _dtGalleryConfiguration.Columns.Add(DataTableConfigColumns.OgDescription, typeof(string));
+        _dtGalleryConfiguration.Columns.Add(DataTableConfigColumns.OgImage, typeof(string));
+        _dtGalleryConfiguration.Columns.Add(DataTableConfigColumns.OgUrl, typeof(string));
+        _dtGalleryConfiguration.Columns.Add(DataTableConfigColumns.PicsJson, typeof(string));
+        _dtGalleryConfiguration.Columns.Add(DataTableConfigColumns.Zoom, typeof(int));
+        _dtGalleryConfiguration.Columns.Add(DataTableConfigColumns.ResizeImages, typeof(bool));
+        _dtGalleryConfiguration.Columns.Add(DataTableConfigColumns.JoomlaThumbsPath, typeof(string));
+        _dtGalleryConfiguration.Columns.Add(DataTableConfigColumns.JoomlaImgSrcPath, typeof(string));
     }
 
     private void btnSaveConfig_Click(object sender, EventArgs e)
