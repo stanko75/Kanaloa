@@ -115,19 +115,10 @@ public partial class Form1 : Form
 
     private void btnLoadOld_Click(object sender, EventArgs e)
     {
-        _dtGalleryConfiguration.Columns.Add(DataTableConfigColumns.GalleryName);
-        _dtGalleryConfiguration.Columns.Add(DataTableConfigColumns.RootGalleryFolder);
-        _dtGalleryConfiguration.Columns.Add(DataTableConfigColumns.WebPath);
-        _dtGalleryConfiguration.Columns.Add(DataTableConfigColumns.Gapikey);
-        _dtGalleryConfiguration.Columns.Add(DataTableConfigColumns.OgTitle);
-        _dtGalleryConfiguration.Columns.Add(DataTableConfigColumns.OgDescription);
-        _dtGalleryConfiguration.Columns.Add(DataTableConfigColumns.OgImage);
-        _dtGalleryConfiguration.Columns.Add(DataTableConfigColumns.OgUrl);
-        _dtGalleryConfiguration.Columns.Add(DataTableConfigColumns.PicsJson);
-        _dtGalleryConfiguration.Columns.Add(DataTableConfigColumns.Zoom);
-        _dtGalleryConfiguration.Columns.Add(DataTableConfigColumns.ResizeImages);
-        _dtGalleryConfiguration.Columns.Add(DataTableConfigColumns.JoomlaThumbsPath);
-        _dtGalleryConfiguration.Columns.Add(DataTableConfigColumns.JoomlaImgSrcPath);
+        if (_dtGalleryConfiguration.Columns.Count == 0)
+        {
+            AddColumnsToDt();
+        }
 
         dgvGalleryConfiguration.DataSource = _dtGalleryConfiguration;
 
@@ -157,7 +148,9 @@ public partial class Form1 : Form
                 DataRow drGalleryConfiguration = _dtGalleryConfiguration.NewRow();
                 drGalleryConfiguration[DataTableConfigColumns.GalleryName] = setting.GalleryName;
                 drGalleryConfiguration[DataTableConfigColumns.RootGalleryFolder] = setting.RootGalleryFolder;
-                drGalleryConfiguration[DataTableConfigColumns.WebPath] = string.IsNullOrWhiteSpace(setting.WebPath) ? "http://www.milosev.com/gallery/allWithPics/travelBuddies/" : setting.WebPath;
+                drGalleryConfiguration[DataTableConfigColumns.WebPath] = string.IsNullOrWhiteSpace(setting.WebPath)
+                    ? "http://www.milosev.com/gallery/allWithPics/travelBuddies/"
+                    : setting.WebPath;
                 //drGalleryConfiguration["gapikey"] = setting.
                 drGalleryConfiguration[DataTableConfigColumns.OgTitle] = setting.OgTitle;
                 drGalleryConfiguration[DataTableConfigColumns.OgDescription] = setting.OgDescription;
@@ -174,6 +167,23 @@ public partial class Form1 : Form
         }
     }
 
+    private void AddColumnsToDt()
+    {
+        _dtGalleryConfiguration.Columns.Add(DataTableConfigColumns.GalleryName);
+        _dtGalleryConfiguration.Columns.Add(DataTableConfigColumns.RootGalleryFolder);
+        _dtGalleryConfiguration.Columns.Add(DataTableConfigColumns.WebPath);
+        _dtGalleryConfiguration.Columns.Add(DataTableConfigColumns.Gapikey);
+        _dtGalleryConfiguration.Columns.Add(DataTableConfigColumns.OgTitle);
+        _dtGalleryConfiguration.Columns.Add(DataTableConfigColumns.OgDescription);
+        _dtGalleryConfiguration.Columns.Add(DataTableConfigColumns.OgImage);
+        _dtGalleryConfiguration.Columns.Add(DataTableConfigColumns.OgUrl);
+        _dtGalleryConfiguration.Columns.Add(DataTableConfigColumns.PicsJson);
+        _dtGalleryConfiguration.Columns.Add(DataTableConfigColumns.Zoom);
+        _dtGalleryConfiguration.Columns.Add(DataTableConfigColumns.ResizeImages);
+        _dtGalleryConfiguration.Columns.Add(DataTableConfigColumns.JoomlaThumbsPath);
+        _dtGalleryConfiguration.Columns.Add(DataTableConfigColumns.JoomlaImgSrcPath);
+    }
+
     private void btnSaveConfig_Click(object sender, EventArgs e)
     {
         List<Dictionary<string, string>> jsonList = new List<Dictionary<string, string>>();
@@ -182,6 +192,8 @@ public partial class Form1 : Form
             var jsonObj = new Dictionary<string, string>
             {
                 { "/*galleryName*/", row[DataTableConfigColumns.GalleryName].ToString() },
+                { "/*rootGalleryFolder*/", row[DataTableConfigColumns.RootGalleryFolder].ToString() },
+                { "/*webPath*/", row[DataTableConfigColumns.WebPath].ToString() },
                 { "/*gapikey*/", row[DataTableConfigColumns.Gapikey].ToString() },
                 { "/*ogTitle*/", row[DataTableConfigColumns.OgTitle].ToString() },
                 { "/*ogDescription*/", row[DataTableConfigColumns.OgDescription].ToString() },
@@ -195,7 +207,36 @@ public partial class Form1 : Form
 
             jsonList.Add(jsonObj);
         }
+
         string jsonString = JsonConvert.SerializeObject(jsonList, Formatting.Indented);
         File.WriteAllText("gallery_config.json", jsonString);
+    }
+
+    private void btnLoadNew_Click(object sender, EventArgs e)
+    {
+        if (_dtGalleryConfiguration.Columns.Count == 0)
+        {
+            AddColumnsToDt();
+        }
+        dgvGalleryConfiguration.DataSource = _dtGalleryConfiguration;
+
+        var galleries = JsonConvert.DeserializeObject<List<Dictionary<string, string>>>(File.ReadAllText("gallery_config.json"));
+        foreach (Dictionary<string, string> setting in galleries)
+        {
+            DataRow drGalleryConfiguration = _dtGalleryConfiguration.NewRow();
+            drGalleryConfiguration[DataTableConfigColumns.GalleryName] = setting["/*galleryName*/"];
+            drGalleryConfiguration[DataTableConfigColumns.RootGalleryFolder] = setting["/*rootGalleryFolder*/"];
+            drGalleryConfiguration[DataTableConfigColumns.WebPath] = setting["/*webPath*/"];
+            drGalleryConfiguration[DataTableConfigColumns.Gapikey] = setting["/*gapikey*/"];
+            drGalleryConfiguration[DataTableConfigColumns.OgTitle] = setting["/*ogTitle*/"];
+            drGalleryConfiguration[DataTableConfigColumns.OgDescription] = setting["/*ogDescription*/"];
+            drGalleryConfiguration[DataTableConfigColumns.OgImage] = setting["/*ogImage*/"];
+            drGalleryConfiguration[DataTableConfigColumns.OgUrl] = setting["/*ogUrl*/"];
+            drGalleryConfiguration[DataTableConfigColumns.PicsJson] = setting["/*picsJson*/"];
+            drGalleryConfiguration[DataTableConfigColumns.Zoom] = setting["/*zoom*/"];
+            drGalleryConfiguration[DataTableConfigColumns.JoomlaThumbsPath] = setting["/*joomlaThumbsPath*/"];
+            drGalleryConfiguration[DataTableConfigColumns.JoomlaImgSrcPath] = setting["/*joomlaImgSrcPath*/"];
+            _dtGalleryConfiguration.Rows.Add(drGalleryConfiguration);
+        }
     }
 }
