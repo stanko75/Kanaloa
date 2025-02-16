@@ -18,65 +18,71 @@ public partial class Form1 : Form
 
     private void btnStart_Click(object sender, EventArgs e)
     {
-        string folderName = @"C:\projects\KanaloaGalleryTest\mariaLaach\";
-        string jsonThumbsFileName = @"C:\projects\KanaloaGalleryTest\mariaLaach\www\mariaLaachThumbs.json";
-        string jsonPicsFileName = @"C:\projects\KanaloaGalleryTest\mariaLaach\www\mariaLaach.json";
-
-        if (File.Exists(jsonThumbsFileName))
+        foreach (DataRow dataRow in _dtGalleryConfiguration.Rows)
         {
-            File.Delete(jsonThumbsFileName);
-        }
+            string galleryName = dataRow[DataTableConfigColumns.GalleryName].ToString();
 
-        if (File.Exists(jsonPicsFileName))
-        {
-            File.Delete(jsonPicsFileName);
-        }
+            string folderName = Path.Join(dataRow[DataTableConfigColumns.RootGalleryFolder].ToString(), galleryName);
+            string jsonThumbsFileName = $@"C:\projects\KanaloaGalleryTest\mariaLaach\www\{galleryName}Thumbs.json";
+            string jsonPicsFileName = $@"C:\projects\KanaloaGalleryTest\mariaLaach\www\{galleryName}.json";
 
-        foreach (string imageFileName in Directory.GetFiles(Path.Join(folderName, "pics")))
-        {
-            try
+            if (File.Exists(jsonThumbsFileName))
             {
-                var resizeImageCommand = new ResizeImageCommand
-                {
-                    CanvasHeight = 200,
-                    CanvasWidth = 200,
-                    OriginalFileName = Path.GetFileName(imageFileName),
-                    //SaveTo = Path.Join(@"C:\projects\KanaloaGalleryTest\mariaLaach\thumbs", imageFileName)
-                    SaveTo = Path.GetFileName(imageFileName)
-                };
-                resizeImageCommand.CreateDirectories(folderName);
-
-                ResizeImage resizeImage = new ResizeImage();
-                resizeImage.Execute(resizeImageCommand);
-
-                ExtractGpsInfoFromImage extractGpsInfoFromImage = new ExtractGpsInfoFromImage();
-                var extractGpsInfoFromImageCommand = new ExtractGpsInfoFromImageCommand
-                {
-                    ImageFileNameToReadGpsFrom = imageFileName
-                };
-                extractGpsInfoFromImage.Execute(extractGpsInfoFromImageCommand);
-
-                var updateOrCreateJsonFileWithListOfImagesCommand = new UpdateOrCreateJsonFileWithListOfImagesCommand
-                {
-                    FolderName = string.Empty,
-                    LatLngModel = extractGpsInfoFromImageCommand.LatLngModel,
-                    ImageFileName = Path.GetFileName(imageFileName),
-                    JsonThumbsFileName = @"C:\projects\KanaloaGalleryTest\mariaLaach\www\mariaLaachThumbs.json",
-                    JsonPicsFileName = @"C:\projects\KanaloaGalleryTest\mariaLaach\www\mariaLaach.json"
-                };
-
-                UpdateOrCreateJsonFileWithListOfImages updateOrCreateJsonFileWithListOfImages =
-                    new UpdateOrCreateJsonFileWithListOfImages(new UpdateJsonIfExistsOrCreateNewIfNot());
-                updateOrCreateJsonFileWithListOfImages.Execute(updateOrCreateJsonFileWithListOfImagesCommand);
+                File.Delete(jsonThumbsFileName);
             }
-            catch (Exception ex)
+
+            if (File.Exists(jsonPicsFileName))
             {
-                tbLog.AppendText(ex.Message);
-                tbLog.AppendText(Environment.NewLine);
+                File.Delete(jsonPicsFileName);
             }
-        }
 
-        PrepareHtmlFolder(tbTemplateRootFolder.Text, tbSaveToPath.Text, tbJsonFile.Text);
+            foreach (string imageFileName in Directory.GetFiles(Path.Join(folderName, "pics")))
+            {
+                try
+                {
+                    var resizeImageCommand = new ResizeImageCommand
+                    {
+                        CanvasHeight = 200,
+                        CanvasWidth = 200,
+                        OriginalFileName = Path.GetFileName(imageFileName),
+                        //SaveTo = Path.Join(@"C:\projects\KanaloaGalleryTest\mariaLaach\thumbs", imageFileName)
+                        SaveTo = Path.GetFileName(imageFileName)
+                    };
+                    resizeImageCommand.CreateDirectories(folderName);
+
+                    ResizeImage resizeImage = new ResizeImage();
+                    resizeImage.Execute(resizeImageCommand);
+
+                    ExtractGpsInfoFromImage extractGpsInfoFromImage = new ExtractGpsInfoFromImage();
+                    var extractGpsInfoFromImageCommand = new ExtractGpsInfoFromImageCommand
+                    {
+                        ImageFileNameToReadGpsFrom = imageFileName
+                    };
+                    extractGpsInfoFromImage.Execute(extractGpsInfoFromImageCommand);
+
+                    var updateOrCreateJsonFileWithListOfImagesCommand = new UpdateOrCreateJsonFileWithListOfImagesCommand
+                    {
+                        FolderName = string.Empty,
+                        LatLngModel = extractGpsInfoFromImageCommand.LatLngModel,
+                        ImageFileName = Path.GetFileName(imageFileName),
+                        JsonThumbsFileName = @"C:\projects\KanaloaGalleryTest\mariaLaach\www\mariaLaachThumbs.json",
+                        JsonPicsFileName = @"C:\projects\KanaloaGalleryTest\mariaLaach\www\mariaLaach.json"
+                    };
+
+                    UpdateOrCreateJsonFileWithListOfImages updateOrCreateJsonFileWithListOfImages =
+                        new UpdateOrCreateJsonFileWithListOfImages(new UpdateJsonIfExistsOrCreateNewIfNot());
+                    updateOrCreateJsonFileWithListOfImages.Execute(updateOrCreateJsonFileWithListOfImagesCommand);
+                }
+                catch (Exception ex)
+                {
+                    tbLog.AppendText(ex.Message);
+                    tbLog.AppendText(Environment.NewLine);
+                }
+            }
+
+            PrepareHtmlFolder(tbTemplateRootFolder.Text, dataRow[DataTableConfigColumns.RootGalleryFolder].ToString(), tbJsonFile.Text);
+
+        }
     }
 
     private void PrepareHtmlFolder(string templateRootFolder, string saveToPath,
