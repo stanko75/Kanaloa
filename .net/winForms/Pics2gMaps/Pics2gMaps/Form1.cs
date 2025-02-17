@@ -18,6 +18,7 @@ public partial class Form1 : Form
 
     private void btnStart_Click(object sender, EventArgs e)
     {
+
         foreach (DataRow dataRow in _dtGalleryConfiguration.Rows)
         {
             string galleryName = dataRow[DataTableConfigColumns.GalleryName].ToString();
@@ -26,76 +27,114 @@ public partial class Form1 : Form
             string jsonThumbsFileName = Path.Join(dataRow[DataTableConfigColumns.RootGalleryFolder].ToString(), $@"{galleryName}\www\{galleryName}Thumbs.json");
             string jsonPicsFileName = Path.Join(dataRow[DataTableConfigColumns.RootGalleryFolder].ToString(), $@"{galleryName}\www\{galleryName}.json");
 
-            if (File.Exists(jsonThumbsFileName))
+            //ResizeImage(jsonThumbsFileName, jsonPicsFileName, folderName);
+
+            Dictionary<string, string> listOfKeyValuesToReplaceInFiles = new Dictionary<string, string>();
+            foreach (DataColumn dataColumn in _dtGalleryConfiguration.Columns)
             {
-                File.Delete(jsonThumbsFileName);
+                listOfKeyValuesToReplaceInFiles.Add($"/*{dataColumn}*/", dataRow[dataColumn].ToString());
             }
 
-            if (File.Exists(jsonPicsFileName))
-            {
-                File.Delete(jsonPicsFileName);
-            }
-
-            string picsFolder = Path.Join(folderName, "pics");
-            if (Directory.Exists(picsFolder))
-            {
-                foreach (string imageFileName in Directory.GetFiles(picsFolder))
-                {
-                    try
-                    {
-                        var resizeImageCommand = new ResizeImageCommand
-                        {
-                            CanvasHeight = 200,
-                            CanvasWidth = 200,
-                            OriginalFileName = Path.GetFileName(imageFileName),
-                            //SaveTo = Path.Join(@"C:\projects\KanaloaGalleryTest\mariaLaach\thumbs", imageFileName)
-                            SaveTo = Path.GetFileName(imageFileName)
-                        };
-                        resizeImageCommand.CreateDirectories(folderName);
-
-                        ResizeImage resizeImage = new ResizeImage();
-                        resizeImage.Execute(resizeImageCommand);
-
-                        ExtractGpsInfoFromImage extractGpsInfoFromImage = new ExtractGpsInfoFromImage();
-                        var extractGpsInfoFromImageCommand = new ExtractGpsInfoFromImageCommand
-                        {
-                            ImageFileNameToReadGpsFrom = imageFileName
-                        };
-                        extractGpsInfoFromImage.Execute(extractGpsInfoFromImageCommand);
-
-                        var updateOrCreateJsonFileWithListOfImagesCommand =
-                            new UpdateOrCreateJsonFileWithListOfImagesCommand
-                            {
-                                FolderName = string.Empty,
-                                LatLngModel = extractGpsInfoFromImageCommand.LatLngModel,
-                                ImageFileName = Path.GetFileName(imageFileName),
-                                JsonThumbsFileName = jsonThumbsFileName,
-                                JsonPicsFileName = jsonPicsFileName
-                            };
-
-                        UpdateOrCreateJsonFileWithListOfImages updateOrCreateJsonFileWithListOfImages =
-                            new UpdateOrCreateJsonFileWithListOfImages(new UpdateJsonIfExistsOrCreateNewIfNot());
-                        updateOrCreateJsonFileWithListOfImages.Execute(updateOrCreateJsonFileWithListOfImagesCommand);
-                    }
-                    catch (Exception ex)
-                    {
-                        tbLog.AppendText(ex.Message);
-                        tbLog.AppendText(Environment.NewLine);
-                    }
-                }
-            }
-            else
-            {
-                tbLog.AppendText($"Folder {picsFolder} does not exist!");
-                tbLog.AppendText(Environment.NewLine);
-            }
-
-            PrepareHtmlFolder(tbTemplateRootFolder.Text, dataRow[DataTableConfigColumns.RootGalleryFolder].ToString(), tbJsonFile.Text);
-
+            PrepareHtmlFolder(tbTemplateRootFolder.Text
+                , listOfKeyValuesToReplaceInFiles
+                , dataRow[DataTableConfigColumns.RootGalleryFolder].ToString()
+                , dataRow[DataTableConfigColumns.GalleryName].ToString());
         }
     }
 
-    private void PrepareHtmlFolder(string templateRootFolder, string saveToPath,
+    private void ResizeImage(string jsonThumbsFileName, string jsonPicsFileName, string folderName)
+    {
+        if (File.Exists(jsonThumbsFileName))
+        {
+            File.Delete(jsonThumbsFileName);
+        }
+
+        if (File.Exists(jsonPicsFileName))
+        {
+            File.Delete(jsonPicsFileName);
+        }
+
+        string picsFolder = Path.Join(folderName, "pics");
+        if (Directory.Exists(picsFolder))
+        {
+            foreach (string imageFileName in Directory.GetFiles(picsFolder))
+            {
+                try
+                {
+                    var resizeImageCommand = new ResizeImageCommand
+                    {
+                        CanvasHeight = 200,
+                        CanvasWidth = 200,
+                        OriginalFileName = Path.GetFileName(imageFileName),
+                        //SaveTo = Path.Join(@"C:\projects\KanaloaGalleryTest\mariaLaach\thumbs", imageFileName)
+                        SaveTo = Path.GetFileName(imageFileName)
+                    };
+                    resizeImageCommand.CreateDirectories(folderName);
+
+                    ResizeImage resizeImage = new ResizeImage();
+                    resizeImage.Execute(resizeImageCommand);
+
+                    ExtractGpsInfoFromImage extractGpsInfoFromImage = new ExtractGpsInfoFromImage();
+                    var extractGpsInfoFromImageCommand = new ExtractGpsInfoFromImageCommand
+                    {
+                        ImageFileNameToReadGpsFrom = imageFileName
+                    };
+                    extractGpsInfoFromImage.Execute(extractGpsInfoFromImageCommand);
+
+                    var updateOrCreateJsonFileWithListOfImagesCommand =
+                        new UpdateOrCreateJsonFileWithListOfImagesCommand
+                        {
+                            FolderName = string.Empty,
+                            LatLngModel = extractGpsInfoFromImageCommand.LatLngModel,
+                            ImageFileName = Path.GetFileName(imageFileName),
+                            JsonThumbsFileName = jsonThumbsFileName,
+                            JsonPicsFileName = jsonPicsFileName
+                        };
+
+                    UpdateOrCreateJsonFileWithListOfImages updateOrCreateJsonFileWithListOfImages =
+                        new UpdateOrCreateJsonFileWithListOfImages(new UpdateJsonIfExistsOrCreateNewIfNot());
+                    updateOrCreateJsonFileWithListOfImages.Execute(updateOrCreateJsonFileWithListOfImagesCommand);
+                }
+                catch (Exception ex)
+                {
+                    tbLog.AppendText(ex.Message);
+                    tbLog.AppendText(Environment.NewLine);
+                }
+            }
+        }
+        else
+        {
+            tbLog.AppendText($"Folder {picsFolder} does not exist!");
+            tbLog.AppendText(Environment.NewLine);
+        }
+    }
+
+    private void PrepareHtmlFolder(string templateRootFolder
+        , Dictionary<string, string> listOfKeyValuesToReplaceInFiles
+        , string? saveTo
+        , string galleryName)
+    {
+        ReplaceKeysInFilesCommand replaceKeysInFilesCommand = new ReplaceKeysInFilesCommand();
+
+        string listOfFilesToReplaceAndCopyFileName = Path.Join(templateRootFolder, "listOfFilesToReplaceAndCopy.json");
+        IEnumerable<string> listOfFilesToReplaceAndCopy = JsonConvert.DeserializeObject<IEnumerable<string>>(File.ReadAllText(listOfFilesToReplaceAndCopyFileName));
+
+        replaceKeysInFilesCommand.ListOfFilesToReplace = listOfFilesToReplaceAndCopy;
+        replaceKeysInFilesCommand.ListOfKeyValuesToReplaceInFiles = listOfKeyValuesToReplaceInFiles;
+        replaceKeysInFilesCommand.TemplateRootFolder = templateRootFolder;
+        replaceKeysInFilesCommand.SaveToPath = Path.Join(saveTo, galleryName);
+        replaceKeysInFilesCommand.SaveToPath = Path.Join(replaceKeysInFilesCommand.SaveToPath, "www");
+
+        if (!Directory.Exists(replaceKeysInFilesCommand.SaveToPath))
+        {
+            Directory.CreateDirectory(replaceKeysInFilesCommand.SaveToPath);
+        }
+
+        ReplaceKeysInFiles replaceKeysInFiles = new ReplaceKeysInFiles();
+        replaceKeysInFiles.Execute(replaceKeysInFilesCommand);
+    }
+
+    private void PrepareHtmlFolder_old(string templateRootFolder, string saveToPath,
         string listOfKeyValuesToReplaceInFilesJson)
     {
         string listOfFilesToReplaceJson = Path.Join(templateRootFolder, "listOfFilesToReplaceAndCopy.json");
