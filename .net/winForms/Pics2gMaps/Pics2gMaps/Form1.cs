@@ -27,7 +27,7 @@ public partial class Form1 : Form
             string jsonThumbsFileName = Path.Join(dataRow[DataTableConfigColumns.RootGalleryFolder].ToString(), $@"{galleryName}\www\{galleryName}Thumbs.json");
             string jsonPicsFileName = Path.Join(dataRow[DataTableConfigColumns.RootGalleryFolder].ToString(), $@"{galleryName}\www\{galleryName}.json");
 
-            //ResizeImage(jsonThumbsFileName, jsonPicsFileName, folderName);
+            ResizeImage(jsonThumbsFileName, jsonPicsFileName, folderName);
 
             Dictionary<string, string> listOfKeyValuesToReplaceInFiles = new Dictionary<string, string>();
             foreach (DataColumn dataColumn in _dtGalleryConfiguration.Columns)
@@ -40,6 +40,8 @@ public partial class Form1 : Form
                 , dataRow[DataTableConfigColumns.RootGalleryFolder].ToString()
                 , dataRow[DataTableConfigColumns.GalleryName].ToString());
         }
+
+        MessageBox.Show("Done!");
     }
 
     private void ResizeImage(string jsonThumbsFileName, string jsonPicsFileName, string folderName)
