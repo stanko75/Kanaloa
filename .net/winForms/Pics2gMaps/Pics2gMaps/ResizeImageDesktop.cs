@@ -4,7 +4,7 @@ using ImageHandling;
 
 namespace Pics2gMaps;
 
-public class ResizeImageDesktop(ILogger logger): ICommandHandler<ResizeImageDesktopCommand>
+public class ResizeImageDesktop(ILogger logger) : ICommandHandler<ResizeImageDesktopCommand>
 {
     public UpdateUi UpdateUi { get; set; }
 
@@ -33,11 +33,14 @@ public class ResizeImageDesktop(ILogger logger): ICommandHandler<ResizeImageDesk
         string picsFolder = isMerged ? folderName : Path.Join(folderName, "pics");
         if (Directory.Exists(picsFolder))
         {
-            //Parallel.ForEach(Directory.EnumerateFiles(picsFolder), imageFileName =>
-            foreach (string imageFileName in Directory.GetFiles(picsFolder, "*.*", SearchOption.AllDirectories))
+            Parallel.ForEach(Directory.EnumerateFiles(picsFolder, "*.*", SearchOption.AllDirectories).AsParallel(), imageFileName =>
+            //foreach (string imageFileName in Directory.GetFiles(picsFolder, "*.*", SearchOption.AllDirectories))
             {
                 try
                 {
+                    UpdateUi.Error = $"{imageFileName}";
+                    logger.Log(UpdateUi);
+
                     if (!isMerged)
                     {
                         var resizeImageCommand = new ResizeImageCommand
@@ -80,8 +83,8 @@ public class ResizeImageDesktop(ILogger logger): ICommandHandler<ResizeImageDesk
                     UpdateUi.Error = $"{imageFileName}: {ex.Message}";
                     logger.Log(UpdateUi);
                 }
-                //});
-            }
+            });
+            //}
         }
         else
         {
