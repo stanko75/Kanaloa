@@ -1,9 +1,11 @@
 using System.Data;
 using System.Xml.Linq;
 using Common;
+using FastLoadImagesToMemoryAndProcessLater.Log;
 using HtmlHandling;
 using ImageHandling;
 using Newtonsoft.Json;
+using Pics2gMaps.Log;
 
 namespace Pics2gMaps;
 
@@ -47,7 +49,16 @@ public partial class Form1 : Form
             {
                 DataRow = dataRow
             };
-            ResizeImageDesktop resizeImageDesktop = new ResizeImageDesktop();
+            ResizeImageDesktop resizeImageDesktop = new ResizeImageDesktop(new UiLogger());
+
+            UpdateUi updateUi = new UpdateUi
+            {
+                Form = this,
+                TextBox = tbLog,
+                Name = "resizeImageDesktop"
+            };
+            resizeImageDesktop.UpdateUi = updateUi;
+
             resizeImageDesktop.Execute(resizeImageDesktopCommand);
         }
 

@@ -1,10 +1,13 @@
 ﻿using Common;
+using FastLoadImagesToMemoryAndProcessLater.Log;
 using ImageHandling;
 
 namespace Pics2gMaps;
 
-public class ResizeImageDesktop(): ICommandHandler<ResizeImageDesktopCommand>
+public class ResizeImageDesktop(ILogger logger): ICommandHandler<ResizeImageDesktopCommand>
 {
+    public UpdateUi UpdateUi { get; set; }
+
     public void Execute(ResizeImageDesktopCommand command)
     {
         string galleryName = command.DataRow[DataTableConfigColumns.GalleryName].ToString();
@@ -15,7 +18,7 @@ public class ResizeImageDesktop(): ICommandHandler<ResizeImageDesktopCommand>
         ResizeImage(jsonThumbsFileName, jsonPicsFileName, folderName, (bool)command.DataRow[DataTableConfigColumns.IsMerged]);
     }
 
-    private void ResizeImage(string jsonThumbsFileName, string jsonPicsFileName, string folderName, bool IsMerged)
+    private void ResizeImage(string jsonThumbsFileName, string jsonPicsFileName, string folderName, bool isMerged)
     {
         if (File.Exists(jsonThumbsFileName))
         {
@@ -27,7 +30,7 @@ public class ResizeImageDesktop(): ICommandHandler<ResizeImageDesktopCommand>
             File.Delete(jsonPicsFileName);
         }
 
-        string picsFolder = IsMerged ? folderName : Path.Join(folderName, "pics");
+        string picsFolder = isMerged ? folderName : Path.Join(folderName, "pics");
         if (Directory.Exists(picsFolder))
         {
             //Parallel.ForEach(Directory.EnumerateFiles(picsFolder), imageFileName =>
@@ -35,7 +38,7 @@ public class ResizeImageDesktop(): ICommandHandler<ResizeImageDesktopCommand>
             {
                 try
                 {
-                    if (!IsMerged)
+                    if (!isMerged)
                     {
                         var resizeImageCommand = new ResizeImageCommand
                         {
@@ -74,16 +77,15 @@ public class ResizeImageDesktop(): ICommandHandler<ResizeImageDesktopCommand>
                 }
                 catch (Exception ex)
                 {
-                    //tbLog.AppendText($"{imageFileName}: {ex.Message}");
-                    //tbLog.AppendText(Environment.NewLine);
+                    UpdateUi.Error = $"{imageFileName}: {ex.Message}";
+                    logger.Log(UpdateUi);
                 }
                 //});
             }
         }
         else
         {
-            tbLog.AppendText($"Folder {picsFolder} does not exist!");
-            tbLog.AppendText(Environment.NewLine);
+            logger.Log($"Folder {picsFolder} does not exist!");
         }
     }
 
