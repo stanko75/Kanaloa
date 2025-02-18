@@ -20,7 +20,7 @@ public partial class Form1 : Form
     {
         IEnumerable<DataRow> rows;
 
-        if (dgvGalleryConfiguration.SelectedRows == null || dgvGalleryConfiguration.SelectedRows.Count == 0)
+        if (dgvGalleryConfiguration.SelectedRows.Count == 0)
         {
             rows = _dtGalleryConfiguration.AsEnumerable();
         }
@@ -43,87 +43,17 @@ public partial class Form1 : Form
             PrepareHtmlFolder prepareHtmlFolder = new PrepareHtmlFolder();
             prepareHtmlFolder.Execute(prepareHtmlFolderCommand);
 
-            string galleryName = dataRow[DataTableConfigColumns.GalleryName].ToString();
-            string folderName = Path.Join(dataRow[DataTableConfigColumns.RootGalleryFolder].ToString(), galleryName);
-            string jsonThumbsFileName = Path.Join(dataRow[DataTableConfigColumns.RootGalleryFolder].ToString(), $@"{galleryName}\www\{galleryName}Thumbs.json");
-            string jsonPicsFileName = Path.Join(dataRow[DataTableConfigColumns.RootGalleryFolder].ToString(), $@"{galleryName}\www\{galleryName}.json");
-            ResizeImage(jsonThumbsFileName, jsonPicsFileName, folderName, (bool)dataRow[DataTableConfigColumns.IsMerged]);
+            ResizeImageDesktopCommand resizeImageDesktopCommand = new ResizeImageDesktopCommand
+            {
+                DataRow = dataRow
+            };
+            ResizeImageDesktop resizeImageDesktop = new ResizeImageDesktop();
+            resizeImageDesktop.Execute(resizeImageDesktopCommand);
         }
 
         MessageBox.Show("Done!");
     }
 
-    private void ResizeImage(string jsonThumbsFileName, string jsonPicsFileName, string folderName, bool IsMerged)
-    {
-        if (File.Exists(jsonThumbsFileName))
-        {
-            File.Delete(jsonThumbsFileName);
-        }
-
-        if (File.Exists(jsonPicsFileName))
-        {
-            File.Delete(jsonPicsFileName);
-        }
-
-        string picsFolder = IsMerged ? folderName : Path.Join(folderName, "pics");
-        if (Directory.Exists(picsFolder))
-        {
-            //Parallel.ForEach(Directory.EnumerateFiles(picsFolder), imageFileName =>
-            foreach (string imageFileName in Directory.GetFiles(picsFolder, "*.*", SearchOption.AllDirectories))
-            {
-                try
-                {
-                    if (!IsMerged)
-                    {
-                        var resizeImageCommand = new ResizeImageCommand
-                        {
-                            CanvasHeight = 200,
-                            CanvasWidth = 200,
-                            OriginalFileName = Path.GetFileName(imageFileName),
-                            //SaveTo = Path.Join(@"C:\projects\KanaloaGalleryTest\mariaLaach\thumbs", imageFileName)
-                            SaveTo = Path.GetFileName(imageFileName)
-                        };
-                        resizeImageCommand.CreateDirectories(folderName);
-
-                        ResizeImage resizeImage = new ResizeImage();
-                        resizeImage.Execute(resizeImageCommand);
-                    }
-
-                    ExtractGpsInfoFromImage extractGpsInfoFromImage = new ExtractGpsInfoFromImage();
-                    var extractGpsInfoFromImageCommand = new ExtractGpsInfoFromImageCommand
-                    {
-                        ImageFileNameToReadGpsFrom = imageFileName
-                    };
-                    extractGpsInfoFromImage.Execute(extractGpsInfoFromImageCommand);
-
-                    var updateOrCreateJsonFileWithListOfImagesCommand =
-                        new UpdateOrCreateJsonFileWithListOfImagesCommand
-                        {
-                            FolderName = string.Empty,
-                            LatLngModel = extractGpsInfoFromImageCommand.LatLngModel,
-                            ImageFileName = Path.GetFileName(imageFileName),
-                            JsonThumbsFileName = jsonThumbsFileName,
-                            JsonPicsFileName = jsonPicsFileName
-                        };
-
-                    UpdateOrCreateJsonFileWithListOfImages updateOrCreateJsonFileWithListOfImages =
-                        new UpdateOrCreateJsonFileWithListOfImages(new UpdateJsonIfExistsOrCreateNewIfNot());
-                    updateOrCreateJsonFileWithListOfImages.Execute(updateOrCreateJsonFileWithListOfImagesCommand);
-                }
-                catch (Exception ex)
-                {
-                    tbLog.AppendText($"{imageFileName}: {ex.Message}");
-                    tbLog.AppendText(Environment.NewLine);
-                }
-                //});
-            }
-        }
-        else
-        {
-            tbLog.AppendText($"Folder {picsFolder} does not exist!");
-            tbLog.AppendText(Environment.NewLine);
-        }
-    }
 
     private void btnLoadOld_Click(object sender, EventArgs e)
     {
