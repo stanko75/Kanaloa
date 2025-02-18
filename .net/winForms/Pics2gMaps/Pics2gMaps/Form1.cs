@@ -34,16 +34,14 @@ public partial class Form1 : Form
 
         foreach (DataRow dataRow in rows)
         {
-            Dictionary<string, string> listOfKeyValuesToReplaceInFiles = new Dictionary<string, string>();
-            foreach (DataColumn dataColumn in _dtGalleryConfiguration.Columns)
+            PrepareHtmlFolderCommand prepareHtmlFolderCommand = new PrepareHtmlFolderCommand
             {
-                listOfKeyValuesToReplaceInFiles.Add($"/*{dataColumn}*/", dataRow[dataColumn].ToString());
-            }
-
-            PrepareHtmlFolder(tbTemplateRootFolder.Text
-                , listOfKeyValuesToReplaceInFiles
-                , dataRow[DataTableConfigColumns.RootGalleryFolder].ToString()
-                , dataRow[DataTableConfigColumns.GalleryName].ToString());
+                DataRow = dataRow,
+                TemplateRootFolder = tbTemplateRootFolder.Text,
+                Columns = _dtGalleryConfiguration.Columns
+            };
+            PrepareHtmlFolder prepareHtmlFolder = new PrepareHtmlFolder();
+            prepareHtmlFolder.Execute(prepareHtmlFolderCommand);
 
             string galleryName = dataRow[DataTableConfigColumns.GalleryName].ToString();
             string folderName = Path.Join(dataRow[DataTableConfigColumns.RootGalleryFolder].ToString(), galleryName);
@@ -126,32 +124,6 @@ public partial class Form1 : Form
             tbLog.AppendText(Environment.NewLine);
         }
     }
-
-    private void PrepareHtmlFolder(string templateRootFolder
-        , Dictionary<string, string> listOfKeyValuesToReplaceInFiles
-        , string? saveTo
-        , string galleryName)
-    {
-        ReplaceKeysInFilesCommand replaceKeysInFilesCommand = new ReplaceKeysInFilesCommand();
-
-        string listOfFilesToReplaceAndCopyFileName = Path.Join(templateRootFolder, "listOfFilesToReplaceAndCopy.json");
-        IEnumerable<string> listOfFilesToReplaceAndCopy = JsonConvert.DeserializeObject<IEnumerable<string>>(File.ReadAllText(listOfFilesToReplaceAndCopyFileName));
-
-        replaceKeysInFilesCommand.ListOfFilesToReplace = listOfFilesToReplaceAndCopy;
-        replaceKeysInFilesCommand.ListOfKeyValuesToReplaceInFiles = listOfKeyValuesToReplaceInFiles;
-        replaceKeysInFilesCommand.TemplateRootFolder = templateRootFolder;
-        replaceKeysInFilesCommand.SaveToPath = Path.Join(saveTo, galleryName);
-        replaceKeysInFilesCommand.SaveToPath = Path.Join(replaceKeysInFilesCommand.SaveToPath, "www");
-
-        if (!Directory.Exists(replaceKeysInFilesCommand.SaveToPath))
-        {
-            Directory.CreateDirectory(replaceKeysInFilesCommand.SaveToPath);
-        }
-
-        ReplaceKeysInFiles replaceKeysInFiles = new ReplaceKeysInFiles();
-        replaceKeysInFiles.Execute(replaceKeysInFilesCommand);
-    }
-
 
     private void btnLoadOld_Click(object sender, EventArgs e)
     {
