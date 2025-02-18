@@ -18,10 +18,22 @@ public partial class Form1 : Form
 
     private void btnStart_Click(object sender, EventArgs e)
     {
-        foreach (DataGridViewRow dgvRow in dgvGalleryConfiguration.SelectedRows)
-        {
-            DataRow dataRow = ((DataRowView)dgvRow.DataBoundItem).Row;
+        IEnumerable<DataRow> rows;
 
+        if (dgvGalleryConfiguration.SelectedRows == null || dgvGalleryConfiguration.SelectedRows.Count == 0)
+        {
+            rows = _dtGalleryConfiguration.AsEnumerable();
+        }
+        else
+        {
+            rows = dgvGalleryConfiguration.SelectedRows
+                .Cast<DataGridViewRow>()
+                .Select(row => (row.DataBoundItem as DataRowView)?.Row)
+                .Where(row => row != null)!;
+        }
+
+        foreach (DataRow dataRow in rows)
+        {
             Dictionary<string, string> listOfKeyValuesToReplaceInFiles = new Dictionary<string, string>();
             foreach (DataColumn dataColumn in _dtGalleryConfiguration.Columns)
             {
@@ -55,7 +67,7 @@ public partial class Form1 : Form
             File.Delete(jsonPicsFileName);
         }
 
-        string picsFolder = IsMerged ? folderName : Path.Join(folderName, "pics"); 
+        string picsFolder = IsMerged ? folderName : Path.Join(folderName, "pics");
         if (Directory.Exists(picsFolder))
         {
             //Parallel.ForEach(Directory.EnumerateFiles(picsFolder), imageFileName =>
