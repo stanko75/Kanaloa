@@ -21,13 +21,6 @@ public partial class Form1 : Form
         foreach (DataGridViewRow dgvRow in dgvGalleryConfiguration.SelectedRows)
         {
             DataRow dataRow = ((DataRowView)dgvRow.DataBoundItem).Row;
-            string galleryName = dataRow[DataTableConfigColumns.GalleryName].ToString();
-
-            string folderName = Path.Join(dataRow[DataTableConfigColumns.RootGalleryFolder].ToString(), galleryName);
-            string jsonThumbsFileName = Path.Join(dataRow[DataTableConfigColumns.RootGalleryFolder].ToString(), $@"{galleryName}\www\{galleryName}Thumbs.json");
-            string jsonPicsFileName = Path.Join(dataRow[DataTableConfigColumns.RootGalleryFolder].ToString(), $@"{galleryName}\www\{galleryName}.json");
-
-            ResizeImage(jsonThumbsFileName, jsonPicsFileName, folderName);
 
             Dictionary<string, string> listOfKeyValuesToReplaceInFiles = new Dictionary<string, string>();
             foreach (DataColumn dataColumn in _dtGalleryConfiguration.Columns)
@@ -39,12 +32,18 @@ public partial class Form1 : Form
                 , listOfKeyValuesToReplaceInFiles
                 , dataRow[DataTableConfigColumns.RootGalleryFolder].ToString()
                 , dataRow[DataTableConfigColumns.GalleryName].ToString());
+
+            string galleryName = dataRow[DataTableConfigColumns.GalleryName].ToString();
+            string folderName = Path.Join(dataRow[DataTableConfigColumns.RootGalleryFolder].ToString(), galleryName);
+            string jsonThumbsFileName = Path.Join(dataRow[DataTableConfigColumns.RootGalleryFolder].ToString(), $@"{galleryName}\www\{galleryName}Thumbs.json");
+            string jsonPicsFileName = Path.Join(dataRow[DataTableConfigColumns.RootGalleryFolder].ToString(), $@"{galleryName}\www\{galleryName}.json");
+            ResizeImage(jsonThumbsFileName, jsonPicsFileName, folderName, (bool)dataRow[DataTableConfigColumns.IsMerged]);
         }
 
         MessageBox.Show("Done!");
     }
 
-    private void ResizeImage(string jsonThumbsFileName, string jsonPicsFileName, string folderName)
+    private void ResizeImage(string jsonThumbsFileName, string jsonPicsFileName, string folderName, bool IsMerged)
     {
         if (File.Exists(jsonThumbsFileName))
         {
@@ -56,26 +55,29 @@ public partial class Form1 : Form
             File.Delete(jsonPicsFileName);
         }
 
-        string picsFolder = Path.Join(folderName, "pics");
+        string picsFolder = IsMerged ? folderName : Path.Join(folderName, "pics"); 
         if (Directory.Exists(picsFolder))
         {
             //Parallel.ForEach(Directory.EnumerateFiles(picsFolder), imageFileName =>
-            foreach (string imageFileName in Directory.GetFiles(picsFolder))
+            foreach (string imageFileName in Directory.GetFiles(picsFolder, "*.*", SearchOption.AllDirectories))
             {
                 try
                 {
-                    var resizeImageCommand = new ResizeImageCommand
+                    if (!IsMerged)
                     {
-                        CanvasHeight = 200,
-                        CanvasWidth = 200,
-                        OriginalFileName = Path.GetFileName(imageFileName),
-                        //SaveTo = Path.Join(@"C:\projects\KanaloaGalleryTest\mariaLaach\thumbs", imageFileName)
-                        SaveTo = Path.GetFileName(imageFileName)
-                    };
-                    resizeImageCommand.CreateDirectories(folderName);
+                        var resizeImageCommand = new ResizeImageCommand
+                        {
+                            CanvasHeight = 200,
+                            CanvasWidth = 200,
+                            OriginalFileName = Path.GetFileName(imageFileName),
+                            //SaveTo = Path.Join(@"C:\projects\KanaloaGalleryTest\mariaLaach\thumbs", imageFileName)
+                            SaveTo = Path.GetFileName(imageFileName)
+                        };
+                        resizeImageCommand.CreateDirectories(folderName);
 
-                    ResizeImage resizeImage = new ResizeImage();
-                    resizeImage.Execute(resizeImageCommand);
+                        ResizeImage resizeImage = new ResizeImage();
+                        resizeImage.Execute(resizeImageCommand);
+                    }
 
                     ExtractGpsInfoFromImage extractGpsInfoFromImage = new ExtractGpsInfoFromImage();
                     var extractGpsInfoFromImageCommand = new ExtractGpsInfoFromImageCommand
@@ -100,7 +102,7 @@ public partial class Form1 : Form
                 }
                 catch (Exception ex)
                 {
-                    tbLog.AppendText(ex.Message);
+                    tbLog.AppendText($"{imageFileName}: {ex.Message}");
                     tbLog.AppendText(Environment.NewLine);
                 }
                 //});
