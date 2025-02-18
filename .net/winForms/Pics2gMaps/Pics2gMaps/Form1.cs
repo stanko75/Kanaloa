@@ -18,9 +18,9 @@ public partial class Form1 : Form
 
     private void btnStart_Click(object sender, EventArgs e)
     {
-
-        foreach (DataRow dataRow in _dtGalleryConfiguration.Rows)
+        foreach (DataGridViewRow dgvRow in dgvGalleryConfiguration.SelectedRows)
         {
+            DataRow dataRow = ((DataRowView)dgvRow.DataBoundItem).Row;
             string galleryName = dataRow[DataTableConfigColumns.GalleryName].ToString();
 
             string folderName = Path.Join(dataRow[DataTableConfigColumns.RootGalleryFolder].ToString(), galleryName);
@@ -59,6 +59,7 @@ public partial class Form1 : Form
         string picsFolder = Path.Join(folderName, "pics");
         if (Directory.Exists(picsFolder))
         {
+            //Parallel.ForEach(Directory.EnumerateFiles(picsFolder), imageFileName =>
             foreach (string imageFileName in Directory.GetFiles(picsFolder))
             {
                 try
@@ -102,6 +103,7 @@ public partial class Form1 : Form
                     tbLog.AppendText(ex.Message);
                     tbLog.AppendText(Environment.NewLine);
                 }
+                //});
             }
         }
         else
@@ -136,39 +138,6 @@ public partial class Form1 : Form
         replaceKeysInFiles.Execute(replaceKeysInFilesCommand);
     }
 
-    private void PrepareHtmlFolder_old(string templateRootFolder, string saveToPath,
-        string listOfKeyValuesToReplaceInFilesJson)
-    {
-        string listOfFilesToReplaceJson = Path.Join(templateRootFolder, "listOfFilesToReplaceAndCopy.json");
-
-        try
-        {
-            ReplaceInFilesObject replaceInFilesObject = new ReplaceInFilesObject();
-            PrepareTemplatesCommand prepareTemplatesCommand = new PrepareTemplatesCommand
-            {
-                ListOfFilesToReplaceJson = listOfFilesToReplaceJson,
-                ListOfKeyValuesToReplaceInFilesJson = listOfKeyValuesToReplaceInFilesJson,
-                SaveToPath = saveToPath,
-                TemplatesFolder = templateRootFolder
-            };
-            PrepareTemplates prepareTemplates = new PrepareTemplates(replaceInFilesObject);
-            prepareTemplates.Execute(prepareTemplatesCommand);
-
-            if (prepareTemplatesCommand.ListOfSavedFiles is not null)
-            {
-                foreach (string savedFile in prepareTemplatesCommand.ListOfSavedFiles)
-                {
-                    tbLog.AppendText(savedFile);
-                    tbLog.AppendText(Environment.NewLine);
-                }
-            }
-        }
-        catch (Exception ex)
-        {
-            tbLog.AppendText(ex.Message);
-            tbLog.AppendText(Environment.NewLine);
-        }
-    }
 
     private void btnLoadOld_Click(object sender, EventArgs e)
     {
@@ -218,7 +187,8 @@ public partial class Form1 : Form
                 drGalleryConfiguration[DataTableConfigColumns.Zoom] = setting.Zoom;
                 drGalleryConfiguration[DataTableConfigColumns.ResizeImages] = setting.ResizeImages;
                 drGalleryConfiguration[DataTableConfigColumns.JoomlaThumbsPath] = setting.JoomlaThumbsPath;
-                drGalleryConfiguration[DataTableConfigColumns.JoomlaImgSrcPath] = setting.JoomlaImgSrcPath;
+                drGalleryConfiguration[DataTableConfigColumns.IsMerged] = false;
+                _dtGalleryConfiguration.Rows.Add(drGalleryConfiguration);
                 _dtGalleryConfiguration.Rows.Add(drGalleryConfiguration);
             }
         }
@@ -239,6 +209,7 @@ public partial class Form1 : Form
         _dtGalleryConfiguration.Columns.Add(DataTableConfigColumns.ResizeImages, typeof(bool));
         _dtGalleryConfiguration.Columns.Add(DataTableConfigColumns.JoomlaThumbsPath, typeof(string));
         _dtGalleryConfiguration.Columns.Add(DataTableConfigColumns.JoomlaImgSrcPath, typeof(string));
+        _dtGalleryConfiguration.Columns.Add(DataTableConfigColumns.IsMerged, typeof(bool));
     }
 
     private void btnSaveConfig_Click(object sender, EventArgs e)
@@ -260,7 +231,8 @@ public partial class Form1 : Form
                 { "/*zoom*/", row[DataTableConfigColumns.Zoom].ToString() },
                 { "/*resizeImages*/", row[DataTableConfigColumns.ResizeImages].ToString() },
                 { "/*joomlaThumbsPath*/", row[DataTableConfigColumns.JoomlaThumbsPath].ToString() },
-                { "/*joomlaImgSrcPath*/", row[DataTableConfigColumns.JoomlaImgSrcPath].ToString() }
+                { "/*joomlaImgSrcPath*/", row[DataTableConfigColumns.JoomlaImgSrcPath].ToString() },
+                { "/*isMerged*/", row[DataTableConfigColumns.IsMerged].ToString() }
             };
 
             jsonList.Add(jsonObj);
@@ -296,6 +268,7 @@ public partial class Form1 : Form
             drGalleryConfiguration[DataTableConfigColumns.ResizeImages] = setting["/*resizeImages*/"];
             drGalleryConfiguration[DataTableConfigColumns.JoomlaThumbsPath] = setting["/*joomlaThumbsPath*/"];
             drGalleryConfiguration[DataTableConfigColumns.JoomlaImgSrcPath] = setting["/*joomlaImgSrcPath*/"];
+            drGalleryConfiguration[DataTableConfigColumns.IsMerged] = setting.TryGetValue("/*isMerged*/", out string? value) ? value : false;
             _dtGalleryConfiguration.Rows.Add(drGalleryConfiguration);
         }
     }
