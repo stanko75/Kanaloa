@@ -69,12 +69,6 @@ public partial class Form1 : Form
     private void btnLoadOld_Click(object sender, EventArgs e)
     {
         _dtGalleryConfiguration.Clear();
-        if (_dtGalleryConfiguration.Columns.Count == 0)
-        {
-            AddColumnsToDt();
-        }
-
-        dgvGalleryConfiguration.DataSource = _dtGalleryConfiguration;
 
         XDocument xmlDoc = XDocument.Load(@"C:\projects\Kanaloa\.net\winForms\Pics2gMaps\Pics2gMaps\app.config");
         var galleries = xmlDoc.Descendants("galleries")
@@ -156,10 +150,10 @@ public partial class Form1 : Form
                 { "/*ogUrl*/", row[DataTableConfigColumns.OgUrl].ToString() },
                 { "/*picsJson*/", row[DataTableConfigColumns.PicsJson].ToString() },
                 { "/*zoom*/", row[DataTableConfigColumns.Zoom].ToString() },
-                { "/*resizeImages*/", row[DataTableConfigColumns.ResizeImages].ToString() },
+                { "/*resizeImages*/", string.IsNullOrWhiteSpace(row[DataTableConfigColumns.ResizeImages].ToString()) ? "false" : row[DataTableConfigColumns.ResizeImages].ToString() },
                 { "/*joomlaThumbsPath*/", row[DataTableConfigColumns.JoomlaThumbsPath].ToString() },
                 { "/*joomlaImgSrcPath*/", row[DataTableConfigColumns.JoomlaImgSrcPath].ToString() },
-                { "/*isMerged*/", row[DataTableConfigColumns.IsMerged].ToString() }
+                { "/*isMerged*/", string.IsNullOrWhiteSpace(row[DataTableConfigColumns.IsMerged].ToString()) ? "false" : row[DataTableConfigColumns.IsMerged].ToString()}
             };
 
             jsonList.Add(jsonObj);
@@ -192,7 +186,7 @@ public partial class Form1 : Form
             drGalleryConfiguration[DataTableConfigColumns.OgUrl] = setting["/*ogUrl*/"];
             drGalleryConfiguration[DataTableConfigColumns.PicsJson] = setting["/*picsJson*/"];
             drGalleryConfiguration[DataTableConfigColumns.Zoom] = setting["/*zoom*/"];
-            drGalleryConfiguration[DataTableConfigColumns.ResizeImages] = setting["/*resizeImages*/"];
+            drGalleryConfiguration[DataTableConfigColumns.ResizeImages] = setting.TryGetValue("/*resizeImages*/", out string? resizeImagesValue) ? resizeImagesValue : false;
             drGalleryConfiguration[DataTableConfigColumns.JoomlaThumbsPath] = setting["/*joomlaThumbsPath*/"];
             drGalleryConfiguration[DataTableConfigColumns.JoomlaImgSrcPath] = setting["/*joomlaImgSrcPath*/"];
             drGalleryConfiguration[DataTableConfigColumns.IsMerged] = setting.TryGetValue("/*isMerged*/", out string? value) ? value : false;
@@ -210,5 +204,12 @@ public partial class Form1 : Form
     private void Form1_Load(object sender, EventArgs e)
     {
         tbJsonFile.Text = Settings.Default.JsonFile;
+
+        if (_dtGalleryConfiguration.Columns.Count == 0)
+        {
+            AddColumnsToDt();
+        }
+
+        dgvGalleryConfiguration.DataSource = _dtGalleryConfiguration;
     }
 }
