@@ -4,7 +4,7 @@ using ImageHandling;
 
 namespace Pics2gMaps;
 
-public class ResizeImageDesktop(ILogger logger) : ICommandHandler<ResizeImageDesktopCommand>
+public class ResizeImageDesktop(ILogger logger) : ICommandHandlerAsync<ResizeImageDesktopCommand>
 {
     public UpdateUi UpdateUi { get; set; }
     private int _recordCount;
@@ -34,17 +34,17 @@ public class ResizeImageDesktop(ILogger logger) : ICommandHandler<ResizeImageDes
     }
 
 
-    public void Execute(ResizeImageDesktopCommand command)
+    public async Task Execute(ResizeImageDesktopCommand command)
     {
         string galleryName = command.DataRow[DataTableConfigColumns.GalleryName].ToString();
         string folderName = Path.Join(command.DataRow[DataTableConfigColumns.RootGalleryFolder].ToString(), galleryName);
         string jsonThumbsFileName = Path.Join(command.DataRow[DataTableConfigColumns.RootGalleryFolder].ToString(), $@"{galleryName}\www\{galleryName}Thumbs.json");
         string jsonPicsFileName = Path.Join(command.DataRow[DataTableConfigColumns.RootGalleryFolder].ToString(), $@"{galleryName}\www\{galleryName}.json");
 
-        ResizeImage(jsonThumbsFileName, jsonPicsFileName, folderName, (bool)command.DataRow[DataTableConfigColumns.IsMerged]);
+        await ResizeImage(jsonThumbsFileName, jsonPicsFileName, folderName, (bool)command.DataRow[DataTableConfigColumns.IsMerged]);
     }
 
-    private void ResizeImage(string jsonThumbsFileName, string jsonPicsFileName, string folderName, bool isMerged)
+    private async Task ResizeImage(string jsonThumbsFileName, string jsonPicsFileName, string folderName, bool isMerged)
     {
         if (File.Exists(jsonThumbsFileName))
         {
@@ -59,12 +59,15 @@ public class ResizeImageDesktop(ILogger logger) : ICommandHandler<ResizeImageDes
         string picsFolder = isMerged ? folderName : Path.Join(folderName, "pics");
         if (Directory.Exists(picsFolder))
         {
-            Parallel.ForEach(Directory.EnumerateFiles(picsFolder, "*.*", SearchOption.AllDirectories).AsParallel(), imageFileName =>
+            await Parallel.ForEachAsync(
+                Directory.EnumerateFiles(picsFolder, "*.*", SearchOption.AllDirectories),
+                new ParallelOptions { MaxDegreeOfParallelism = Environment.ProcessorCount },
+                async (imageFileName, cancellationToken) =>
             //foreach (string imageFileName in Directory.GetFiles(picsFolder, "*.*", SearchOption.AllDirectories))
             {
                 try
                 {
-                    RecordCount = Interlocked.Increment(ref _recordCount);
+                    //RecordCount = Interlocked.Increment(ref _recordCount);
                     UpdateUi.Error = $"{imageFileName}";
                     logger.Log(UpdateUi);
 

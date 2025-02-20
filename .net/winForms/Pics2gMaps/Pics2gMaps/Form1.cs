@@ -19,7 +19,7 @@ public partial class Form1 : Form
         InitializeComponent();
     }
 
-    private void btnStart_Click(object sender, EventArgs e)
+    private async void btnStart_Click(object sender, EventArgs e)
     {
         IEnumerable<DataRow> rows;
 
@@ -66,7 +66,7 @@ public partial class Form1 : Form
                 tsslRecordCount.GetCurrentParent().Refresh();
             };
 
-            resizeImageDesktop.Execute(resizeImageDesktopCommand);
+            await resizeImageDesktop.Execute(resizeImageDesktopCommand);
         }
 
         MessageBox.Show("Done!");
