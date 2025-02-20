@@ -1,3 +1,4 @@
+using System.Collections.Concurrent;
 using System.Data;
 using System.Diagnostics;
 using System.Diagnostics.Metrics;
@@ -76,9 +77,11 @@ public partial class Form1 : Form
             PrepareHtmlFolder prepareHtmlFolder = new PrepareHtmlFolder();
             prepareHtmlFolder.Execute(prepareHtmlFolderCommand);
 
+            var fileQueue = new BlockingCollection<string>();
             ResizeImageDesktopCommand resizeImageDesktopCommand = new ResizeImageDesktopCommand
             {
-                DataRow = dataRow
+                DataRow = dataRow,
+                FileQueue = fileQueue
             };
             ResizeImageDesktop resizeImageDesktop = new ResizeImageDesktop(new UiLogger());
 
@@ -97,7 +100,17 @@ public partial class Form1 : Form
 
             };
 
-            await resizeImageDesktop.Execute(resizeImageDesktopCommand);
+            SearchForAllFilesAndPutThemInQueueCommand searchForAllFilesAndPutThemInQueueCommand =
+                new SearchForAllFilesAndPutThemInQueueCommand
+                {
+                    FileQueue = fileQueue,
+                    Path = dataRow[DataTableConfigColumns.RootGalleryFolder].ToString()
+                };
+            SearchForAllFilesAndPutThemInQueue searchForAllFilesAndPutThemInQueue =
+                new SearchForAllFilesAndPutThemInQueue();
+
+            await Task.WhenAll(searchForAllFilesAndPutThemInQueue.Execute(searchForAllFilesAndPutThemInQueueCommand),
+                resizeImageDesktop.Execute(resizeImageDesktopCommand));
         }
 
         _cts?.Cancel();
