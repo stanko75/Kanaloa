@@ -7,6 +7,32 @@ namespace Pics2gMaps;
 public class ResizeImageDesktop(ILogger logger) : ICommandHandler<ResizeImageDesktopCommand>
 {
     public UpdateUi UpdateUi { get; set; }
+    private int _recordCount;
+    public event EventHandler<int>? RecordCountChanged;
+
+    public int RecordCount
+    {
+        get => _recordCount;
+        private set
+        {
+            _recordCount = value;
+            RaiseRecordCountChanged(_recordCount);
+        }
+        // Sicheres Event-Handling
+    }
+
+    private void RaiseRecordCountChanged(int count)
+    {
+        if (UpdateUi.Form is { IsHandleCreated: true, InvokeRequired: true })
+        {
+            UpdateUi.Form.BeginInvoke(() => RecordCountChanged?.Invoke(this, count));
+        }
+        else
+        {
+            RecordCountChanged?.Invoke(this, count);
+        }
+    }
+
 
     public void Execute(ResizeImageDesktopCommand command)
     {
@@ -38,6 +64,7 @@ public class ResizeImageDesktop(ILogger logger) : ICommandHandler<ResizeImageDes
             {
                 try
                 {
+                    RecordCount = Interlocked.Increment(ref _recordCount);
                     UpdateUi.Error = $"{imageFileName}";
                     logger.Log(UpdateUi);
 

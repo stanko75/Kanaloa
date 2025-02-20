@@ -1,4 +1,5 @@
 using System.Data;
+using System.Diagnostics;
 using System.Xml.Linq;
 using Common;
 using FastLoadImagesToMemoryAndProcessLater.Log;
@@ -58,6 +59,12 @@ public partial class Form1 : Form
                 Name = "resizeImageDesktop"
             };
             resizeImageDesktop.UpdateUi = updateUi;
+
+            resizeImageDesktop.RecordCountChanged += (senderRecordCountChanged, count) =>
+            {
+                tsslRecordCount.Text = $"Files processed: {count}";
+                tsslRecordCount.GetCurrentParent().Refresh();
+            };
 
             resizeImageDesktop.Execute(resizeImageDesktopCommand);
         }

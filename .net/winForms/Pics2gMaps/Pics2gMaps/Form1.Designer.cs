@@ -50,6 +50,8 @@
             dgvGalleryConfiguration = new DataGridView();
             btnSaveConfig = new Button();
             btnLoadNew = new Button();
+            statusStrip1 = new StatusStrip();
+            tsslRecordCount = new ToolStripStatusLabel();
             panel1.SuspendLayout();
             panel3.SuspendLayout();
             panel2.SuspendLayout();
@@ -60,12 +62,13 @@
             panel8.SuspendLayout();
             panel9.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)dgvGalleryConfiguration).BeginInit();
+            statusStrip1.SuspendLayout();
             SuspendLayout();
             // 
             // btnStart
             // 
             btnStart.Dock = DockStyle.Bottom;
-            btnStart.Location = new Point(0, 427);
+            btnStart.Location = new Point(0, 405);
             btnStart.Name = "btnStart";
             btnStart.Size = new Size(800, 23);
             btnStart.TabIndex = 0;
@@ -173,7 +176,7 @@
             tbLog.Multiline = true;
             tbLog.Name = "tbLog";
             tbLog.ScrollBars = ScrollBars.Both;
-            tbLog.Size = new Size(800, 120);
+            tbLog.Size = new Size(800, 98);
             tbLog.TabIndex = 3;
             // 
             // panel7
@@ -226,7 +229,7 @@
             // btnLoadOld
             // 
             btnLoadOld.Dock = DockStyle.Bottom;
-            btnLoadOld.Location = new Point(0, 404);
+            btnLoadOld.Location = new Point(0, 382);
             btnLoadOld.Name = "btnLoadOld";
             btnLoadOld.Size = new Size(800, 23);
             btnLoadOld.TabIndex = 4;
@@ -255,7 +258,7 @@
             // btnSaveConfig
             // 
             btnSaveConfig.Dock = DockStyle.Bottom;
-            btnSaveConfig.Location = new Point(0, 381);
+            btnSaveConfig.Location = new Point(0, 359);
             btnSaveConfig.Name = "btnSaveConfig";
             btnSaveConfig.Size = new Size(800, 23);
             btnSaveConfig.TabIndex = 8;
@@ -266,13 +269,28 @@
             // btnLoadNew
             // 
             btnLoadNew.Dock = DockStyle.Bottom;
-            btnLoadNew.Location = new Point(0, 358);
+            btnLoadNew.Location = new Point(0, 336);
             btnLoadNew.Name = "btnLoadNew";
             btnLoadNew.Size = new Size(800, 23);
             btnLoadNew.TabIndex = 9;
             btnLoadNew.Text = "Load new configuration";
             btnLoadNew.UseVisualStyleBackColor = true;
             btnLoadNew.Click += btnLoadNew_Click;
+            // 
+            // statusStrip1
+            // 
+            statusStrip1.Items.AddRange(new ToolStripItem[] { tsslRecordCount });
+            statusStrip1.Location = new Point(0, 428);
+            statusStrip1.Name = "statusStrip1";
+            statusStrip1.Size = new Size(800, 22);
+            statusStrip1.TabIndex = 10;
+            statusStrip1.Text = "statusStrip1";
+            // 
+            // tsslRecordCount
+            // 
+            tsslRecordCount.Name = "tsslRecordCount";
+            tsslRecordCount.Size = new Size(98, 17);
+            tsslRecordCount.Text = "Files processed: 0";
             // 
             // Form1
             // 
@@ -289,6 +307,7 @@
             Controls.Add(panel4);
             Controls.Add(panel1);
             Controls.Add(btnStart);
+            Controls.Add(statusStrip1);
             Name = "Form1";
             Text = "Form1";
             Load += Form1_Load;
@@ -305,6 +324,8 @@
             panel8.PerformLayout();
             panel9.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)dgvGalleryConfiguration).EndInit();
+            statusStrip1.ResumeLayout(false);
+            statusStrip1.PerformLayout();
             ResumeLayout(false);
             PerformLayout();
         }
@@ -333,5 +354,7 @@
         private DataGridView dgvGalleryConfiguration;
         private Button btnSaveConfig;
         private Button btnLoadNew;
+        private StatusStrip statusStrip1;
+        private ToolStripStatusLabel tsslRecordCount;
     }
 }
