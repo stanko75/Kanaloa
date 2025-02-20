@@ -1,5 +1,6 @@
 using System.Data;
 using System.Diagnostics;
+using System.Diagnostics.Metrics;
 using System.Xml.Linq;
 using Common;
 using FastLoadImagesToMemoryAndProcessLater.Log;
@@ -7,6 +8,7 @@ using HtmlHandling;
 using ImageHandling;
 using Newtonsoft.Json;
 using Pics2gMaps.Log;
+using Timer = System.Windows.Forms.Timer;
 
 namespace Pics2gMaps;
 
@@ -19,8 +21,36 @@ public partial class Form1 : Form
         InitializeComponent();
     }
 
+    private CancellationTokenSource _cts;
+    private TimeSpan _elapsedTime;
+    private DateTime _startTime;
     private async void btnStart_Click(object sender, EventArgs e)
     {
+        _cts = new CancellationTokenSource();
+        _startTime = DateTime.Now;
+
+        _ = Task.Run(() =>
+        {
+            while (!_cts.Token.IsCancellationRequested)
+            {
+                _elapsedTime = DateTime.Now - _startTime;
+
+                // UI sicher aktualisieren
+                Invoke((MethodInvoker)(() => tsslElapsedTime.Text = $"Elapsed time: {_elapsedTime.ToString(@"hh\:mm\:ss")}"));
+
+                try
+                {
+                    Task.Delay(1000, _cts.Token); // 1 Sekunde warten
+                }
+                catch (TaskCanceledException)
+                {
+                    break;
+                }
+            }
+
+            return Task.FromResult(Task.CompletedTask);
+        }, _cts.Token);
+
         IEnumerable<DataRow> rows;
 
         if (dgvGalleryConfiguration.SelectedRows.Count == 0)
@@ -64,14 +94,15 @@ public partial class Form1 : Form
             {
                 tsslRecordCount.Text = $"Files processed: {count}";
                 tsslRecordCount.GetCurrentParent().Refresh();
+
             };
 
             await resizeImageDesktop.Execute(resizeImageDesktopCommand);
         }
 
+        _cts?.Cancel();
         MessageBox.Show("Done!");
     }
-
 
     private void btnLoadOld_Click(object sender, EventArgs e)
     {

@@ -52,6 +52,7 @@
             btnLoadNew = new Button();
             statusStrip1 = new StatusStrip();
             tsslRecordCount = new ToolStripStatusLabel();
+            tsslElapsedTime = new ToolStripStatusLabel();
             panel1.SuspendLayout();
             panel3.SuspendLayout();
             panel2.SuspendLayout();
@@ -279,7 +280,7 @@
             // 
             // statusStrip1
             // 
-            statusStrip1.Items.AddRange(new ToolStripItem[] { tsslRecordCount });
+            statusStrip1.Items.AddRange(new ToolStripItem[] { tsslRecordCount, tsslElapsedTime });
             statusStrip1.Location = new Point(0, 428);
             statusStrip1.Name = "statusStrip1";
             statusStrip1.Size = new Size(800, 22);
@@ -291,6 +292,12 @@
             tsslRecordCount.Name = "tsslRecordCount";
             tsslRecordCount.Size = new Size(98, 17);
             tsslRecordCount.Text = "Files processed: 0";
+            // 
+            // tsslElapsedTime
+            // 
+            tsslElapsedTime.Name = "tsslElapsedTime";
+            tsslElapsedTime.Size = new Size(122, 17);
+            tsslElapsedTime.Text = "Elapsed time: 00:00:00";
             // 
             // Form1
             // 
@@ -356,5 +363,6 @@
         private Button btnLoadNew;
         private StatusStrip statusStrip1;
         private ToolStripStatusLabel tsslRecordCount;
+        private ToolStripStatusLabel tsslElapsedTime;
     }
 }

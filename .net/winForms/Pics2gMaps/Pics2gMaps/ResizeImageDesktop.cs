@@ -60,7 +60,7 @@ public class ResizeImageDesktop(ILogger logger) : ICommandHandlerAsync<ResizeIma
         if (Directory.Exists(picsFolder))
         {
             await Parallel.ForEachAsync(
-                Directory.EnumerateFiles(picsFolder, "*.*", SearchOption.AllDirectories),
+                Directory.EnumerateFiles(picsFolder, "*.*", SearchOption.AllDirectories).AsParallel(),
                 async (imageFileName, cancellationToken) =>
             //foreach (string imageFileName in Directory.GetFiles(picsFolder, "*.*", SearchOption.AllDirectories))
             {
