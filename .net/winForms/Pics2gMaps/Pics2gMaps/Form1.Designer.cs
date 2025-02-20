@@ -316,7 +316,7 @@
             Controls.Add(btnStart);
             Controls.Add(statusStrip1);
             Name = "Form1";
-            Text = "Form1";
+            Text = "Main";
             Load += Form1_Load;
             panel1.ResumeLayout(false);
             panel3.ResumeLayout(false);
