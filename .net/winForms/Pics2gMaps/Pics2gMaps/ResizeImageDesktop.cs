@@ -61,7 +61,6 @@ public class ResizeImageDesktop(ILogger logger) : ICommandHandlerAsync<ResizeIma
         {
             await Parallel.ForEachAsync(
                 Directory.EnumerateFiles(picsFolder, "*.*", SearchOption.AllDirectories),
-                new ParallelOptions { MaxDegreeOfParallelism = Environment.ProcessorCount },
                 async (imageFileName, cancellationToken) =>
             //foreach (string imageFileName in Directory.GetFiles(picsFolder, "*.*", SearchOption.AllDirectories))
             {
