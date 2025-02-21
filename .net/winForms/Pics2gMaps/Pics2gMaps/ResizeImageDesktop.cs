@@ -1,6 +1,7 @@
 ﻿using Common;
 using FastLoadImagesToMemoryAndProcessLater.Log;
 using ImageHandling;
+using System.Collections.Concurrent;
 
 namespace Pics2gMaps;
 
@@ -59,6 +60,8 @@ public class ResizeImageDesktop(ILogger logger) : ICommandHandlerAsync<ResizeIma
         string picsFolder = isMerged ? folderName : Path.Join(folderName, "pics");
         if (Directory.Exists(picsFolder))
         {
+            var fileNames = new ConcurrentBag<string>();
+
             await Parallel.ForEachAsync(
                 Directory.EnumerateFiles(picsFolder, "*.*", SearchOption.AllDirectories).AsParallel(),
                 async (imageFileName, cancellationToken) =>
@@ -66,7 +69,7 @@ public class ResizeImageDesktop(ILogger logger) : ICommandHandlerAsync<ResizeIma
             {
                 try
                 {
-                    RecordCount = Interlocked.Increment(ref _recordCount);
+                    fileNames.Add(imageFileName);
                     UpdateUi.Error = $"{imageFileName}";
                     logger.Log(UpdateUi);
 
@@ -106,6 +109,7 @@ public class ResizeImageDesktop(ILogger logger) : ICommandHandlerAsync<ResizeIma
                     UpdateOrCreateJsonFileWithListOfImages updateOrCreateJsonFileWithListOfImages =
                         new UpdateOrCreateJsonFileWithListOfImages(new UpdateJsonIfExistsOrCreateNewIfNot());
                     updateOrCreateJsonFileWithListOfImages.Execute(updateOrCreateJsonFileWithListOfImagesCommand);
+                    RecordCount = Interlocked.Increment(ref _recordCount);
                 }
                 catch (Exception ex)
                 {
@@ -113,6 +117,8 @@ public class ResizeImageDesktop(ILogger logger) : ICommandHandlerAsync<ResizeIma
                     logger.Log(UpdateUi);
                 }
             });
+
+            await File.WriteAllLinesAsync(@"fileListMain.txt", fileNames);
             //}
         }
         else
