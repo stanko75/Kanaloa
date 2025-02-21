@@ -66,7 +66,6 @@ public class ResizeImageDesktop(ILogger logger) : ICommandHandlerAsync<ResizeIma
             {
                 try
                 {
-                    RecordCount = Interlocked.Increment(ref _recordCount);
                     UpdateUi.Error = $"{imageFileName}";
                     logger.Log(UpdateUi);
 
@@ -106,6 +105,7 @@ public class ResizeImageDesktop(ILogger logger) : ICommandHandlerAsync<ResizeIma
                     UpdateOrCreateJsonFileWithListOfImages updateOrCreateJsonFileWithListOfImages =
                         new UpdateOrCreateJsonFileWithListOfImages(new UpdateJsonIfExistsOrCreateNewIfNot());
                     updateOrCreateJsonFileWithListOfImages.Execute(updateOrCreateJsonFileWithListOfImagesCommand);
+                    RecordCount = Interlocked.Increment(ref _recordCount);
                 }
                 catch (Exception ex)
                 {
