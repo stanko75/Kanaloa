@@ -11,29 +11,7 @@ public class ResizeImageDesktop(ILogger logger) : ICommandHandlerAsync<ResizeIma
     private int _recordCount;
     public event EventHandler<int>? RecordCountChanged;
 
-    public int RecordCount
-    {
-        get => _recordCount;
-        private set
-        {
-            _recordCount = value;
-            RaiseRecordCountChanged(_recordCount);
-        }
-        // Sicheres Event-Handling
-    }
-
-    private void RaiseRecordCountChanged(int count)
-    {
-        if (UpdateUi.Form is { IsHandleCreated: true, InvokeRequired: true })
-        {
-            UpdateUi.Form.BeginInvoke(() => RecordCountChanged?.Invoke(this, count));
-        }
-        else
-        {
-            RecordCountChanged?.Invoke(this, count);
-        }
-    }
-
+    public int RecordCount { get; set; }
 
     public async Task Execute(ResizeImageDesktopCommand command)
     {
@@ -66,7 +44,7 @@ public class ResizeImageDesktop(ILogger logger) : ICommandHandlerAsync<ResizeIma
         if (Directory.Exists(picsFolder) && fileQueue is not null)
         {
             var fileNames = new ConcurrentBag<string>();
-
+            _recordCount = 0;
             await Parallel.ForEachAsync(
                 fileQueue.GetConsumingEnumerable().AsParallel(), async (imageFileName, cancellationToken) =>
                     //foreach (string imageFileName in Directory.GetFiles(picsFolder, "*.*", SearchOption.AllDirectories))
@@ -134,15 +112,15 @@ public class ResizeImageDesktop(ILogger logger) : ICommandHandlerAsync<ResizeIma
         }
         catch (Exception ex)
         {
-            var updateUi = new UpdateUi
-            {
-                Form = UpdateUi.Form,
-                TextBox = UpdateUi.TextBox,
-                Error = $"{imageFileName}: {ex.Message}",
-                Name = UpdateUi.Name
-            };
+            //var updateUi = new UpdateUi
+            //{
+            //    Form = UpdateUi.Form,
+            //    TextBox = UpdateUi.TextBox,
+            //    Error = $"{imageFileName}: {ex.Message}",
+            //    Name = UpdateUi.Name
+            //};
 
-            logger.Log(updateUi);
+            //logger.Log(updateUi);
         }
     }
 
@@ -168,15 +146,15 @@ public class ResizeImageDesktop(ILogger logger) : ICommandHandlerAsync<ResizeIma
         }
         catch (Exception ex)
         {
-            var updateUi = new UpdateUi
-            {
-                Form = UpdateUi.Form,
-                TextBox = UpdateUi.TextBox,
-                Error = $"{imageFileName}: {ex.Message}",
-                Name = UpdateUi.Name
-            };
+            //var updateUi = new UpdateUi
+            //{
+            //    Form = UpdateUi.Form,
+            //    TextBox = UpdateUi.TextBox,
+            //    Error = $"{imageFileName}: {ex.Message}",
+            //    Name = UpdateUi.Name
+            //};
 
-            logger.Log(updateUi);
+            //logger.Log(updateUi);
         }
     }
 }
