@@ -14,5 +14,6 @@ public class SearchForAllFilesAndPutThemInQueue : ICommandHandlerAsync<SearchFor
     {
         Parallel.ForEach(Directory.EnumerateFiles(path, "*.*", SearchOption.AllDirectories),
             fileQueue.Add);
+        fileQueue.CompleteAdding();
     }
 }
