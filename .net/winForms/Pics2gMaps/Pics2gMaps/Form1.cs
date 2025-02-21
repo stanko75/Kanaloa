@@ -100,11 +100,16 @@ public partial class Form1 : Form
 
             };
 
+            bool isMerged = (bool)dataRow[DataTableConfigColumns.IsMerged];
+            string galleryName = dataRow[DataTableConfigColumns.GalleryName].ToString();
+            string folderName = Path.Join(dataRow[DataTableConfigColumns.RootGalleryFolder].ToString(), galleryName);
+            string picsFolder = isMerged ? folderName : Path.Join(folderName, "pics");
+
             SearchForAllFilesAndPutThemInQueueCommand searchForAllFilesAndPutThemInQueueCommand =
                 new SearchForAllFilesAndPutThemInQueueCommand
                 {
                     FileQueue = fileQueue,
-                    Path = dataRow[DataTableConfigColumns.RootGalleryFolder].ToString()
+                    Path = picsFolder
                 };
             SearchForAllFilesAndPutThemInQueue searchForAllFilesAndPutThemInQueue =
                 new SearchForAllFilesAndPutThemInQueue();
