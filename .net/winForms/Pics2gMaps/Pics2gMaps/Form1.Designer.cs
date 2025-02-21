@@ -104,6 +104,7 @@
             tbTemplateRootFolder.Size = new Size(676, 23);
             tbTemplateRootFolder.TabIndex = 0;
             tbTemplateRootFolder.Text = "..\\..\\..\\..\\..\\..\\..\\html\\templateForBlog";
+            tbTemplateRootFolder.Leave += tbTemplateRootFolder_Leave;
             // 
             // panel2
             // 

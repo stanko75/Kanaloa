@@ -24,6 +24,7 @@ public partial class Form1 : Form
     private CancellationTokenSource _cts;
     private TimeSpan _elapsedTime;
     private DateTime _startTime;
+
     private async void btnStart_Click(object sender, EventArgs e)
     {
         _cts = new CancellationTokenSource();
@@ -191,7 +192,7 @@ public partial class Form1 : Form
                 { "/*resizeImages*/", string.IsNullOrWhiteSpace(row[DataTableConfigColumns.ResizeImages].ToString()) ? "false" : row[DataTableConfigColumns.ResizeImages].ToString() },
                 { "/*joomlaThumbsPath*/", row[DataTableConfigColumns.JoomlaThumbsPath].ToString() },
                 { "/*joomlaImgSrcPath*/", row[DataTableConfigColumns.JoomlaImgSrcPath].ToString() },
-                { "/*isMerged*/", string.IsNullOrWhiteSpace(row[DataTableConfigColumns.IsMerged].ToString()) ? "false" : row[DataTableConfigColumns.IsMerged].ToString()}
+                { "/*isMerged*/", string.IsNullOrWhiteSpace(row[DataTableConfigColumns.IsMerged].ToString()) ? "false" : row[DataTableConfigColumns.IsMerged].ToString() }
             };
 
             jsonList.Add(jsonObj);
@@ -208,6 +209,7 @@ public partial class Form1 : Form
         {
             AddColumnsToDt();
         }
+
         dgvGalleryConfiguration.DataSource = _dtGalleryConfiguration;
 
         var galleries = JsonConvert.DeserializeObject<List<Dictionary<string, string>>>(File.ReadAllText(tbJsonFile.Text));
@@ -232,6 +234,13 @@ public partial class Form1 : Form
         }
     }
 
+    private void tbTemplateRootFolder_Leave(object sender, EventArgs e)
+    {
+        Settings.Default.TemplateRootFolder = tbTemplateRootFolder.Text;
+        Settings.Default.Save();
+        Settings.Default.Reload();
+    }
+
     private void tbJsonFile_Leave(object sender, EventArgs e)
     {
         Settings.Default.JsonFile = tbJsonFile.Text;
@@ -242,6 +251,7 @@ public partial class Form1 : Form
     private void Form1_Load(object sender, EventArgs e)
     {
         tbJsonFile.Text = Settings.Default.JsonFile;
+        tbTemplateRootFolder.Text = string.IsNullOrWhiteSpace(Settings.Default.TemplateRootFolder) ? @"..\..\..\..\..\..\..\html\templateForBlog" : Settings.Default.TemplateRootFolder;
 
         if (_dtGalleryConfiguration.Columns.Count == 0)
         {
