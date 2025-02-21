@@ -71,41 +71,16 @@ public class ResizeImageDesktop(ILogger logger) : ICommandHandlerAsync<ResizeIma
                 {
                     try
                     {
-                        var updateUi = new UpdateUi
-                        {
-                            Form = UpdateUi.Form, // Falls nötig, übergeben
-                            TextBox = UpdateUi.TextBox, // Falls nötig, übergeben
-                            Error = imageFileName,
-                            Name = UpdateUi.Name
-                        };
+                        Task resizeTask = Task.Run(() => { ResizeImage(folderName, isMerged, imageFileName); },
+                            cancellationToken);
 
-                        logger.Log(updateUi);
-
-                        Task resizeTask = Task.Run(() =>
-                        {
-                            try
-                            {
-                                ResizeImage(folderName, isMerged, imageFileName);
-                            }
-                            catch (Exception ex)
-                            {
-                                UpdateUi.Error = $"{imageFileName}: {ex.Message}";
-                                logger.Log(UpdateUi);
-                            }
-                        }, cancellationToken);
-
-                        Task gpsAndJsonTask = Task.Run(() =>
-                        {
-                            try
-                            {
-                                ExtractGpsInfoFromImageAndUpdateOrCreateJsonFileWithListOfImages(jsonThumbsFileName, jsonPicsFileName, imageFileName);
-                            }
-                            catch (Exception ex)
-                            {
-                                UpdateUi.Error = $"{imageFileName}: {ex.Message}";
-                                logger.Log(UpdateUi);
-                            }
-                        }, cancellationToken);
+                        Task gpsAndJsonTask =
+                            Task.Run(
+                                () =>
+                                {
+                                    ExtractGpsInfoFromImageAndUpdateOrCreateJsonFileWithListOfImages(jsonThumbsFileName,
+                                        jsonPicsFileName, imageFileName);
+                                }, cancellationToken);
 
                         await Task.WhenAll(resizeTask, gpsAndJsonTask);
                     }
@@ -125,46 +100,73 @@ public class ResizeImageDesktop(ILogger logger) : ICommandHandlerAsync<ResizeIma
         }
     }
 
-    private static void ExtractGpsInfoFromImageAndUpdateOrCreateJsonFileWithListOfImages(string jsonThumbsFileName, string jsonPicsFileName, string imageFileName)
+    private void ExtractGpsInfoFromImageAndUpdateOrCreateJsonFileWithListOfImages(string jsonThumbsFileName,
+        string jsonPicsFileName, string imageFileName)
     {
-        ExtractGpsInfoFromImage extractGpsInfoFromImage = new ExtractGpsInfoFromImage();
-        var extractGpsInfoFromImageCommand = new ExtractGpsInfoFromImageCommand
+        try
         {
-            ImageFileNameToReadGpsFrom = imageFileName
-        };
-        extractGpsInfoFromImage.Execute(extractGpsInfoFromImageCommand);
-
-        var updateOrCreateJsonFileWithListOfImagesCommand =
-            new UpdateOrCreateJsonFileWithListOfImagesCommand
+            ExtractGpsInfoFromImage extractGpsInfoFromImage = new ExtractGpsInfoFromImage();
+            var extractGpsInfoFromImageCommand = new ExtractGpsInfoFromImageCommand
             {
-                FolderName = string.Empty,
-                LatLngModel = extractGpsInfoFromImageCommand.LatLngModel,
-                ImageFileName = Path.GetFileName(imageFileName),
-                JsonThumbsFileName = jsonThumbsFileName,
-                JsonPicsFileName = jsonPicsFileName
+                ImageFileNameToReadGpsFrom = imageFileName
+            };
+            extractGpsInfoFromImage.Execute(extractGpsInfoFromImageCommand);
+
+            var updateOrCreateJsonFileWithListOfImagesCommand =
+                new UpdateOrCreateJsonFileWithListOfImagesCommand
+                {
+                    FolderName = string.Empty,
+                    LatLngModel = extractGpsInfoFromImageCommand.LatLngModel,
+                    ImageFileName = Path.GetFileName(imageFileName),
+                    JsonThumbsFileName = jsonThumbsFileName,
+                    JsonPicsFileName = jsonPicsFileName
+                };
+
+            UpdateOrCreateJsonFileWithListOfImages updateOrCreateJsonFileWithListOfImages =
+                new UpdateOrCreateJsonFileWithListOfImages(new UpdateJsonIfExistsOrCreateNewIfNot());
+            updateOrCreateJsonFileWithListOfImages.Execute(updateOrCreateJsonFileWithListOfImagesCommand);
+        }
+        catch (Exception ex)
+        {
+            var updateUi = new UpdateUi
+            {
+                Form = UpdateUi.Form,
+                TextBox = UpdateUi.TextBox,
+                Error = imageFileName,
+                Name = UpdateUi.Name
             };
 
-        UpdateOrCreateJsonFileWithListOfImages updateOrCreateJsonFileWithListOfImages =
-            new UpdateOrCreateJsonFileWithListOfImages(new UpdateJsonIfExistsOrCreateNewIfNot());
-        updateOrCreateJsonFileWithListOfImages.Execute(updateOrCreateJsonFileWithListOfImagesCommand);
+            logger.Log(updateUi);
+
+            UpdateUi.Error = $"{imageFileName}: {ex.Message}";
+            logger.Log(UpdateUi);
+        }
     }
 
-    private static void ResizeImage(string folderName, bool isMerged, string imageFileName)
+    private void ResizeImage(string folderName, bool isMerged, string imageFileName)
     {
-        if (!isMerged)
+        try
         {
-            var resizeImageCommand = new ResizeImageCommand
+            if (!isMerged)
             {
-                CanvasHeight = 200,
-                CanvasWidth = 200,
-                OriginalFileName = Path.GetFileName(imageFileName),
-                //SaveTo = Path.Join(@"C:\projects\KanaloaGalleryTest\mariaLaach\thumbs", imageFileName)
-                SaveTo = Path.GetFileName(imageFileName)
-            };
-            resizeImageCommand.CreateDirectories(folderName);
+                var resizeImageCommand = new ResizeImageCommand
+                {
+                    CanvasHeight = 200,
+                    CanvasWidth = 200,
+                    OriginalFileName = Path.GetFileName(imageFileName),
+                    //SaveTo = Path.Join(@"C:\projects\KanaloaGalleryTest\mariaLaach\thumbs", imageFileName)
+                    SaveTo = Path.GetFileName(imageFileName)
+                };
+                resizeImageCommand.CreateDirectories(folderName);
 
-            ResizeImage resizeImage = new ResizeImage();
-            resizeImage.Execute(resizeImageCommand);
+                ResizeImage resizeImage = new ResizeImage();
+                resizeImage.Execute(resizeImageCommand);
+            }
+        }
+        catch (Exception ex)
+        {
+            UpdateUi.Error = $"{imageFileName}: {ex.Message}";
+            logger.Log(UpdateUi);
         }
     }
 }
