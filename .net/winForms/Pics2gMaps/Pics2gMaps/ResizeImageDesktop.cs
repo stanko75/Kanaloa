@@ -93,6 +93,7 @@ public class ResizeImageDesktop(ILogger logger) : ICommandHandlerAsync<ResizeIma
                     }
 
                     RecordCount = Interlocked.Increment(ref _recordCount);
+                    fileNames.Add($"{RecordCount}. {imageFileName}");
                 });
 
             await File.WriteAllLinesAsync(@"fileListProducerConsumer.txt", fileNames);
