@@ -65,9 +65,11 @@ public class ResizeImageDesktop(ILogger logger) : ICommandHandlerAsync<ResizeIma
         string picsFolder = isMerged ? folderName : Path.Join(folderName, "pics");
         if (Directory.Exists(picsFolder) && fileQueue is not null)
         {
+            var fileNames = new ConcurrentBag<string>();
+
             await Parallel.ForEachAsync(
                 fileQueue.GetConsumingEnumerable().AsParallel(), async (imageFileName, cancellationToken) =>
-                //foreach (string imageFileName in Directory.GetFiles(picsFolder, "*.*", SearchOption.AllDirectories))
+                    //foreach (string imageFileName in Directory.GetFiles(picsFolder, "*.*", SearchOption.AllDirectories))
                 {
                     try
                     {
@@ -92,6 +94,9 @@ public class ResizeImageDesktop(ILogger logger) : ICommandHandlerAsync<ResizeIma
 
                     RecordCount = Interlocked.Increment(ref _recordCount);
                 });
+
+            await File.WriteAllLinesAsync(@"fileListProducerConsumer.txt", fileNames);
+
             //}
         }
         else
