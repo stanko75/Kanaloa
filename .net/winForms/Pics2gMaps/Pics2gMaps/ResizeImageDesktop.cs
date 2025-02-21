@@ -71,7 +71,6 @@ public class ResizeImageDesktop(ILogger logger) : ICommandHandlerAsync<ResizeIma
                 {
                     try
                     {
-                        RecordCount = Interlocked.Increment(ref _recordCount);
                         UpdateUi.Error = $"{imageFileName}";
                         logger.Log(UpdateUi);
 
@@ -118,6 +117,7 @@ public class ResizeImageDesktop(ILogger logger) : ICommandHandlerAsync<ResizeIma
                         logger.Log(UpdateUi);
                     }
 
+                    RecordCount = Interlocked.Increment(ref _recordCount);
                     return ValueTask.CompletedTask;
                 });
             //}
