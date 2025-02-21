@@ -137,14 +137,11 @@ public class ResizeImageDesktop(ILogger logger) : ICommandHandlerAsync<ResizeIma
             {
                 Form = UpdateUi.Form,
                 TextBox = UpdateUi.TextBox,
-                Error = imageFileName,
+                Error = $"{imageFileName}: {ex.Message}",
                 Name = UpdateUi.Name
             };
 
             logger.Log(updateUi);
-
-            UpdateUi.Error = $"{imageFileName}: {ex.Message}";
-            logger.Log(UpdateUi);
         }
     }
 
@@ -170,8 +167,15 @@ public class ResizeImageDesktop(ILogger logger) : ICommandHandlerAsync<ResizeIma
         }
         catch (Exception ex)
         {
-            UpdateUi.Error = $"{imageFileName}: {ex.Message}";
-            logger.Log(UpdateUi);
+            var updateUi = new UpdateUi
+            {
+                Form = UpdateUi.Form,
+                TextBox = UpdateUi.TextBox,
+                Error = $"{imageFileName}: {ex.Message}",
+                Name = UpdateUi.Name
+            };
+
+            logger.Log(updateUi);
         }
     }
 }
