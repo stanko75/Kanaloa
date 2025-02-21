@@ -66,8 +66,15 @@ public class ResizeImageDesktop(ILogger logger) : ICommandHandlerAsync<ResizeIma
             {
                 try
                 {
-                    UpdateUi.Error = $"{imageFileName}";
-                    logger.Log(UpdateUi);
+                    var updateUi = new UpdateUi
+                        {
+                            Form = UpdateUi.Form, // Falls nötig, übergeben
+                            TextBox = UpdateUi.TextBox, // Falls nötig, übergeben
+                            Error = imageFileName,
+                            Name = UpdateUi.Name
+                    };
+
+                    logger.Log(updateUi);
 
                     Task resizeTask = Task.Run(() =>
                     {

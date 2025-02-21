@@ -12,22 +12,9 @@ public class UiLogger : ILogger
 
         if (log.UpdateUi.Form.InvokeRequired)
         {
-            Task.Run(() =>
-            {
-                var timeElapsed = (DateTime.Now - _lastUpdate).TotalMilliseconds;
-                if (timeElapsed > 100)
-                {
-                    log.UpdateUi.Form.Invoke(() =>
-                    {
-                        Log(log);
-                    });
-                    _lastUpdate = DateTime.Now;
-                }
-            });
+            log.UpdateUi.Form.Invoke(() => Log(log));
             return;
         }
-
-        if (log.UpdateUi.TextBox is null) return;
 
         log.UpdateUi.TextBox.AppendText(log.UpdateUi.Error);
         log.UpdateUi.TextBox.AppendText(Environment.NewLine);
