@@ -245,6 +245,13 @@ public partial class Form1 : Form
         }
     }
 
+    private void tbTemplateRootFolder_Leave(object sender, EventArgs e)
+    {
+        Settings.Default.TemplateRootFolder = tbTemplateRootFolder.Text;
+        Settings.Default.Save();
+        Settings.Default.Reload();
+    }
+
     private void tbJsonFile_Leave(object sender, EventArgs e)
     {
         Settings.Default.JsonFile = tbJsonFile.Text;
@@ -255,6 +262,7 @@ public partial class Form1 : Form
     private void Form1_Load(object sender, EventArgs e)
     {
         tbJsonFile.Text = Settings.Default.JsonFile;
+        tbTemplateRootFolder.Text = string.IsNullOrWhiteSpace(Settings.Default.TemplateRootFolder) ? @"..\..\..\..\..\..\..\html\templateForBlog" : Settings.Default.TemplateRootFolder;
 
         if (_dtGalleryConfiguration.Columns.Count == 0)
         {
