@@ -2,6 +2,8 @@
 using FastLoadImagesToMemoryAndProcessLater.Log;
 using ImageHandling;
 using System.Collections.Concurrent;
+using System.IO;
+using System.Text.Json;
 
 namespace Pics2gMaps;
 
@@ -38,19 +40,50 @@ public class ResizeImageDesktop/*(ILogger logger)*/ : ICommandHandlerAsync<Resiz
         if (Directory.Exists(picsFolder))
         {
             var fileNames = new ConcurrentBag<string>();
+            var latLngQueue = new ConcurrentBag<LatLngFileNameModel>();
 
             await Parallel.ForEachAsync(
                 Directory.EnumerateFiles(picsFolder, "*.*", SearchOption.AllDirectories).AsParallel(),
                 async (imageFileName, cancellationToken) =>
-                //foreach (string imageFileName in Directory.GetFiles(picsFolder, "*.*", SearchOption.AllDirectories))
-            {
-                ResizeImage(folderName, isMerged, imageFileName);
-                ExtractGpsInfoFromImageAndUpdateOrCreateJsonFileWithListOfImages(jsonThumbsFileName, jsonPicsFileName, imageFileName);
+                    //foreach (string imageFileName in Directory.GetFiles(picsFolder, "*.*", SearchOption.AllDirectories))
+                {
+                    ExtractGpsInfoFromImage extractGpsInfoFromImage = new ExtractGpsInfoFromImage();
+                    var extractGpsInfoFromImageCommand = new ExtractGpsInfoFromImageCommand
+                    {
+                        ImageFileNameToReadGpsFrom = imageFileName
+                    };
 
-                RecordCount = Interlocked.Increment(ref _recordCount);
-            });
+                    try
+                    {
+                        extractGpsInfoFromImage.Execute(extractGpsInfoFromImageCommand);
+                        if (extractGpsInfoFromImageCommand.LatLngModel != null)
+                        {
+                            CreateRelativeWebPath(imageFileName, "thumbs", folderName);
+                            LatLngFileNameModel latLngFileNameModel = new LatLngFileNameModel
+                            {
+                                FileName = CreateRelativeWebPath(imageFileName, "thumbs", folderName),
+                                Latitude = extractGpsInfoFromImageCommand.LatLngModel.Latitude,
+                                Longitude = extractGpsInfoFromImageCommand.LatLngModel.Longitude
+                            };
+                            latLngQueue.Add(latLngFileNameModel);
+
+                            ResizeImage(folderName, isMerged, imageFileName);
+                        }
+                    }
+                    catch (Exception e)
+                    {
+                        //Console.WriteLine(e);
+                        //throw;
+                    }
+
+                    //ExtractGpsInfoFromImageAndUpdateOrCreateJsonFileWithListOfImages(jsonThumbsFileName, jsonPicsFileName, imageFileName);
+
+                    RecordCount = Interlocked.Increment(ref _recordCount);
+                    fileNames.Add($"{RecordCount}. {imageFileName}");
+                });
 
             await File.WriteAllLinesAsync(@"fileListMain.txt", fileNames);
+            await SaveAsJsonAsync(@"test.json", latLngQueue);
             //}
         }
         else
@@ -59,46 +92,26 @@ public class ResizeImageDesktop/*(ILogger logger)*/ : ICommandHandlerAsync<Resiz
         }
     }
 
-    private void ExtractGpsInfoFromImageAndUpdateOrCreateJsonFileWithListOfImages(string jsonThumbsFileName,
-        string jsonPicsFileName, string imageFileName)
+    private string CreateRelativeWebPath(string fullImageFileName, string folderName, string baseGalleryPath)
     {
-        try
+        string baseFolderToCreateRelativeFrom = Directory.GetParent(fullImageFileName)?.FullName ?? string.Empty;
+        baseFolderToCreateRelativeFrom = Directory.GetParent(baseFolderToCreateRelativeFrom)?.FullName ?? string.Empty;
+        baseFolderToCreateRelativeFrom = Path.Join(baseFolderToCreateRelativeFrom, folderName);
+        baseFolderToCreateRelativeFrom = Path.Join(baseFolderToCreateRelativeFrom, Path.GetFileName(fullImageFileName));
+        //string basePath = @"C:\projects\KanaloaGalleryTest\gallery\allWithPics";
+        string relativePath = Path.GetRelativePath(baseGalleryPath, baseFolderToCreateRelativeFrom);
+        return $"../{relativePath.Replace("\\", "/")}";
+    }
+
+    static async Task SaveAsJsonAsync(string filePath, IEnumerable<LatLngFileNameModel> data)
+    {
+        var options = new JsonSerializerOptions
         {
+            WriteIndented = true
+        };
 
-            ExtractGpsInfoFromImage extractGpsInfoFromImage = new ExtractGpsInfoFromImage();
-            var extractGpsInfoFromImageCommand = new ExtractGpsInfoFromImageCommand
-            {
-                ImageFileNameToReadGpsFrom = imageFileName
-            };
-            extractGpsInfoFromImage.Execute(extractGpsInfoFromImageCommand);
-
-            var updateOrCreateJsonFileWithListOfImagesCommand =
-                new UpdateOrCreateJsonFileWithListOfImagesCommand
-                {
-                    FolderName = string.Empty,
-                    LatLngModel = extractGpsInfoFromImageCommand.LatLngModel,
-                    ImageFileName = Path.GetFileName(imageFileName),
-                    JsonThumbsFileName = jsonThumbsFileName,
-                    JsonPicsFileName = jsonPicsFileName
-                };
-
-            UpdateOrCreateJsonFileWithListOfImages updateOrCreateJsonFileWithListOfImages =
-                new UpdateOrCreateJsonFileWithListOfImages(new UpdateJsonIfExistsOrCreateNewIfNot());
-            updateOrCreateJsonFileWithListOfImages.Execute(updateOrCreateJsonFileWithListOfImagesCommand);
-        }
-        catch (Exception ex)
-        {
-            //var updateUi = new UpdateUi
-            //{
-            //    Form = UpdateUi.Form,
-            //    TextBox = UpdateUi.TextBox,
-            //    Error = $"{imageFileName}: {ex.Message}",
-            //    Name = UpdateUi.Name
-            //};
-
-            //logger.Log(updateUi);
-        }
-
+        await using FileStream fs = new FileStream(filePath, FileMode.Create, FileAccess.Write, FileShare.None);
+        await JsonSerializer.SerializeAsync(fs, data, options);
     }
 
     private void ResizeImage(string folderName, bool isMerged, string imageFileName)
