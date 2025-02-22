@@ -80,7 +80,7 @@ public partial class Form1 : Form
             {
                 DataRow = dataRow
             };
-            ResizeImageDesktop resizeImageDesktop = new ResizeImageDesktop(new UiLogger());
+            ResizeImageDesktop resizeImageDesktop = new ResizeImageDesktop(/*new UiLogger()*/);
 
             UpdateUi updateUi = new UpdateUi
             {
@@ -89,13 +89,6 @@ public partial class Form1 : Form
                 Name = "resizeImageDesktop"
             };
             resizeImageDesktop.UpdateUi = updateUi;
-
-            resizeImageDesktop.RecordCountChanged += (senderRecordCountChanged, count) =>
-            {
-                tsslRecordCount.Text = $"Files processed: {count}";
-                tsslRecordCount.GetCurrentParent().Refresh();
-
-            };
 
             await resizeImageDesktop.Execute(resizeImageDesktopCommand);
         }

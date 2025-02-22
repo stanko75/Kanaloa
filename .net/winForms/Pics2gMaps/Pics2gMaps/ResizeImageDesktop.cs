@@ -5,35 +5,12 @@ using System.Collections.Concurrent;
 
 namespace Pics2gMaps;
 
-public class ResizeImageDesktop(ILogger logger) : ICommandHandlerAsync<ResizeImageDesktopCommand>
+public class ResizeImageDesktop/*(ILogger logger)*/ : ICommandHandlerAsync<ResizeImageDesktopCommand>
 {
     public UpdateUi UpdateUi { get; set; }
     private int _recordCount;
-    public event EventHandler<int>? RecordCountChanged;
 
-    public int RecordCount
-    {
-        get => _recordCount;
-        private set
-        {
-            _recordCount = value;
-            RaiseRecordCountChanged(_recordCount);
-        }
-        // Sicheres Event-Handling
-    }
-
-    private void RaiseRecordCountChanged(int count)
-    {
-        if (UpdateUi.Form is { IsHandleCreated: true, InvokeRequired: true })
-        {
-            UpdateUi.Form.BeginInvoke(() => RecordCountChanged?.Invoke(this, count));
-        }
-        else
-        {
-            RecordCountChanged?.Invoke(this, count);
-        }
-    }
-
+    public int RecordCount { get; private set; }
 
     public async Task Execute(ResizeImageDesktopCommand command)
     {
@@ -78,7 +55,7 @@ public class ResizeImageDesktop(ILogger logger) : ICommandHandlerAsync<ResizeIma
         }
         else
         {
-            logger.Log($"Folder {picsFolder} does not exist!");
+            //logger.Log($"Folder {picsFolder} does not exist!");
         }
     }
 
@@ -111,15 +88,15 @@ public class ResizeImageDesktop(ILogger logger) : ICommandHandlerAsync<ResizeIma
         }
         catch (Exception ex)
         {
-            var updateUi = new UpdateUi
-            {
-                Form = UpdateUi.Form,
-                TextBox = UpdateUi.TextBox,
-                Error = $"{imageFileName}: {ex.Message}",
-                Name = UpdateUi.Name
-            };
+            //var updateUi = new UpdateUi
+            //{
+            //    Form = UpdateUi.Form,
+            //    TextBox = UpdateUi.TextBox,
+            //    Error = $"{imageFileName}: {ex.Message}",
+            //    Name = UpdateUi.Name
+            //};
 
-            logger.Log(updateUi);
+            //logger.Log(updateUi);
         }
 
     }
@@ -147,15 +124,15 @@ public class ResizeImageDesktop(ILogger logger) : ICommandHandlerAsync<ResizeIma
         }
         catch (Exception ex)
         {
-            var updateUi = new UpdateUi
-            {
-                Form = UpdateUi.Form,
-                TextBox = UpdateUi.TextBox,
-                Error = $"{imageFileName}: {ex.Message}",
-                Name = UpdateUi.Name
-            };
+            //var updateUi = new UpdateUi
+            //{
+            //    Form = UpdateUi.Form,
+            //    TextBox = UpdateUi.TextBox,
+            //    Error = $"{imageFileName}: {ex.Message}",
+            //    Name = UpdateUi.Name
+            //};
 
-            logger.Log(updateUi);
+            //logger.Log(updateUi);
         }
     }
 }
