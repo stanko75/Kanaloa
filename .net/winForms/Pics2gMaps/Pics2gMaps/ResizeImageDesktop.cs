@@ -40,7 +40,8 @@ public class ResizeImageDesktop/*(ILogger logger)*/ : ICommandHandlerAsync<Resiz
         if (Directory.Exists(picsFolder))
         {
             var fileNames = new ConcurrentBag<string>();
-            var latLngQueue = new ConcurrentBag<LatLngFileNameModel>();
+            var latLngThumbsQueue = new ConcurrentBag<LatLngFileNameModel>();
+            var latLngPicsQueue = new ConcurrentBag<LatLngFileNameModel>();
 
             await Parallel.ForEachAsync(
                 Directory.EnumerateFiles(picsFolder, "*.*", SearchOption.AllDirectories).AsParallel(),
@@ -58,14 +59,22 @@ public class ResizeImageDesktop/*(ILogger logger)*/ : ICommandHandlerAsync<Resiz
                         extractGpsInfoFromImage.Execute(extractGpsInfoFromImageCommand);
                         if (extractGpsInfoFromImageCommand.LatLngModel != null)
                         {
-                            CreateRelativeWebPath(imageFileName, "thumbs", folderName);
-                            LatLngFileNameModel latLngFileNameModel = new LatLngFileNameModel
+                            CreateRelativeWebPath(imageFileName, "pics", folderName);
+                            LatLngFileNameModel latLngFileNameThumbsModel = new LatLngFileNameModel
                             {
                                 FileName = CreateRelativeWebPath(imageFileName, "thumbs", folderName),
                                 Latitude = extractGpsInfoFromImageCommand.LatLngModel.Latitude,
                                 Longitude = extractGpsInfoFromImageCommand.LatLngModel.Longitude
                             };
-                            latLngQueue.Add(latLngFileNameModel);
+                            latLngThumbsQueue.Add(latLngFileNameThumbsModel);
+
+                            LatLngFileNameModel latLngFileNamePicsModel = new LatLngFileNameModel
+                            {
+                                FileName = CreateRelativeWebPath(imageFileName, "pics", folderName),
+                                Latitude = extractGpsInfoFromImageCommand.LatLngModel.Latitude,
+                                Longitude = extractGpsInfoFromImageCommand.LatLngModel.Longitude
+                            };
+                            latLngPicsQueue.Add(latLngFileNamePicsModel);
 
                             ResizeImage(folderName, isMerged, imageFileName);
                         }
@@ -83,7 +92,8 @@ public class ResizeImageDesktop/*(ILogger logger)*/ : ICommandHandlerAsync<Resiz
                 });
 
             await File.WriteAllLinesAsync(@"fileListMain.txt", fileNames);
-            await SaveAsJsonAsync(@"test.json", latLngQueue);
+            await SaveAsJsonAsync(jsonThumbsFileName, latLngThumbsQueue);
+            await SaveAsJsonAsync(jsonPicsFileName, latLngPicsQueue);
             //}
         }
         else
@@ -118,7 +128,6 @@ public class ResizeImageDesktop/*(ILogger logger)*/ : ICommandHandlerAsync<Resiz
     {
         try
         {
-
             if (!isMerged)
             {
                 var resizeImageCommand = new ResizeImageCommand

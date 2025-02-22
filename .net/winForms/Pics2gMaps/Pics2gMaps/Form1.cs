@@ -1,14 +1,7 @@
 using System.Data;
-using System.Diagnostics;
-using System.Diagnostics.Metrics;
 using System.Xml.Linq;
-using Common;
 using FastLoadImagesToMemoryAndProcessLater.Log;
-using HtmlHandling;
-using ImageHandling;
 using Newtonsoft.Json;
-using Pics2gMaps.Log;
-using Timer = System.Windows.Forms.Timer;
 
 namespace Pics2gMaps;
 
