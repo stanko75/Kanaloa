@@ -58,23 +58,8 @@ public class ResizeImageDesktop/*(ILogger logger)*/ : ICommandHandlerAsync<Resiz
                         extractGpsInfoFromImage.Execute(extractGpsInfoFromImageCommand);
                         if (extractGpsInfoFromImageCommand.LatLngModel != null)
                         {
-                            CreateRelativeWebPath(imageFileName, "pics", folderName);
-                            LatLngFileNameModel latLngFileNameThumbsModel = new LatLngFileNameModel
-                            {
-                                FileName = CreateRelativeWebPath(imageFileName, "thumbs", folderName),
-                                Latitude = extractGpsInfoFromImageCommand.LatLngModel.Latitude,
-                                Longitude = extractGpsInfoFromImageCommand.LatLngModel.Longitude
-                            };
-                            latLngThumbsQueue.Add(latLngFileNameThumbsModel);
-
-                            LatLngFileNameModel latLngFileNamePicsModel = new LatLngFileNameModel
-                            {
-                                FileName = CreateRelativeWebPath(imageFileName, "pics", folderName),
-                                Latitude = extractGpsInfoFromImageCommand.LatLngModel.Latitude,
-                                Longitude = extractGpsInfoFromImageCommand.LatLngModel.Longitude
-                            };
-                            latLngPicsQueue.Add(latLngFileNamePicsModel);
-
+                            AddLatLngFileNameModelToQueue(folderName, imageFileName, extractGpsInfoFromImageCommand, latLngThumbsQueue, "thumbs");
+                            AddLatLngFileNameModelToQueue(folderName, imageFileName, extractGpsInfoFromImageCommand, latLngPicsQueue, "pics");
                             ResizeImage(folderName, isMerged, imageFileName);
                         }
                     }
@@ -100,6 +85,18 @@ public class ResizeImageDesktop/*(ILogger logger)*/ : ICommandHandlerAsync<Resiz
         {
             //logger.Log($"Folder {picsFolder} does not exist!");
         }
+    }
+
+    private void AddLatLngFileNameModelToQueue(string folderName, string imageFileName,
+        ExtractGpsInfoFromImageCommand extractGpsInfoFromImageCommand, ConcurrentBag<LatLngFileNameModel> latLngThumbsQueue, string folderThumbsOrPicsName)
+    {
+        LatLngFileNameModel latLngFileNameThumbsModel = new LatLngFileNameModel
+        {
+            FileName = CreateRelativeWebPath(imageFileName, folderThumbsOrPicsName, folderName),
+            Latitude = extractGpsInfoFromImageCommand.LatLngModel.Latitude,
+            Longitude = extractGpsInfoFromImageCommand.LatLngModel.Longitude
+        };
+        latLngThumbsQueue.Add(latLngFileNameThumbsModel);
     }
 
     private string CreateRelativeWebPath(string fullImageFileName, string folderName, string baseGalleryPath)
