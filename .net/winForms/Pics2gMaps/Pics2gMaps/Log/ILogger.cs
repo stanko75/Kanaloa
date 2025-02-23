@@ -1,6 +1,6 @@
-﻿using System.Reflection.Metadata.Ecma335;
+﻿using FastLoadImagesToMemoryAndProcessLater.Log;
 
-namespace FastLoadImagesToMemoryAndProcessLater.Log;
+namespace Pics2gMaps.Log;
 
 public interface ILogger
 {

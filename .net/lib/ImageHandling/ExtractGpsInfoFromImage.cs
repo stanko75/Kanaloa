@@ -17,7 +17,7 @@ public class ExtractGpsInfoFromImage : ICommandHandler<ExtractGpsInfoFromImageCo
 
             if (location is null || location.Latitude == 0 || location.Longitude == 0)
             {
-                throw new Exception("Cannot extract GPS info from image!");
+                throw new Exception($"Cannot extract GPS info from image: {command.ImageFileNameToReadGpsFrom}!");
             }
 
             command.LatLngModel = new LatLngModel

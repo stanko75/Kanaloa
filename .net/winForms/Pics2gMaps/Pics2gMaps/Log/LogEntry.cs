@@ -1,13 +1,14 @@
-﻿namespace FastLoadImagesToMemoryAndProcessLater.Log;
+﻿using FastLoadImagesToMemoryAndProcessLater.Log;
+
+namespace Pics2gMaps.Log;
 
 public class LogEntry
 {
     public LoggingEventType Severity { get; }
     public string? Message { get; }
     public Exception? Exception { get; }
-    public UpdateUi? UpdateUi { get; }
 
-    public LogEntry(LoggingEventType severity, string? msg, Exception? ex = null, UpdateUi ui = null)
+    public LogEntry(LoggingEventType severity, string? msg, Exception? ex = null)
     {
         switch (msg)
         {
@@ -20,6 +21,5 @@ public class LogEntry
         Severity = severity;
         Message = msg;
         Exception = ex;
-        UpdateUi = ui;
     }
 }

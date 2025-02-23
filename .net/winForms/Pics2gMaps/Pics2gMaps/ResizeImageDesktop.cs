@@ -1,6 +1,7 @@
 ﻿using Common;
 using FastLoadImagesToMemoryAndProcessLater.Log;
 using ImageHandling;
+using System;
 using System.Collections.Concurrent;
 using System.Text.Json;
 using Timer = System.Threading.Timer;
@@ -11,6 +12,7 @@ public class ResizeImageDesktop() : ICommandHandlerAsync<ResizeImageDesktopComma
 {
     public event EventHandler<FilesProcessedEventArgs>? FilesProcessed;
     private int _recordCount;
+    ConcurrentQueue<Exception> _exceptions = new ConcurrentQueue<Exception>();
 
     private readonly ConcurrentQueue<int> _queue = new();
     private readonly Timer? _timer;
@@ -68,7 +70,7 @@ public class ResizeImageDesktop() : ICommandHandlerAsync<ResizeImageDesktopComma
 
             await Parallel.ForEachAsync(
                 Directory.EnumerateFiles(picsFolder, "*.*", SearchOption.AllDirectories).AsParallel(), (imageFileName, cancellationToken) =>
-                    //foreach (string imageFileName in Directory.GetFiles(picsFolder, "*.*", SearchOption.AllDirectories))
+                //foreach (string imageFileName in Directory.GetFiles(picsFolder, "*.*", SearchOption.AllDirectories))
                 {
                     ExtractGpsInfoFromImage extractGpsInfoFromImage = new ExtractGpsInfoFromImage();
                     var extractGpsInfoFromImageCommand = new ExtractGpsInfoFromImageCommand
@@ -88,8 +90,7 @@ public class ResizeImageDesktop() : ICommandHandlerAsync<ResizeImageDesktopComma
                     }
                     catch (Exception e)
                     {
-                        //Console.WriteLine(e);
-                        //throw;
+                       _exceptions.Enqueue(e);
                     }
 
                     //ExtractGpsInfoFromImageAndUpdateOrCreateJsonFileWithListOfImages(jsonThumbsFileName, jsonPicsFileName, imageFileName);
@@ -107,7 +108,12 @@ public class ResizeImageDesktop() : ICommandHandlerAsync<ResizeImageDesktopComma
         }
         else
         {
-            //logger.Log($"Folder {picsFolder} does not exist!");
+            throw new DirectoryNotFoundException($"Directory {picsFolder} not found.");
+        }
+
+        if (!_exceptions.IsEmpty)
+        {
+            throw new AggregateException(_exceptions);
         }
     }
 
@@ -147,35 +153,20 @@ public class ResizeImageDesktop() : ICommandHandlerAsync<ResizeImageDesktopComma
 
     private void ResizeImage(string folderName, bool isMerged, string imageFileName)
     {
-        try
+        if (!isMerged)
         {
-            if (!isMerged)
+            var resizeImageCommand = new ResizeImageCommand
             {
-                var resizeImageCommand = new ResizeImageCommand
-                {
-                    CanvasHeight = 200,
-                    CanvasWidth = 200,
-                    OriginalFileName = Path.GetFileName(imageFileName),
-                    //SaveTo = Path.Join(@"C:\projects\KanaloaGalleryTest\mariaLaach\thumbs", imageFileName)
-                    SaveTo = Path.GetFileName(imageFileName)
-                };
-                resizeImageCommand.CreateDirectories(folderName);
+                CanvasHeight = 200,
+                CanvasWidth = 200,
+                OriginalFileName = Path.GetFileName(imageFileName),
+                //SaveTo = Path.Join(@"C:\projects\KanaloaGalleryTest\mariaLaach\thumbs", imageFileName)
+                SaveTo = Path.GetFileName(imageFileName)
+            };
+            resizeImageCommand.CreateDirectories(folderName);
 
-                ResizeImage resizeImage = new ResizeImage();
-                resizeImage.Execute(resizeImageCommand);
-            }
-        }
-        catch (Exception ex)
-        {
-            //var updateUi = new UpdateUi
-            //{
-            //    Form = UpdateUi.Form,
-            //    TextBox = UpdateUi.TextBox,
-            //    Error = $"{imageFileName}: {ex.Message}",
-            //    Name = UpdateUi.Name
-            //};
-
-            //logger.Log(updateUi);
+            ResizeImage resizeImage = new ResizeImage();
+            resizeImage.Execute(resizeImageCommand);
         }
     }
 }

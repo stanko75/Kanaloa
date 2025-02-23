@@ -2,6 +2,7 @@ using System.Data;
 using System.Xml.Linq;
 using FastLoadImagesToMemoryAndProcessLater.Log;
 using Newtonsoft.Json;
+using Pics2gMaps.Log;
 
 namespace Pics2gMaps;
 
@@ -58,24 +59,33 @@ public partial class Form1 : Form
                 .Where(row => row != null)!;
         }
 
-        foreach (DataRow dataRow in rows)
+        try
         {
-            PrepareHtmlFolderCommand prepareHtmlFolderCommand = new PrepareHtmlFolderCommand
+            foreach (DataRow dataRow in rows)
             {
-                DataRow = dataRow,
-                TemplateRootFolder = tbTemplateRootFolder.Text,
-                Columns = _dtGalleryConfiguration.Columns
-            };
-            PrepareHtmlFolder prepareHtmlFolder = new PrepareHtmlFolder();
-            prepareHtmlFolder.Execute(prepareHtmlFolderCommand);
+                PrepareHtmlFolderCommand prepareHtmlFolderCommand = new PrepareHtmlFolderCommand
+                {
+                    DataRow = dataRow,
+                    TemplateRootFolder = tbTemplateRootFolder.Text,
+                    Columns = _dtGalleryConfiguration.Columns
+                };
+                PrepareHtmlFolder prepareHtmlFolder = new PrepareHtmlFolder();
+                prepareHtmlFolder.Execute(prepareHtmlFolderCommand);
 
-            ResizeImageDesktopCommand resizeImageDesktopCommand = new ResizeImageDesktopCommand
-            {
-                DataRow = dataRow
-            };
-            ResizeImageDesktop resizeImageDesktop = new ResizeImageDesktop(this);
-            resizeImageDesktop.FilesProcessed += UpdateRecordCount;
-            await resizeImageDesktop.Execute(resizeImageDesktopCommand);
+                ResizeImageDesktopCommand resizeImageDesktopCommand = new ResizeImageDesktopCommand
+                {
+                    DataRow = dataRow
+                };
+                ResizeImageDesktop resizeImageDesktop = new ResizeImageDesktop();
+                resizeImageDesktop.FilesProcessed += UpdateRecordCount;
+                await resizeImageDesktop.Execute(resizeImageDesktopCommand);
+            }
+        }
+        catch (AggregateException ae)
+        {
+            tbLog.AppendText($"Adding errors, number of errors: {ae.InnerExceptions.Count}, please wait");
+            ILogger logger = new TextBoxLogger(tbLog);
+            logger.Log(ae);
         }
 
         _cts?.Cancel();
