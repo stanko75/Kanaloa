@@ -73,12 +73,17 @@ public partial class Form1 : Form
             {
                 DataRow = dataRow
             };
-            ResizeImageDesktop resizeImageDesktop = new ResizeImageDesktop(/*new UiLogger()*/);
+            ResizeImageDesktop resizeImageDesktop = new ResizeImageDesktop(this);
             await resizeImageDesktop.Execute(resizeImageDesktopCommand);
         }
 
         _cts?.Cancel();
         MessageBox.Show("Done!");
+    }
+
+    private void UpdateRecordCount(int recordCount)
+    {
+        tsslRecordCount.Text = $"Files processed: {recordCount}";
     }
 
     private void btnLoadOld_Click(object sender, EventArgs e)

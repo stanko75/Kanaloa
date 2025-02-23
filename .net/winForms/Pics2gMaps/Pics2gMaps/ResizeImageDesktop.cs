@@ -3,15 +3,41 @@ using FastLoadImagesToMemoryAndProcessLater.Log;
 using ImageHandling;
 using System.Collections.Concurrent;
 using System.Text.Json;
+using Timer = System.Threading.Timer;
 
 namespace Pics2gMaps;
 
-public class ResizeImageDesktop/*(ILogger logger)*/ : ICommandHandlerAsync<ResizeImageDesktopCommand>
+public class ResizeImageDesktop() : ICommandHandlerAsync<ResizeImageDesktopCommand>
 {
     public UpdateUi UpdateUi { get; set; }
     private int _recordCount;
 
-    public int RecordCount { get; private set; }
+    private readonly ConcurrentQueue<int> _queue = new();
+    private readonly Timer _timer;
+
+    public ResizeImageDesktop(Form form) : this()
+    {
+        _timer = new Timer(_ =>
+        {
+            if (_queue.TryDequeue(out int item))
+            {
+                form.Invoke(new Action(() =>
+                {
+                    if (!(form.Controls["statusStrip1"] is { IsDisposed: true }) &&
+                        form.Controls["statusStrip1"] is StatusStrip statusStrip)
+                    {
+                        statusStrip.Items[0].Text = $"Files processed: {_recordCount}";
+                    }
+                }));
+            }
+        }, null, 0, 100);
+    }
+
+    public int RecordCount
+    {
+        get => _recordCount;
+        private set => _recordCount = value;
+    }
 
     public async Task Execute(ResizeImageDesktopCommand command)
     {
@@ -71,6 +97,7 @@ public class ResizeImageDesktop/*(ILogger logger)*/ : ICommandHandlerAsync<Resiz
                     //ExtractGpsInfoFromImageAndUpdateOrCreateJsonFileWithListOfImages(jsonThumbsFileName, jsonPicsFileName, imageFileName);
 
                     RecordCount = Interlocked.Increment(ref _recordCount);
+                    _queue.Enqueue(RecordCount);
                     fileNames.Add($"{RecordCount}. {imageFileName}");
                     return ValueTask.CompletedTask;
                 });
