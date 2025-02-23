@@ -2,7 +2,6 @@
 using FastLoadImagesToMemoryAndProcessLater.Log;
 using ImageHandling;
 using System.Collections.Concurrent;
-using System.IO;
 using System.Text.Json;
 
 namespace Pics2gMaps;
