@@ -125,7 +125,6 @@ public partial class Form1 : Form
                 drGalleryConfiguration[DataTableConfigColumns.JoomlaThumbsPath] = setting.JoomlaThumbsPath;
                 drGalleryConfiguration[DataTableConfigColumns.IsMerged] = false;
                 _dtGalleryConfiguration.Rows.Add(drGalleryConfiguration);
-                _dtGalleryConfiguration.Rows.Add(drGalleryConfiguration);
             }
         }
     }
