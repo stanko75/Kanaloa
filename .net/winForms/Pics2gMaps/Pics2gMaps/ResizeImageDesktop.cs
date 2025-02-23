@@ -44,8 +44,7 @@ public class ResizeImageDesktop/*(ILogger logger)*/ : ICommandHandlerAsync<Resiz
             var latLngPicsQueue = new ConcurrentBag<LatLngFileNameModel>();
 
             await Parallel.ForEachAsync(
-                Directory.EnumerateFiles(picsFolder, "*.*", SearchOption.AllDirectories).AsParallel(),
-                async (imageFileName, cancellationToken) =>
+                Directory.EnumerateFiles(picsFolder, "*.*", SearchOption.AllDirectories).AsParallel(), (imageFileName, cancellationToken) =>
                     //foreach (string imageFileName in Directory.GetFiles(picsFolder, "*.*", SearchOption.AllDirectories))
                 {
                     ExtractGpsInfoFromImage extractGpsInfoFromImage = new ExtractGpsInfoFromImage();
@@ -89,6 +88,7 @@ public class ResizeImageDesktop/*(ILogger logger)*/ : ICommandHandlerAsync<Resiz
 
                     RecordCount = Interlocked.Increment(ref _recordCount);
                     fileNames.Add($"{RecordCount}. {imageFileName}");
+                    return ValueTask.CompletedTask;
                 });
 
             await File.WriteAllLinesAsync(@"fileListMain.txt", fileNames);

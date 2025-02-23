@@ -74,15 +74,6 @@ public partial class Form1 : Form
                 DataRow = dataRow
             };
             ResizeImageDesktop resizeImageDesktop = new ResizeImageDesktop(/*new UiLogger()*/);
-
-            UpdateUi updateUi = new UpdateUi
-            {
-                Form = this,
-                TextBox = tbLog,
-                Name = "resizeImageDesktop"
-            };
-            resizeImageDesktop.UpdateUi = updateUi;
-
             await resizeImageDesktop.Execute(resizeImageDesktopCommand);
         }
 
