@@ -7,13 +7,13 @@ using Timer = System.Threading.Timer;
 
 namespace Pics2gMaps;
 
-public class ResizeImageDesktop() : ICommandHandlerAsync<ResizeImageDesktopCommand>
+public class ResizeImageDesktop() : ICommandHandlerAsync<ResizeImageDesktopCommand>, IDisposable
 {
-    public UpdateUi UpdateUi { get; set; }
+    public event EventHandler<FilesProcessedEventArgs>? FilesProcessed;
     private int _recordCount;
 
     private readonly ConcurrentQueue<int> _queue = new();
-    private readonly Timer _timer;
+    private readonly Timer? _timer;
 
     public ResizeImageDesktop(Form form) : this()
     {
@@ -21,16 +21,14 @@ public class ResizeImageDesktop() : ICommandHandlerAsync<ResizeImageDesktopComma
         {
             if (_queue.TryDequeue(out int item))
             {
-                form.Invoke(new Action(() =>
-                {
-                    if (!(form.Controls["statusStrip1"] is { IsDisposed: true }) &&
-                        form.Controls["statusStrip1"] is StatusStrip statusStrip)
-                    {
-                        statusStrip.Items[0].Text = $"Files processed: {_recordCount}";
-                    }
-                }));
+                FilesProcessed?.Invoke(this, new FilesProcessedEventArgs(_recordCount));
             }
         }, null, 0, 100);
+    }
+
+    public void Dispose()
+    {
+        _timer?.Dispose();
     }
 
     public int RecordCount

@@ -74,6 +74,7 @@ public partial class Form1 : Form
                 DataRow = dataRow
             };
             ResizeImageDesktop resizeImageDesktop = new ResizeImageDesktop(this);
+            resizeImageDesktop.FilesProcessed += UpdateRecordCount;
             await resizeImageDesktop.Execute(resizeImageDesktopCommand);
         }
 
@@ -81,9 +82,24 @@ public partial class Form1 : Form
         MessageBox.Show("Done!");
     }
 
-    private void UpdateRecordCount(int recordCount)
+    private void UpdateRecordCount(object? sender, FilesProcessedEventArgs e)
     {
-        tsslRecordCount.Text = $"Files processed: {recordCount}";
+        if (!IsDisposed)
+        {
+            if (InvokeRequired)
+            {
+                BeginInvoke(() => UpdateStatus(e.ProcessedFiles));
+            }
+            else
+            {
+                UpdateStatus(e.ProcessedFiles);
+            }
+        }
+    }
+
+    private void UpdateStatus(int processedFiles)
+    {
+        tsslRecordCount.Text = $"Processed files: {processedFiles}";
     }
 
     private void btnLoadOld_Click(object sender, EventArgs e)
