@@ -61,6 +61,7 @@ public partial class Form1 : Form
 
         try
         {
+            var lstOfTasksToExecuteWhenGpsInfoWasExtracted = new List<ITaskToExecuteWhenGpsIsExtracting>();
             foreach (DataRow dataRow in rows)
             {
                 PrepareHtmlFolderCommand prepareHtmlFolderCommand = new PrepareHtmlFolderCommand
@@ -72,13 +73,23 @@ public partial class Form1 : Form
                 PrepareHtmlFolder prepareHtmlFolder = new PrepareHtmlFolder();
                 prepareHtmlFolder.Execute(prepareHtmlFolderCommand);
 
-                ResizeImageDesktopCommand resizeImageDesktopCommand = new ResizeImageDesktopCommand
-                {
-                    DataRow = dataRow
-                };
-                ResizeImageDesktop resizeImageDesktop = new ResizeImageDesktop();
-                resizeImageDesktop.FilesProcessed += UpdateRecordCount;
-                await resizeImageDesktop.Execute(resizeImageDesktopCommand);
+                //ResizeImageDesktopCommand resizeImageDesktopCommand = new ResizeImageDesktopCommand
+                //{
+                //    DataRow = dataRow
+                //};
+                //ResizeImageDesktop resizeImageDesktop = new ResizeImageDesktop();
+                //resizeImageDesktop.FilesProcessed += UpdateRecordCount;
+                //await resizeImageDesktop.Execute(resizeImageDesktopCommand);
+
+                //ToDO: lstOfTasksToExecuteWhenGpsInfoWasExtracted.Add(AddToSqlServerTask);
+                var extractGpsInfoAndResizeImageWrapperCommand =
+                    new ExtractGpsInfoAndResizeImageWrapperCommand
+                    {
+                        DataRow = dataRow,
+                        LstOfTasksToExecuteWhenGpsInfoWasExtracted = lstOfTasksToExecuteWhenGpsInfoWasExtracted
+                    };
+                var extractGpsInfoAndResizeImageWrapper = new ExtractGpsInfoAndResizeImageWrapper();
+                await extractGpsInfoAndResizeImageWrapper.Execute(extractGpsInfoAndResizeImageWrapperCommand);
             }
         }
         catch (AggregateException ae)

@@ -5,9 +5,12 @@ using System;
 
 namespace Pics2gMaps;
 
-public class ParallelForEachAndExtractGpsInfoWrapper<TCommand>(ICommandHandlerAsync<TCommand>[] arrayOfTasksToExecuteWhenGpsInfoWasExtracted, ICommandHandlerAsync<TCommand>[] arrayOfTasksToExecuteWhenForEachIsDone) : ICommandHandlerAsync<TCommand>
+
+
+public class ParallelForEachAndExtractGpsInfoWrapper(
+    List<ITaskToExecuteWhenGpsIsExtracting> lstOfTasksToExecuteWhenGpsInfoWasExtracted
+    , List<ITaskToExecuteWhenForEachIsDone>? lstOfTasksToExecuteWhenForEachIsDone) : ICommandHandlerAsync<ParallelForEachAndExtractGpsInfoWrapperCommand>
 {
-    public string FolderName { get; set; }
 
     ConcurrentQueue<Exception> _exceptions = new ConcurrentQueue<Exception>();
     private int _recordCount;
@@ -17,31 +20,38 @@ public class ParallelForEachAndExtractGpsInfoWrapper<TCommand>(ICommandHandlerAs
         private set => _recordCount = value;
     }
 
-    public async Task Execute(TCommand command)
+    public async Task Execute(ParallelForEachAndExtractGpsInfoWrapperCommand parallelForEachAndExtractGpsInfoWrapperCommand)
     {
-        if (Directory.Exists(FolderName))
+        if (Directory.Exists(parallelForEachAndExtractGpsInfoWrapperCommand.FolderName))
         {
             var fileNames = new ConcurrentBag<string>();
+            var latLngThumbsQueue = new ConcurrentBag<LatLngFileNameModel>();
+            var latLngPicsQueue = new ConcurrentBag<LatLngFileNameModel>();
 
             List<Task> tasksToExecuteWhenGpsInfoWasExtracted = new List<Task>();
+            List<Task> tasksToExecuteWhenForEachIsDone = new List<Task>();
 
             await Parallel.ForEachAsync(
-                Directory.EnumerateFiles(FolderName, "*.*", SearchOption.AllDirectories), (imageFileName, cancellationToken) =>
+                Directory.EnumerateFiles(parallelForEachAndExtractGpsInfoWrapperCommand.FolderName, "*.*", SearchOption.AllDirectories), (imageFileName, cancellationToken) =>
                 {
                     ExtractGpsInfoFromImage extractGpsInfoFromImage = new ExtractGpsInfoFromImage();
                     var extractGpsInfoFromImageCommand = new ExtractGpsInfoFromImageCommand
                     {
                         ImageFileNameToReadGpsFrom = imageFileName
                     };
+                    parallelForEachAndExtractGpsInfoWrapperCommand.ImageFileNameToReadGpsFrom = imageFileName;
 
                     try
                     {
                         extractGpsInfoFromImage.Execute(extractGpsInfoFromImageCommand);
                         if (extractGpsInfoFromImageCommand.LatLngModel != null)
                         {
-                            foreach (ICommandHandlerAsync<TCommand> commandHandlerAsync in arrayOfTasksToExecuteWhenGpsInfoWasExtracted)
+                            foreach (var commandHandlerAsync in lstOfTasksToExecuteWhenGpsInfoWasExtracted)
                             {
-                                tasksToExecuteWhenGpsInfoWasExtracted.Add(commandHandlerAsync.Execute(command));
+                                //ToDo here invoke rather event
+                                AddLatLngFileNameModelToQueue(parallelForEachAndExtractGpsInfoWrapperCommand.FolderName, imageFileName, extractGpsInfoFromImageCommand, latLngThumbsQueue, "thumbs");
+                                AddLatLngFileNameModelToQueue(parallelForEachAndExtractGpsInfoWrapperCommand.FolderName, imageFileName, extractGpsInfoFromImageCommand, latLngPicsQueue, "pics");
+                                tasksToExecuteWhenGpsInfoWasExtracted.Add(commandHandlerAsync.Execute(extractGpsInfoFromImageCommand));
                             }
                         }
                         else
@@ -59,16 +69,23 @@ public class ParallelForEachAndExtractGpsInfoWrapper<TCommand>(ICommandHandlerAs
                     return ValueTask.CompletedTask;
                 });
 
-            await Task.WhenAll(tasksToExecuteWhenGpsInfoWasExtracted);
-            foreach (ICommandHandlerAsync<TCommand> commandHandlerAsync in arrayOfTasksToExecuteWhenGpsInfoWasExtracted)
+            //ToDo: also here rather event then list
+            foreach (var taskToExecuteWhenForEachIsDone in lstOfTasksToExecuteWhenForEachIsDone)
             {
-                await commandHandlerAsync.Execute(command);
+                tasksToExecuteWhenForEachIsDone.Add(taskToExecuteWhenForEachIsDone.Execute(latLngPicsQueue));
             }
+
+            await Task.WhenAll(tasksToExecuteWhenGpsInfoWasExtracted);
+            //foreach (var commandHandlerAsync in lstOfTasksToExecuteWhenGpsInfoWasExtracted)
+            //{
+            //    await commandHandlerAsync.Execute(command);
+            //}
         }
         else
         {
-            throw new DirectoryNotFoundException($"Directory {FolderName} not found.");
+            throw new DirectoryNotFoundException($"Directory {parallelForEachAndExtractGpsInfoWrapperCommand.FolderName} not found.");
         }
+
     }
 
     private void AddLatLngFileNameModelToQueue(string folderName, string imageFileName,
@@ -93,4 +110,14 @@ public class ParallelForEachAndExtractGpsInfoWrapper<TCommand>(ICommandHandlerAs
         string relativePath = Path.GetRelativePath(baseGalleryPath, baseFolderToCreateRelativeFrom);
         return $"../{relativePath.Replace("\\", "/")}";
     }
+}
+
+public interface ITaskToExecuteWhenGpsIsExtracting
+{
+    Task Execute(ExtractGpsInfoFromImageCommand extractGpsInfoFromImageCommand);
+}
+
+public interface ITaskToExecuteWhenForEachIsDone
+{
+    Task Execute(ConcurrentBag<LatLngFileNameModel> latLngThumbsQueue);
 }
