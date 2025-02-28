@@ -9,6 +9,12 @@ public class ReplaceKeysInFiles: ICommandHandler<ReplaceKeysInFilesCommand>
         foreach (string fileName in replaceKeysInFilesCommand.ListOfFilesToReplace)
         {
             string fullFileName = Path.Join(replaceKeysInFilesCommand.TemplateRootFolder, fileName);
+
+            if (!File.Exists(fullFileName))
+            {
+                throw new FileNotFoundException($"File: {Path.GetFullPath(fullFileName)} not found!");
+            }
+
             string fileContent = File.ReadAllText(fullFileName);
 
             foreach (KeyValuePair<string, string?> keyValuesToReplaceInFiles in

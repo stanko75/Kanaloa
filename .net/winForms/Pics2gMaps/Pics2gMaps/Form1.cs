@@ -61,7 +61,6 @@ public partial class Form1 : Form
 
         try
         {
-            var lstOfTasksToExecuteWhenGpsInfoWasExtracted = new List<ITaskToExecuteWhenGpsIsExtracting>();
             foreach (DataRow dataRow in rows)
             {
                 PrepareHtmlFolderCommand prepareHtmlFolderCommand = new PrepareHtmlFolderCommand
@@ -82,14 +81,17 @@ public partial class Form1 : Form
                 //await resizeImageDesktop.Execute(resizeImageDesktopCommand);
 
                 //ToDO: lstOfTasksToExecuteWhenGpsInfoWasExtracted.Add(AddToSqlServerTask);
-                var extractGpsInfoAndResizeImageWrapperCommand =
-                    new ExtractGpsInfoAndResizeImageWrapperCommand
-                    {
-                        DataRow = dataRow,
-                        LstOfTasksToExecuteWhenGpsInfoWasExtracted = lstOfTasksToExecuteWhenGpsInfoWasExtracted
-                    };
-                var extractGpsInfoAndResizeImageWrapper = new ExtractGpsInfoAndResizeImageWrapper();
-                await extractGpsInfoAndResizeImageWrapper.Execute(extractGpsInfoAndResizeImageWrapperCommand);
+                await Task.Run(async () =>
+                {
+                    var extractGpsInfoAndResizeImageWrapperCommand =
+                        new ExtractGpsInfoAndResizeImageWrapperCommand
+                        {
+                            DataRow = dataRow
+                        };
+
+                    var extractGpsInfoAndResizeImageWrapper = new ExtractGpsInfoAndResizeImageWrapper();
+                    await extractGpsInfoAndResizeImageWrapper.Execute(extractGpsInfoAndResizeImageWrapperCommand);
+                });
             }
         }
         catch (AggregateException ae)
