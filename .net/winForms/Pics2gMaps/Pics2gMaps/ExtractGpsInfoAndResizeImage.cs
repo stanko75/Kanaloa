@@ -1,37 +1,39 @@
 ﻿using System.Collections.Concurrent;
+using System.Text.Json;
 using Common;
 using ImageHandling;
 
 namespace Pics2gMaps;
 
-public class ExtractGpsInfoAndResizeImageWrapper : ICommandHandlerAsync<ExtractGpsInfoAndResizeImageWrapperCommand>
+public class ExtractGpsInfoAndResizeImageWrapper(IProgress<int> recordCountProgress) : ICommandHandlerAsync<ExtractGpsInfoAndResizeImageWrapperCommand>
 {
-    private string galleryName;
-    private string _folderName;
-    private string jsonThumbsFileName;
-    private string jsonPicsFileName;
-    private bool isMerged;
-    private ConcurrentBag<LatLngFileNameModel> _latLngThumbsQueue = new();
+    private string? _galleryName;
+    private string? _folderName;
+    private string? _jsonThumbsFileName;
+    private string? _jsonPicsFileName;
+    private bool _isMerged;
+    private readonly ConcurrentBag<LatLngFileNameModel> _latLngThumbsQueue = new();
+    private readonly ConcurrentBag<LatLngFileNameModel> _latLngPicsQueue = new();
 
     public async Task Execute(ExtractGpsInfoAndResizeImageWrapperCommand command)
     {
-        galleryName = command.DataRow[DataTableConfigColumns.GalleryName].ToString();
-        _folderName = Path.Join(command.DataRow[DataTableConfigColumns.RootGalleryFolder].ToString(), galleryName);
-        jsonThumbsFileName = Path.Join(command.DataRow[DataTableConfigColumns.RootGalleryFolder].ToString(), $@"{galleryName}\www\{galleryName}Thumbs.json");
-        jsonPicsFileName = Path.Join(command.DataRow[DataTableConfigColumns.RootGalleryFolder].ToString(), $@"{galleryName}\www\{galleryName}.json");
+        _galleryName = command.DataRow[DataTableConfigColumns.GalleryName].ToString();
+        _folderName = Path.Join(command.DataRow[DataTableConfigColumns.RootGalleryFolder].ToString(), _galleryName);
+        _jsonThumbsFileName = Path.Join(command.DataRow[DataTableConfigColumns.RootGalleryFolder].ToString(), $@"{_galleryName}\www\{_galleryName}Thumbs.json");
+        _jsonPicsFileName = Path.Join(command.DataRow[DataTableConfigColumns.RootGalleryFolder].ToString(), $@"{_galleryName}\www\{_galleryName}.json");
 
-        if (File.Exists(jsonThumbsFileName))
+        if (File.Exists(_jsonThumbsFileName))
         {
-            File.Delete(jsonThumbsFileName);
+            File.Delete(_jsonThumbsFileName);
         }
 
-        if (File.Exists(jsonPicsFileName))
+        if (File.Exists(_jsonPicsFileName))
         {
-            File.Delete(jsonPicsFileName);
+            File.Delete(_jsonPicsFileName);
         }
 
-        isMerged = (bool)command.DataRow[DataTableConfigColumns.IsMerged];
-        string picsFolder = isMerged ? _folderName : Path.Join(_folderName, "pics");
+        _isMerged = (bool)command.DataRow[DataTableConfigColumns.IsMerged];
+        string picsFolder = _isMerged ? _folderName : Path.Join(_folderName, "pics");
         if (Directory.Exists(picsFolder))
         {
             var parallelForEachAndExtractGpsInfoWrapperCommand = new ParallelForEachAndExtractGpsInfoWrapperCommand
@@ -39,17 +41,41 @@ public class ExtractGpsInfoAndResizeImageWrapper : ICommandHandlerAsync<ExtractG
                 FolderName = _folderName
             };
             var parallelForEachAndExtractGpsInfoWrapper =
-                new ParallelForEachAndExtractGpsInfoWrapper();
+                new ParallelForEachAndExtractGpsInfoWrapper(recordCountProgress);
             parallelForEachAndExtractGpsInfoWrapper.OnGpsInfoFromImageExtracted += OnGpsInfoFromImageExtracted;
+            parallelForEachAndExtractGpsInfoWrapper.OnGpsInfoFromImageExtracted += OnAddLatLngFileNameModelToThumbsQueue;
+            parallelForEachAndExtractGpsInfoWrapper.OnGpsInfoFromImageExtracted += OnAddLatLngFileNameModelToPicsQueue;
             await parallelForEachAndExtractGpsInfoWrapper.Execute(parallelForEachAndExtractGpsInfoWrapperCommand);
+
+            await SaveAsJsonAsync(_jsonThumbsFileName, _latLngThumbsQueue);
+            await SaveAsJsonAsync(_jsonPicsFileName, _latLngPicsQueue);
         }
+    }
+
+    static async Task SaveAsJsonAsync(string filePath, IEnumerable<LatLngFileNameModel> data)
+    {
+        var options = new JsonSerializerOptions
+        {
+            WriteIndented = true
+        };
+
+        await using FileStream fs = new FileStream(filePath, FileMode.Create, FileAccess.Write, FileShare.None);
+        await JsonSerializer.SerializeAsync(fs, data, options);
+    }
+
+    private void OnAddLatLngFileNameModelToPicsQueue(object? sender, GpsInfoFromImageExtractedEventArgs e)
+    {
+        AddLatLngFileNameModelToQueue(_folderName, e.LatLngFileName.FileName, e.LatLngFileName.Latitude, e.LatLngFileName.Longitude, _latLngPicsQueue, "pics");
+    }
+
+    private void OnAddLatLngFileNameModelToThumbsQueue(object? sender, GpsInfoFromImageExtractedEventArgs e)
+    {
+        AddLatLngFileNameModelToQueue(_folderName, e.LatLngFileName.FileName, e.LatLngFileName.Latitude, e.LatLngFileName.Longitude, _latLngThumbsQueue, "thumbs");
     }
 
     private async void OnGpsInfoFromImageExtracted(object? sender, GpsInfoFromImageExtractedEventArgs e)
     {
-        await Task.Run(() => ResizeImage(_folderName, isMerged, e.LatLngFileName.FileName));
-        AddLatLngFileNameModelToQueue(_folderName, e.LatLngFileName.FileName, e.LatLngFileName.Latitude, e.LatLngFileName.Longitude, _latLngThumbsQueue, "thumbs");
-        AddLatLngFileNameModelToQueue(_folderName, e.LatLngFileName.FileName, e.LatLngFileName.Latitude, e.LatLngFileName.Longitude, _latLngThumbsQueue, "pics");
+        await Task.Run(() => ResizeImage(_folderName, _isMerged, e.LatLngFileName.FileName));
     }
 
     private void ResizeImage(string? folderName, bool isMerged, string? imageFileName)

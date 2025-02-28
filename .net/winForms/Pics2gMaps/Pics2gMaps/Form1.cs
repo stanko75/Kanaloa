@@ -61,6 +61,7 @@ public partial class Form1 : Form
 
         try
         {
+            IProgress<int> recordCountProgress = new Progress<int>(UpdateRecordCount);
             foreach (DataRow dataRow in rows)
             {
                 PrepareHtmlFolderCommand prepareHtmlFolderCommand = new PrepareHtmlFolderCommand
@@ -89,7 +90,7 @@ public partial class Form1 : Form
                             DataRow = dataRow
                         };
 
-                    var extractGpsInfoAndResizeImageWrapper = new ExtractGpsInfoAndResizeImageWrapper();
+                    var extractGpsInfoAndResizeImageWrapper = new ExtractGpsInfoAndResizeImageWrapper(recordCountProgress);
                     await extractGpsInfoAndResizeImageWrapper.Execute(extractGpsInfoAndResizeImageWrapperCommand);
                 });
             }
@@ -103,6 +104,20 @@ public partial class Form1 : Form
 
         _cts?.Cancel();
         MessageBox.Show("Done!");
+    }
+
+    private void UpdateRecordCount(int recordCount)
+    {
+        if (IsDisposed) return;
+
+        if (InvokeRequired)
+        {
+            BeginInvoke(() => UpdateStatus(recordCount));
+        }
+        else
+        {
+            UpdateStatus(recordCount);
+        }
     }
 
     private void UpdateRecordCount(object? sender, FilesProcessedEventArgs e)
@@ -122,7 +137,10 @@ public partial class Form1 : Form
 
     private void UpdateStatus(int processedFiles)
     {
-        tsslRecordCount.Text = $"Processed files: {processedFiles}";
+        Task.Run(() =>
+        {
+            tsslRecordCount.Text = $"Processed files: {processedFiles}";
+        });
     }
 
     private void btnLoadOld_Click(object sender, EventArgs e)

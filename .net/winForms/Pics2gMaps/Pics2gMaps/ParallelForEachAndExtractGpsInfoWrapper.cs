@@ -4,12 +4,13 @@ using System.Collections.Concurrent;
 
 namespace Pics2gMaps;
 
-public class ParallelForEachAndExtractGpsInfoWrapper : ICommandHandlerAsync<ParallelForEachAndExtractGpsInfoWrapperCommand>
+public class ParallelForEachAndExtractGpsInfoWrapper(IProgress<int> recordCountProgress)
+    : ICommandHandlerAsync<ParallelForEachAndExtractGpsInfoWrapperCommand>
 {
 
     public event EventHandler<GpsInfoFromImageExtractedEventArgs>? OnGpsInfoFromImageExtracted;
 
-    ConcurrentQueue<Exception> _exceptions = new();
+    private readonly ConcurrentQueue<Exception> _exceptions = new();
     private int _recordCount;
 
     public int RecordCount
@@ -28,7 +29,7 @@ public class ParallelForEachAndExtractGpsInfoWrapper : ICommandHandlerAsync<Para
         if (Directory.Exists(parallelForEachAndExtractGpsInfoWrapperCommand.FolderName))
         {
             LatLngFileNameModel latLngFileNameModel = new LatLngFileNameModel();
-
+            const int progressStep = 100;
             await Task.Run(() =>
             {
                 Parallel.ForEach(
@@ -62,6 +63,10 @@ public class ParallelForEachAndExtractGpsInfoWrapper : ICommandHandlerAsync<Para
                         }
 
                         RecordCount = Interlocked.Increment(ref _recordCount);
+                        //if (RecordCount % progressStep == 0)
+                        {
+                            recordCountProgress.Report(RecordCount);
+                        }
                     });
             });
         }
