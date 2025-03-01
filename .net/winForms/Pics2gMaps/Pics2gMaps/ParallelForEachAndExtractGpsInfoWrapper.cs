@@ -41,6 +41,11 @@ public class ParallelForEachAndExtractGpsInfoWrapper(IProgress<int> recordCountP
                         ExtractGpsInfoFromImageAndFireEvent(parallelForEachAndExtractGpsInfoWrapperCommand, imageFileName);
                     }
                 });
+
+            if (!_exceptions.IsEmpty)
+            {
+                throw new AggregateException("Fehler in der Parallelverarbeitung", _exceptions);
+            }
         }
         else
         {

@@ -69,7 +69,8 @@ public partial class Form1 : Form
             _parallelForEachAndExtractGpsInfoWrapper.OnGpsInfoFromImageExtracted +=
                 OnGpsInfoFromImageExtractedAddToMsSqlServer;
             _dbHandling = new DbHandling();
-            var extractGpsInfoAndResizeImageWrapper = new ExtractGpsInfoAndResizeImageWrapper(_parallelForEachAndExtractGpsInfoWrapper);
+            var extractGpsInfoAndResizeImageWrapper =
+                new ExtractGpsInfoAndResizeImageWrapper(_parallelForEachAndExtractGpsInfoWrapper);
 
             foreach (DataRow dataRow in rows)
             {
@@ -105,13 +106,14 @@ public partial class Form1 : Form
         }
         catch (AggregateException ae)
         {
-            tbLog.AppendText($"Adding errors, number of errors: {ae.InnerExceptions.Count}, please wait");
             ILogger logger = new TextBoxLogger(tbLog);
             logger.Log(ae);
         }
-
-        _cts?.Cancel();
-        MessageBox.Show("Done!");
+        finally
+        {
+            _cts?.Cancel();
+            MessageBox.Show("Done!");
+        }
     }
 
     private async void OnGpsInfoFromImageExtractedAddToMsSqlServer(object? sender, GpsInfoFromImageExtractedEventArgs e)
