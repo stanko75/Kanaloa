@@ -10,7 +10,7 @@ public class ParallelForEachAndExtractGpsInfoWrapper(IProgress<int> recordCountP
 
     public event EventHandler<GpsInfoFromImageExtractedEventArgs>? OnGpsInfoFromImageExtracted;
 
-    private readonly ConcurrentQueue<Exception> _exceptions = new();
+    public readonly ConcurrentQueue<Exception> _exceptions = new();
     private int _recordCount;
 
     public int RecordCount

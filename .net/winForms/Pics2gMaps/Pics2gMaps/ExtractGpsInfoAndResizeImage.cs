@@ -7,6 +7,7 @@ namespace Pics2gMaps;
 
 public class ExtractGpsInfoAndResizeImageWrapper(ParallelForEachAndExtractGpsInfoWrapper parallelForEachAndExtractGpsInfoWrapper) : ICommandHandlerAsync<ExtractGpsInfoAndResizeImageWrapperCommand>
 {
+    public readonly ConcurrentBag<Exception> _exceptionsQueue = new();
     private string? _galleryName;
     private string? _folderName;
     private string? _jsonThumbsFileName;
@@ -14,7 +15,6 @@ public class ExtractGpsInfoAndResizeImageWrapper(ParallelForEachAndExtractGpsInf
     private bool _isMerged;
     private readonly ConcurrentBag<LatLngFileNameModel> _latLngThumbsQueue = new();
     private readonly ConcurrentBag<LatLngFileNameModel> _latLngPicsQueue = new();
-    private readonly ConcurrentBag<Exception> _exceptionsQueue = new();
 
     public async Task Execute(ExtractGpsInfoAndResizeImageWrapperCommand command)
     {
@@ -49,6 +49,10 @@ public class ExtractGpsInfoAndResizeImageWrapper(ParallelForEachAndExtractGpsInf
 
             await SaveAsJsonAsync(_jsonThumbsFileName, _latLngThumbsQueue);
             await SaveAsJsonAsync(_jsonPicsFileName, _latLngPicsQueue);
+            foreach (Exception exception in parallelForEachAndExtractGpsInfoWrapper._exceptions)
+            {
+                _exceptionsQueue.Add(exception);
+            }
         }
     }
 
