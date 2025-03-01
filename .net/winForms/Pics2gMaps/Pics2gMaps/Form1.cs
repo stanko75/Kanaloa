@@ -71,6 +71,7 @@ public partial class Form1 : Form
             _dbHandling = new DbHandling();
             var extractGpsInfoAndResizeImageWrapper =
                 new ExtractGpsInfoAndResizeImageWrapper(_parallelForEachAndExtractGpsInfoWrapper);
+            await DbHandling.EnsureTableExists();
 
             foreach (DataRow dataRow in rows)
             {
