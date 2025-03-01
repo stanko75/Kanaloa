@@ -160,10 +160,7 @@ public partial class Form1 : Form
 
     private void UpdateStatus(int processedFiles)
     {
-        Task.Run(() =>
-        {
-            tsslRecordCount.Text = $"Processed files: {processedFiles}";
-        });
+        tsslRecordCount.Text = $"Processed files: {processedFiles}";
     }
 
     private void btnLoadOld_Click(object sender, EventArgs e)
