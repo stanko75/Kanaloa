@@ -9,6 +9,7 @@ namespace Pics2gMaps;
 public partial class Form1 : Form
 {
     private readonly DataTable _dtGalleryConfiguration = new();
+    private ParallelForEachAndExtractGpsInfoWrapper _parallelForEachAndExtractGpsInfoWrapper;
 
     public Form1()
     {
@@ -18,6 +19,7 @@ public partial class Form1 : Form
     private CancellationTokenSource _cts;
     private TimeSpan _elapsedTime;
     private DateTime _startTime;
+
     private async void btnStart_Click(object sender, EventArgs e)
     {
         _cts = new CancellationTokenSource();
@@ -62,6 +64,8 @@ public partial class Form1 : Form
         try
         {
             IProgress<int> recordCountProgress = new Progress<int>(UpdateRecordCount);
+            _parallelForEachAndExtractGpsInfoWrapper = new ParallelForEachAndExtractGpsInfoWrapper(recordCountProgress);
+
             foreach (DataRow dataRow in rows)
             {
                 PrepareHtmlFolderCommand prepareHtmlFolderCommand = new PrepareHtmlFolderCommand
@@ -90,7 +94,9 @@ public partial class Form1 : Form
                             DataRow = dataRow
                         };
 
-                    var extractGpsInfoAndResizeImageWrapper = new ExtractGpsInfoAndResizeImageWrapper(recordCountProgress);
+                    _parallelForEachAndExtractGpsInfoWrapper.OnGpsInfoFromImageExtracted +=
+                        OnGpsInfoFromImageExtractedAddToMsSqlServer;
+                    var extractGpsInfoAndResizeImageWrapper = new ExtractGpsInfoAndResizeImageWrapper(_parallelForEachAndExtractGpsInfoWrapper);
                     await extractGpsInfoAndResizeImageWrapper.Execute(extractGpsInfoAndResizeImageWrapperCommand);
                 });
             }
@@ -104,6 +110,11 @@ public partial class Form1 : Form
 
         _cts?.Cancel();
         MessageBox.Show("Done!");
+    }
+
+    private void OnGpsInfoFromImageExtractedAddToMsSqlServer(object? sender, GpsInfoFromImageExtractedEventArgs e)
+    {
+        throw new NotImplementedException();
     }
 
     private void UpdateRecordCount(int recordCount)

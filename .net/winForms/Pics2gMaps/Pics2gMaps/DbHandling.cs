@@ -1,7 +1,7 @@
 ﻿using Common;
 using Microsoft.EntityFrameworkCore;
-using System;
 using ImageHandling;
+using Microsoft.Extensions.Configuration;
 
 namespace Pics2gMaps;
 
@@ -46,7 +46,13 @@ public class DbHandling:ICommandHandlerAsync<DbHandlingCommand>
 
         protected override void OnConfiguring(DbContextOptionsBuilder options)
         {
+            var config = new ConfigurationBuilder()
+                .SetBasePath(Directory.GetCurrentDirectory()) // Basisverzeichnis setzen
+                .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
+                .Build();
+            string connectionString = config.GetConnectionString("DefaultConnection");
 
+            options.UseSqlServer(connectionString);
         }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

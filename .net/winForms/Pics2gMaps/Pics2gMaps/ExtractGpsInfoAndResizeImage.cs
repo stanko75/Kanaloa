@@ -5,7 +5,7 @@ using ImageHandling;
 
 namespace Pics2gMaps;
 
-public class ExtractGpsInfoAndResizeImageWrapper(IProgress<int> recordCountProgress) : ICommandHandlerAsync<ExtractGpsInfoAndResizeImageWrapperCommand>
+public class ExtractGpsInfoAndResizeImageWrapper(ParallelForEachAndExtractGpsInfoWrapper parallelForEachAndExtractGpsInfoWrapper) : ICommandHandlerAsync<ExtractGpsInfoAndResizeImageWrapperCommand>
 {
     private string? _galleryName;
     private string? _folderName;
@@ -40,8 +40,7 @@ public class ExtractGpsInfoAndResizeImageWrapper(IProgress<int> recordCountProgr
             {
                 FolderName = _folderName
             };
-            var parallelForEachAndExtractGpsInfoWrapper =
-                new ParallelForEachAndExtractGpsInfoWrapper(recordCountProgress);
+
             parallelForEachAndExtractGpsInfoWrapper.OnGpsInfoFromImageExtracted += OnGpsInfoFromImageExtracted;
             parallelForEachAndExtractGpsInfoWrapper.OnGpsInfoFromImageExtracted += OnAddLatLngFileNameModelToThumbsQueue;
             parallelForEachAndExtractGpsInfoWrapper.OnGpsInfoFromImageExtracted += OnAddLatLngFileNameModelToPicsQueue;
