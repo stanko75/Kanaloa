@@ -1,4 +1,5 @@
 ﻿using System.Collections.Concurrent;
+using System.Data;
 using System.Text.Json;
 using Common;
 using ImageHandling;
@@ -32,7 +33,15 @@ public class ExtractGpsInfoAndResizeImageWrapper(ParallelForEachAndExtractGpsInf
             File.Delete(_jsonPicsFileName);
         }
 
-        _isMerged = (bool)command.DataRow[DataTableConfigColumns.IsMerged];
+        if (!command.DataRow.IsNull(DataTableConfigColumns.IsMerged))
+        {
+            _isMerged = (bool)command.DataRow[DataTableConfigColumns.IsMerged];
+        }
+        else
+        {
+            _isMerged = false;
+        }
+
         string picsFolder = _isMerged ? _folderName : Path.Join(_folderName, "pics");
         if (Directory.Exists(picsFolder))
         {
