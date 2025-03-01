@@ -28,14 +28,18 @@ public class ParallelForEachAndExtractGpsInfoWrapper(IProgress<int> recordCountP
     {
         if (Directory.Exists(parallelForEachAndExtractGpsInfoWrapperCommand.FolderName))
         {
-            const int progressStep = 100;
+            var imageExtensions = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
+            {
+                ".jpg", ".jpeg", ".png", ".gif", ".bmp", ".tiff", ".webp"
+            };
             await Parallel.ForEachAsync(
                 Directory.EnumerateFiles(parallelForEachAndExtractGpsInfoWrapperCommand.FolderName, "*.*",
                     SearchOption.AllDirectories), async (imageFileName, ct) =>
                 {
-                    LatLngFileNameModel latLngFileNameModel = new LatLngFileNameModel();
-                    ExtractGpsInfoFromImageAndFireEvent(parallelForEachAndExtractGpsInfoWrapperCommand, imageFileName,
-                        latLngFileNameModel);
+                    if (imageExtensions.Contains(Path.GetExtension(imageFileName).ToLower()))
+                    {
+                        ExtractGpsInfoFromImageAndFireEvent(parallelForEachAndExtractGpsInfoWrapperCommand, imageFileName);
+                    }
                 });
         }
         else
@@ -46,9 +50,9 @@ public class ParallelForEachAndExtractGpsInfoWrapper(IProgress<int> recordCountP
     }
 
     private void ExtractGpsInfoFromImageAndFireEvent(
-        ParallelForEachAndExtractGpsInfoWrapperCommand parallelForEachAndExtractGpsInfoWrapperCommand, string imageFileName,
-        LatLngFileNameModel latLngFileNameModel)
+        ParallelForEachAndExtractGpsInfoWrapperCommand parallelForEachAndExtractGpsInfoWrapperCommand, string imageFileName)
     {
+        LatLngFileNameModel latLngFileNameModel = new LatLngFileNameModel();
         ExtractGpsInfoFromImage extractGpsInfoFromImage = new ExtractGpsInfoFromImage();
         var extractGpsInfoFromImageCommand = new ExtractGpsInfoFromImageCommand
         {

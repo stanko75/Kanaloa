@@ -102,11 +102,6 @@ public partial class Form1 : Form
                     await extractGpsInfoAndResizeImageWrapper.Execute(extractGpsInfoAndResizeImageWrapperCommand);
                 });
             }
-
-            foreach (var exception in extractGpsInfoAndResizeImageWrapper._exceptionsQueue)
-            {
-                tbLog.AppendText(exception.Message + Environment.NewLine);
-            }
         }
         catch (AggregateException ae)
         {
