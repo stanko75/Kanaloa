@@ -10,6 +10,7 @@ public partial class Form1 : Form
 {
     private readonly DataTable _dtGalleryConfiguration = new();
     private ParallelForEachAndExtractGpsInfoWrapper _parallelForEachAndExtractGpsInfoWrapper;
+    private DbHandling _dbHandling;
 
     public Form1()
     {
@@ -65,6 +66,10 @@ public partial class Form1 : Form
         {
             IProgress<int> recordCountProgress = new Progress<int>(UpdateRecordCount);
             _parallelForEachAndExtractGpsInfoWrapper = new ParallelForEachAndExtractGpsInfoWrapper(recordCountProgress);
+            _parallelForEachAndExtractGpsInfoWrapper.OnGpsInfoFromImageExtracted +=
+                OnGpsInfoFromImageExtractedAddToMsSqlServer;
+            _dbHandling = new DbHandling();
+
 
             foreach (DataRow dataRow in rows)
             {
@@ -94,8 +99,6 @@ public partial class Form1 : Form
                             DataRow = dataRow
                         };
 
-                    _parallelForEachAndExtractGpsInfoWrapper.OnGpsInfoFromImageExtracted +=
-                        OnGpsInfoFromImageExtractedAddToMsSqlServer;
                     var extractGpsInfoAndResizeImageWrapper = new ExtractGpsInfoAndResizeImageWrapper(_parallelForEachAndExtractGpsInfoWrapper);
                     await extractGpsInfoAndResizeImageWrapper.Execute(extractGpsInfoAndResizeImageWrapperCommand);
                 });
@@ -112,9 +115,14 @@ public partial class Form1 : Form
         MessageBox.Show("Done!");
     }
 
-    private void OnGpsInfoFromImageExtractedAddToMsSqlServer(object? sender, GpsInfoFromImageExtractedEventArgs e)
+    private async void OnGpsInfoFromImageExtractedAddToMsSqlServer(object? sender, GpsInfoFromImageExtractedEventArgs e)
     {
-        throw new NotImplementedException();
+        var dbHandlingCommand = new DbHandlingCommand
+        {
+            LatLngFileNameModel = e.LatLngFileName
+        };
+
+        await _dbHandling.Execute(dbHandlingCommand);
     }
 
     private void UpdateRecordCount(int recordCount)

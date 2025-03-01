@@ -28,12 +28,12 @@ public class ParallelForEachAndExtractGpsInfoWrapper(IProgress<int> recordCountP
     {
         if (Directory.Exists(parallelForEachAndExtractGpsInfoWrapperCommand.FolderName))
         {
-            LatLngFileNameModel latLngFileNameModel = new LatLngFileNameModel();
             const int progressStep = 100;
             await Parallel.ForEachAsync(
                 Directory.EnumerateFiles(parallelForEachAndExtractGpsInfoWrapperCommand.FolderName, "*.*",
                     SearchOption.AllDirectories), async (imageFileName, ct) =>
                 {
+                    LatLngFileNameModel latLngFileNameModel = new LatLngFileNameModel();
                     ExtractGpsInfoFromImageAndFireEvent(parallelForEachAndExtractGpsInfoWrapperCommand, imageFileName,
                         latLngFileNameModel);
                 });

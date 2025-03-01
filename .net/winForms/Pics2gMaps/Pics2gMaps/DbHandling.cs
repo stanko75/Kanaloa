@@ -7,8 +7,6 @@ namespace Pics2gMaps;
 
 public class DbHandling:ICommandHandlerAsync<DbHandlingCommand>
 {
-    private readonly AppDbContext _context = new();
-
     static void UpsertRecord(AppDbContext context, LatLngFileNameModel latLngFileNameModel)
     {
         using var context1 = new AppDbContext();
@@ -20,7 +18,6 @@ public class DbHandling:ICommandHandlerAsync<DbHandlingCommand>
             // Update existing record
             existingRecord.FileName = latLngFileNameModel.FileName;
             context1.Update(existingRecord);
-            Console.WriteLine("Record updated.");
         }
         else
         {
@@ -29,7 +26,6 @@ public class DbHandling:ICommandHandlerAsync<DbHandlingCommand>
                 , Latitude = latLngFileNameModel.Latitude
                 , Longitude = latLngFileNameModel.Longitude
             });
-            Console.WriteLine("New record inserted.");
         }
 
         context1.SaveChanges();
@@ -37,7 +33,11 @@ public class DbHandling:ICommandHandlerAsync<DbHandlingCommand>
 
     public async Task Execute(DbHandlingCommand command)
     {
-        await Task.Run(() => UpsertRecord(_context, command.LatLngFileNameModel));
+        await Task.Run(() =>
+        {
+            AppDbContext context = new();
+            UpsertRecord(context, command.LatLngFileNameModel);
+        });
     }
 
     public class AppDbContext : DbContext
