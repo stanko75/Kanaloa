@@ -30,50 +30,56 @@ public class ParallelForEachAndExtractGpsInfoWrapper(IProgress<int> recordCountP
         {
             LatLngFileNameModel latLngFileNameModel = new LatLngFileNameModel();
             const int progressStep = 100;
-            await Task.Run(() =>
-            {
-                Parallel.ForEach(
-                    Directory.EnumerateFiles(parallelForEachAndExtractGpsInfoWrapperCommand.FolderName, "*.*", SearchOption.AllDirectories), (imageFileName, cancellationToken) =>
-                    {
-                        ExtractGpsInfoFromImage extractGpsInfoFromImage = new ExtractGpsInfoFromImage();
-                        var extractGpsInfoFromImageCommand = new ExtractGpsInfoFromImageCommand
-                        {
-                            ImageFileNameToReadGpsFrom = imageFileName
-                        };
-                        parallelForEachAndExtractGpsInfoWrapperCommand.ImageFileNameToReadGpsFrom = imageFileName;
-
-                        try
-                        {
-                            extractGpsInfoFromImage.Execute(extractGpsInfoFromImageCommand);
-                            if (extractGpsInfoFromImageCommand.LatLngModel != null)
-                            {
-                                latLngFileNameModel.FileName = imageFileName;
-                                latLngFileNameModel.Latitude = extractGpsInfoFromImageCommand.LatLngModel.Latitude;
-                                latLngFileNameModel.Longitude = extractGpsInfoFromImageCommand.LatLngModel.Longitude;
-                                GpsInfoFromImageExtracted(new GpsInfoFromImageExtractedEventArgs(latLngFileNameModel));
-                            }
-                            else
-                            {
-                                throw new Exception($"No GPS info found in {imageFileName}");
-                            }
-                        }
-                        catch (Exception e)
-                        {
-                            _exceptions.Enqueue(e);
-                        }
-
-                        RecordCount = Interlocked.Increment(ref _recordCount);
-                        //if (RecordCount % progressStep == 0)
-                        {
-                            recordCountProgress.Report(RecordCount);
-                        }
-                    });
-            });
+            await Parallel.ForEachAsync(
+                Directory.EnumerateFiles(parallelForEachAndExtractGpsInfoWrapperCommand.FolderName, "*.*",
+                    SearchOption.AllDirectories), async (imageFileName, ct) =>
+                {
+                    ExtractGpsInfoFromImageAndFireEvent(parallelForEachAndExtractGpsInfoWrapperCommand, imageFileName,
+                        latLngFileNameModel);
+                });
         }
         else
         {
             throw new DirectoryNotFoundException($"Directory {parallelForEachAndExtractGpsInfoWrapperCommand.FolderName} not found.");
         }
 
+    }
+
+    private void ExtractGpsInfoFromImageAndFireEvent(
+        ParallelForEachAndExtractGpsInfoWrapperCommand parallelForEachAndExtractGpsInfoWrapperCommand, string imageFileName,
+        LatLngFileNameModel latLngFileNameModel)
+    {
+        ExtractGpsInfoFromImage extractGpsInfoFromImage = new ExtractGpsInfoFromImage();
+        var extractGpsInfoFromImageCommand = new ExtractGpsInfoFromImageCommand
+        {
+            ImageFileNameToReadGpsFrom = imageFileName
+        };
+        parallelForEachAndExtractGpsInfoWrapperCommand.ImageFileNameToReadGpsFrom = imageFileName;
+
+        try
+        {
+            extractGpsInfoFromImage.Execute(extractGpsInfoFromImageCommand);
+            if (extractGpsInfoFromImageCommand.LatLngModel != null)
+            {
+                latLngFileNameModel.FileName = imageFileName;
+                latLngFileNameModel.Latitude = extractGpsInfoFromImageCommand.LatLngModel.Latitude;
+                latLngFileNameModel.Longitude = extractGpsInfoFromImageCommand.LatLngModel.Longitude;
+                GpsInfoFromImageExtracted(new GpsInfoFromImageExtractedEventArgs(latLngFileNameModel));
+            }
+            else
+            {
+                throw new Exception($"No GPS info found in {imageFileName}");
+            }
+        }
+        catch (Exception e)
+        {
+            _exceptions.Enqueue(e);
+        }
+
+        RecordCount = Interlocked.Increment(ref _recordCount);
+        //if (RecordCount % progressStep == 0)
+        {
+            recordCountProgress.Report(RecordCount);
+        }
     }
 }
