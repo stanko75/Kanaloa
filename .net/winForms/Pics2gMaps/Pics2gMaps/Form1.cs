@@ -66,8 +66,7 @@ public partial class Form1 : Form
         {
             IProgress<int> recordCountProgress = new Progress<int>(UpdateRecordCount);
             _parallelForEachAndExtractGpsInfoWrapper = new ParallelForEachAndExtractGpsInfoWrapper(recordCountProgress);
-            _parallelForEachAndExtractGpsInfoWrapper.OnGpsInfoFromImageExtracted +=
-                OnGpsInfoFromImageExtractedAddToMsSqlServer;
+            //_parallelForEachAndExtractGpsInfoWrapper.OnGpsInfoFromImageExtracted += OnGpsInfoFromImageExtractedAddToMsSqlServer;
             _dbHandling = new DbHandling();
             var extractGpsInfoAndResizeImageWrapper =
                 new ExtractGpsInfoAndResizeImageWrapper(_parallelForEachAndExtractGpsInfoWrapper);

@@ -53,10 +53,15 @@ public class ExtractGpsInfoAndResizeImageWrapper(ParallelForEachAndExtractGpsInf
             parallelForEachAndExtractGpsInfoWrapper.OnGpsInfoFromImageExtracted += OnGpsInfoFromImageExtracted;
             parallelForEachAndExtractGpsInfoWrapper.OnGpsInfoFromImageExtracted += OnAddLatLngFileNameModelToThumbsQueue;
             parallelForEachAndExtractGpsInfoWrapper.OnGpsInfoFromImageExtracted += OnAddLatLngFileNameModelToPicsQueue;
-            await parallelForEachAndExtractGpsInfoWrapper.Execute(parallelForEachAndExtractGpsInfoWrapperCommand);
-
-            await SaveAsJsonAsync(_jsonThumbsFileName, _latLngThumbsQueue);
-            await SaveAsJsonAsync(_jsonPicsFileName, _latLngPicsQueue);
+            try
+            {
+                await parallelForEachAndExtractGpsInfoWrapper.Execute(parallelForEachAndExtractGpsInfoWrapperCommand);
+            }
+            finally
+            {
+                await SaveAsJsonAsync(_jsonThumbsFileName, _latLngThumbsQueue);
+                await SaveAsJsonAsync(_jsonPicsFileName, _latLngPicsQueue);
+            }
         }
     }
 
