@@ -1,3 +1,4 @@
+using System.Buffers.Text;
 using System.Data;
 using System.Xml.Linq;
 using FastLoadImagesToMemoryAndProcessLater.Log;
@@ -11,6 +12,7 @@ public partial class Form1 : Form
     private readonly DataTable _dtGalleryConfiguration = new();
     private ParallelForEachAndExtractGpsInfoWrapper _parallelForEachAndExtractGpsInfoWrapper;
     private DbHandling _dbHandling;
+    private const string BaseUrl = "www.milosev.com";
 
     public Form1()
     {
@@ -83,6 +85,63 @@ public partial class Form1 : Form
                 PrepareHtmlFolder prepareHtmlFolder = new PrepareHtmlFolder();
                 prepareHtmlFolder.Execute(prepareHtmlFolderCommand);
 
+                string[] columnsWhichCantBeNull = 
+                [
+                    DataTableConfigColumns.GalleryName
+                    , DataTableConfigColumns.RootGalleryFolder
+                    , DataTableConfigColumns.OgTitle
+                    , DataTableConfigColumns.OgImage
+                ];
+
+                if (columnsWhichCantBeNull.Any(column =>
+                        dataRow.IsNull(column) || string.IsNullOrWhiteSpace(dataRow[column].ToString())))
+                {
+                    IEnumerable<string> emptyColumns = columnsWhichCantBeNull.Where(column =>
+                        dataRow.IsNull(column) || string.IsNullOrWhiteSpace(dataRow[column].ToString()));
+                    throw new Exception($"Columns: {string.Join(", ", emptyColumns)} are not allowed to be empty!");
+                }
+
+                string galleryFullWebPath = string.Empty;
+                foreach (DataColumn dataColumn in _dtGalleryConfiguration.Columns)
+                {
+                    if (dataRow.IsNull(dataColumn) || string.IsNullOrWhiteSpace(dataRow[dataColumn].ToString()))
+                    {
+                        if (dataColumn.ColumnName == DataTableConfigColumns.WebPath)
+                        {
+                            dataRow[dataColumn] = ConvertToUrl(dataRow[DataTableConfigColumns.RootGalleryFolder].ToString(), BaseUrl);
+                            galleryFullWebPath = dataRow[DataTableConfigColumns.WebPath] +
+                                                 dataRow[DataTableConfigColumns.GalleryName].ToString();
+                        }
+
+                        if (dataColumn.ColumnName == DataTableConfigColumns.OgUrl)
+                        {
+                            dataRow[dataColumn] = galleryFullWebPath + "/www/index.html";
+                        }
+
+                        if (dataColumn.ColumnName == DataTableConfigColumns.PicsJson)
+                        {
+                            dataRow[dataColumn] = dataRow[DataTableConfigColumns.GalleryName];
+                        }
+
+                        //ToDo
+                        if (dataColumn.ColumnName == DataTableConfigColumns.JoomlaThumbsPath)
+                        {
+                            dataRow[dataColumn] = dataRow[DataTableConfigColumns.GalleryName];
+                        }
+
+                    }
+
+                    //http://www.milosev.com/gallery/allWithPics/travelBuddies/
+                    //http://www.milosev.com/thumbs/20240618_155237.jpg
+                    if (dataColumn.ColumnName == DataTableConfigColumns.OgImage)
+                    {
+                        if (!dataRow[dataColumn].ToString().ToLower().Contains(BaseUrl.ToLower()))
+                        {
+                            dataRow[dataColumn] = galleryFullWebPath + "/" + dataRow[dataColumn];
+                        }
+                    }
+                }
+
                 //ResizeImageDesktopCommand resizeImageDesktopCommand = new ResizeImageDesktopCommand
                 //{
                 //    DataRow = dataRow
@@ -109,11 +168,58 @@ public partial class Form1 : Form
             ILogger logger = new TextBoxLogger(tbLog);
             logger.Log(ae);
         }
+        catch (Exception ex)
+        {
+            ILogger logger = new TextBoxLogger(tbLog);
+            logger.Log(ex);
+        }
         finally
         {
             _cts?.Cancel();
             MessageBox.Show("Done!");
         }
+    }
+
+    static string ConvertToUrl(string? path, string baseUrl)
+    {
+        if (string.IsNullOrWhiteSpace(path) || string.IsNullOrWhiteSpace(baseUrl))
+            throw new ArgumentException("Path and base URL are not allowed to be empty.");
+
+        string webPath = path.Replace("\\", "/");
+
+        int index = webPath.IndexOf("/", StringComparison.Ordinal);
+        if (index != -1)
+        {
+            webPath = webPath.Substring(index);
+        }
+
+        baseUrl = AddHttp(baseUrl);
+
+        return $"{baseUrl.TrimEnd('/')}{webPath.TrimEnd('/')}/";
+    }
+
+    private static string AddHttp(string baseUrl)
+    {
+        if (!baseUrl.StartsWith("http://", StringComparison.OrdinalIgnoreCase) &&
+            !baseUrl.StartsWith("https://", StringComparison.OrdinalIgnoreCase))
+        {
+            baseUrl = "http://" + baseUrl;
+        }
+
+        return baseUrl;
+    }
+
+    static string ConvertToCamelCase(string input)
+    {
+        if (string.IsNullOrWhiteSpace(input))
+            return string.Empty;
+
+        var words = input.Split(' ', StringSplitOptions.RemoveEmptyEntries);
+        return string.Concat(
+            words.Select((word, index) =>
+                index == 0 ? word.ToLower() : char.ToUpper(word[0]) + word.Substring(1).ToLower()
+            )
+        );
     }
 
     private async void OnGpsInfoFromImageExtractedAddToMsSqlServer(object? sender, GpsInfoFromImageExtractedEventArgs e)
