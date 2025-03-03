@@ -44,7 +44,7 @@ public class ParallelForEachAndExtractGpsInfoWrapper(IProgress<int> recordCountP
 
             if (!_exceptions.IsEmpty)
             {
-                throw new AggregateException("Fehler in der Parallelverarbeitung", _exceptions);
+                throw new AggregateException("Error in der Parallel.ForEachAsync", _exceptions);
             }
         }
         else

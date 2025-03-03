@@ -1,5 +1,4 @@
 ﻿using Common;
-using System.Buffers.Text;
 using System.Data;
 
 namespace Pics2gMaps;
@@ -77,8 +76,33 @@ public class AutomaticallyFillMissingValues : ICommandHandler<AutomaticallyFillM
                 {
                     dataRow[dataColumn] = jqueryVersion;
                 }
+
+                if (dataColumn.ColumnName == DataTableConfigColumns.OgImageFullPath)
+                {
+                    galleryFullWebPath = GetGalleryFullWebPath(dataRow[DataTableConfigColumns.WebPath].ToString()
+                        , dataRow[DataTableConfigColumns.RootGalleryFolder].ToString()
+                        , baseUrl
+                        , dataRow[DataTableConfigColumns.GalleryName].ToString());
+
+                    dataRow[dataColumn] = galleryFullWebPath + "/" + dataRow[DataTableConfigColumns.OgImage];
+                }
             }
         }
+    }
+
+    private string GetGalleryFullWebPath(string webPath, string rootGalleryFolder, string baseUrl, string galleryName)
+    {
+        string galleryFullWebPath;
+        if (string.IsNullOrWhiteSpace(webPath))
+        {
+            galleryFullWebPath = ConvertToUrl(rootGalleryFolder, baseUrl) + galleryName;
+        }
+        else
+        {
+            galleryFullWebPath = webPath + galleryName;
+        }
+
+        return galleryFullWebPath;
     }
 
     static string ConvertToUrl(string? path, string baseUrl)

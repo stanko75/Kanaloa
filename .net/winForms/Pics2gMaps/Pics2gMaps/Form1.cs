@@ -217,6 +217,7 @@ public partial class Form1 : Form
         _dtGalleryConfiguration.Columns.Add(DataTableConfigColumns.JoomlaImgSrcPath, typeof(string));
         _dtGalleryConfiguration.Columns.Add(DataTableConfigColumns.IsMerged, typeof(bool));
         _dtGalleryConfiguration.Columns.Add(DataTableConfigColumns.JqueryVersion, typeof(string));
+        _dtGalleryConfiguration.Columns.Add(DataTableConfigColumns.OgImageFullPath, typeof(string));
     }
 
     private void btnSaveConfig_Click(object sender, EventArgs e)
@@ -239,7 +240,9 @@ public partial class Form1 : Form
                 { "/*resizeImages*/", string.IsNullOrWhiteSpace(row[DataTableConfigColumns.ResizeImages].ToString()) ? "false" : row[DataTableConfigColumns.ResizeImages].ToString() },
                 { "/*joomlaThumbsPath*/", row[DataTableConfigColumns.JoomlaThumbsPath].ToString() },
                 { "/*joomlaImgSrcPath*/", row[DataTableConfigColumns.JoomlaImgSrcPath].ToString() },
-                { "/*isMerged*/", string.IsNullOrWhiteSpace(row[DataTableConfigColumns.IsMerged].ToString()) ? "false" : row[DataTableConfigColumns.IsMerged].ToString()}
+                { "/*isMerged*/", string.IsNullOrWhiteSpace(row[DataTableConfigColumns.IsMerged].ToString()) ? "false" : row[DataTableConfigColumns.IsMerged].ToString()},
+                { "/*jqueryVersion*/", row[DataTableConfigColumns.JqueryVersion].ToString() },
+                { "/*ogImageFullPath*/", row[DataTableConfigColumns.OgImageFullPath].ToString() }
             };
 
             jsonList.Add(jsonObj);
@@ -276,6 +279,8 @@ public partial class Form1 : Form
             drGalleryConfiguration[DataTableConfigColumns.JoomlaThumbsPath] = setting["/*joomlaThumbsPath*/"];
             drGalleryConfiguration[DataTableConfigColumns.JoomlaImgSrcPath] = setting["/*joomlaImgSrcPath*/"];
             drGalleryConfiguration[DataTableConfigColumns.IsMerged] = setting.TryGetValue("/*isMerged*/", out string? value) ? value : false;
+            drGalleryConfiguration[DataTableConfigColumns.JqueryVersion] = setting["/*jqueryVersion*/"];
+            drGalleryConfiguration[DataTableConfigColumns.OgImageFullPath] = setting["/*ogImageFullPath*/"];
             _dtGalleryConfiguration.Rows.Add(drGalleryConfiguration);
         }
     }

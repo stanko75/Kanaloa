@@ -17,4 +17,5 @@ public readonly struct DataTableConfigColumns
     public static readonly string JoomlaImgSrcPath = "joomlaImgSrcPath";
     public static readonly string IsMerged = "IsMerged";
     public static readonly string JqueryVersion = "jqueryVersion";
+    public static readonly string OgImageFullPath = "ogImageFullPath";
 }

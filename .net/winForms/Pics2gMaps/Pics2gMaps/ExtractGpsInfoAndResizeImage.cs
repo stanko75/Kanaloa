@@ -14,6 +14,7 @@ public class ExtractGpsInfoAndResizeImageWrapper(ParallelForEachAndExtractGpsInf
     private bool _isMerged;
     private readonly ConcurrentBag<LatLngFileNameModel> _latLngThumbsQueue = new();
     private readonly ConcurrentBag<LatLngFileNameModel> _latLngPicsQueue = new();
+    public readonly ConcurrentQueue<Exception> _exceptions = new();
 
     public async Task Execute(ExtractGpsInfoAndResizeImageWrapperCommand command)
     {
@@ -60,6 +61,12 @@ public class ExtractGpsInfoAndResizeImageWrapper(ParallelForEachAndExtractGpsInf
             {
                 await SaveAsJsonAsync(_jsonThumbsFileName, _latLngThumbsQueue);
                 await SaveAsJsonAsync(_jsonPicsFileName, _latLngPicsQueue);
+
+                if (!_exceptions.IsEmpty)
+                {
+                    throw new AggregateException("Error in der ResizeImage", _exceptions);
+                }
+
             }
         }
     }
@@ -92,20 +99,27 @@ public class ExtractGpsInfoAndResizeImageWrapper(ParallelForEachAndExtractGpsInf
 
     private void ResizeImage(string? folderName, bool isMerged, string? imageFileName)
     {
-        if (!isMerged)
+        try
         {
-            var resizeImageCommand = new ResizeImageCommand
+            if (!isMerged)
             {
-                CanvasHeight = 200,
-                CanvasWidth = 200,
-                OriginalFileName = Path.GetFileName(imageFileName),
-                //SaveTo = Path.Join(@"C:\projects\KanaloaGalleryTest\mariaLaach\thumbs", imageFileName)
-                SaveTo = Path.GetFileName(imageFileName)
-            };
-            resizeImageCommand.CreateDirectories(folderName);
+                var resizeImageCommand = new ResizeImageCommand
+                {
+                    CanvasHeight = 200,
+                    CanvasWidth = 200,
+                    OriginalFileName = Path.GetFileName(imageFileName),
+                    //SaveTo = Path.Join(@"C:\projects\KanaloaGalleryTest\mariaLaach\thumbs", imageFileName)
+                    SaveTo = Path.GetFileName(imageFileName)
+                };
+                resizeImageCommand.CreateDirectories(folderName);
 
-            ResizeImage resizeImage = new ResizeImage();
-            resizeImage.Execute(resizeImageCommand);
+                ResizeImage resizeImage = new ResizeImage();
+                resizeImage.Execute(resizeImageCommand);
+            }
+        }
+        catch (Exception e)
+        {
+            _exceptions.Enqueue(e);
         }
     }
 
