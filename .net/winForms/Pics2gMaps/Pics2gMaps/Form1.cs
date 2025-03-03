@@ -74,66 +74,19 @@ public partial class Form1 : Form
                 new ExtractGpsInfoAndResizeImageWrapper(_parallelForEachAndExtractGpsInfoWrapper);
             await DbHandling.EnsureTableExists();
 
+            AutomaticallyFillMissingValues automaticallyFillMissingValues = new AutomaticallyFillMissingValues();
+
             foreach (DataRow dataRow in rows)
             {
-                string[] columnsWhichCantBeNull =
-                [
-                    DataTableConfigColumns.GalleryName
-                    , DataTableConfigColumns.RootGalleryFolder
-                    , DataTableConfigColumns.OgTitle
-                    , DataTableConfigColumns.OgImage
-                ];
-
-                if (columnsWhichCantBeNull.Any(column =>
-                        dataRow.IsNull(column) || string.IsNullOrWhiteSpace(dataRow[column].ToString())))
-                {
-                    IEnumerable<string> emptyColumns = columnsWhichCantBeNull.Where(column =>
-                        dataRow.IsNull(column) || string.IsNullOrWhiteSpace(dataRow[column].ToString()));
-                    throw new Exception($"Columns: {string.Join(", ", emptyColumns)} are not allowed to be empty!");
-                }
-
-                string galleryFullWebPath = string.Empty;
-                string relativeWebPath = string.Empty;
-                foreach (DataColumn dataColumn in _dtGalleryConfiguration.Columns)
-                {
-                    if (dataRow.IsNull(dataColumn) || string.IsNullOrWhiteSpace(dataRow[dataColumn].ToString()))
+                AutomaticallyFillMissingValuesCommand automaticallyFillMissingValuesCommand =
+                    new AutomaticallyFillMissingValuesCommand
                     {
-                        if (dataColumn.ColumnName == DataTableConfigColumns.WebPath)
-                        {
-                            dataRow[dataColumn] = ConvertToUrl(dataRow[DataTableConfigColumns.RootGalleryFolder].ToString(), BaseUrl);
-                            galleryFullWebPath = dataRow[DataTableConfigColumns.WebPath] +
-                                                 dataRow[DataTableConfigColumns.GalleryName].ToString();
-                        }
-
-                        if (dataColumn.ColumnName == DataTableConfigColumns.OgUrl)
-                        {
-                            dataRow[dataColumn] = galleryFullWebPath + "/www/index.html";
-                        }
-
-                        if (dataColumn.ColumnName == DataTableConfigColumns.PicsJson)
-                        {
-                            dataRow[dataColumn] = dataRow[DataTableConfigColumns.GalleryName];
-                        }
-
-                        relativeWebPath = ConvertWindowsPathToWebPath(
-                            dataRow[DataTableConfigColumns.RootGalleryFolder].ToString());
-                        string joomlaImgSrcPath = relativeWebPath + dataRow[DataTableConfigColumns.GalleryName] + "/www/";
-                        if (dataColumn.ColumnName == DataTableConfigColumns.JoomlaImgSrcPath)
-                        {
-                            dataRow[dataColumn] = joomlaImgSrcPath;
-                        }
-
-                        if (dataColumn.ColumnName == DataTableConfigColumns.JoomlaThumbsPath)
-                        {
-                            dataRow[dataColumn] = joomlaImgSrcPath + dataRow[DataTableConfigColumns.GalleryName] + "Thumbs.json";
-                        }
-
-                        if (dataColumn.ColumnName == DataTableConfigColumns.JqueryVersion)
-                        {
-                            dataRow[dataColumn] = JqueryVersion;
-                        }
-                    }
-                }
+                        DataRow = dataRow,
+                        Columns = _dtGalleryConfiguration.Columns,
+                        BaseUrl = BaseUrl,
+                        JqueryVersion = JqueryVersion
+                    };
+                automaticallyFillMissingValues.Execute(automaticallyFillMissingValuesCommand);
 
                 PrepareHtmlFolderCommand prepareHtmlFolderCommand = new PrepareHtmlFolderCommand
                 {
@@ -144,15 +97,6 @@ public partial class Form1 : Form
                 PrepareHtmlFolder prepareHtmlFolder = new PrepareHtmlFolder();
                 prepareHtmlFolder.Execute(prepareHtmlFolderCommand);
 
-                //ResizeImageDesktopCommand resizeImageDesktopCommand = new ResizeImageDesktopCommand
-                //{
-                //    DataRow = dataRow
-                //};
-                //ResizeImageDesktop resizeImageDesktop = new ResizeImageDesktop();
-                //resizeImageDesktop.FilesProcessed += UpdateRecordCount;
-                //await resizeImageDesktop.Execute(resizeImageDesktopCommand);
-
-                //ToDO: lstOfTasksToExecuteWhenGpsInfoWasExtracted.Add(AddToSqlServerTask);
                 await Task.Run(async () =>
                 {
                     var extractGpsInfoAndResizeImageWrapperCommand =
@@ -182,56 +126,6 @@ public partial class Form1 : Form
         }
     }
 
-    static string ConvertWindowsPathToWebPath(string? path)
-    {
-        if (string.IsNullOrWhiteSpace(path))
-            throw new ArgumentException("Path is not allowed to be empty.");
-
-        string webPath = path.Replace("\\", "/");
-
-        int index = webPath.IndexOf("/", StringComparison.Ordinal);
-        if (index != -1)
-        {
-            webPath = webPath.Substring(index);
-        }
-
-        return $"{webPath.TrimEnd('/')}/";
-    }
-
-    static string ConvertToUrl(string? path, string baseUrl)
-    {
-        if (string.IsNullOrWhiteSpace(baseUrl))
-            throw new ArgumentException("URL is not allowed to be empty.");
-
-        baseUrl = AddHttp(baseUrl);
-
-        return $"{baseUrl.TrimEnd('/')}{ConvertWindowsPathToWebPath(path)}";
-    }
-
-    private static string AddHttp(string baseUrl)
-    {
-        if (!baseUrl.StartsWith("http://", StringComparison.OrdinalIgnoreCase) &&
-            !baseUrl.StartsWith("https://", StringComparison.OrdinalIgnoreCase))
-        {
-            baseUrl = "http://" + baseUrl;
-        }
-
-        return baseUrl;
-    }
-
-    static string ConvertToCamelCase(string input)
-    {
-        if (string.IsNullOrWhiteSpace(input))
-            return string.Empty;
-
-        var words = input.Split(' ', StringSplitOptions.RemoveEmptyEntries);
-        return string.Concat(
-            words.Select((word, index) =>
-                index == 0 ? word.ToLower() : char.ToUpper(word[0]) + word.Substring(1).ToLower()
-            )
-        );
-    }
-
     private async void OnGpsInfoFromImageExtractedAddToMsSqlServer(object? sender, GpsInfoFromImageExtractedEventArgs e)
     {
         var dbHandlingCommand = new DbHandlingCommand
@@ -253,21 +147,6 @@ public partial class Form1 : Form
         else
         {
             UpdateStatus(recordCount);
-        }
-    }
-
-    private void UpdateRecordCount(object? sender, FilesProcessedEventArgs e)
-    {
-        if (!IsDisposed)
-        {
-            if (InvokeRequired)
-            {
-                BeginInvoke(() => UpdateStatus(e.ProcessedFiles));
-            }
-            else
-            {
-                UpdateStatus(e.ProcessedFiles);
-            }
         }
     }
 
