@@ -97,16 +97,13 @@ public partial class Form1 : Form
                 PrepareHtmlFolder prepareHtmlFolder = new PrepareHtmlFolder();
                 prepareHtmlFolder.Execute(prepareHtmlFolderCommand);
 
-                await Task.Run(async () =>
-                {
-                    var extractGpsInfoAndResizeImageWrapperCommand =
-                        new ExtractGpsInfoAndResizeImageWrapperCommand
-                        {
-                            DataRow = dataRow
-                        };
+                var extractGpsInfoAndResizeImageWrapperCommand =
+                    new ExtractGpsInfoAndResizeImageWrapperCommand
+                    {
+                        DataRow = dataRow
+                    };
 
-                    await extractGpsInfoAndResizeImageWrapper.Execute(extractGpsInfoAndResizeImageWrapperCommand);
-                });
+                await extractGpsInfoAndResizeImageWrapper.Execute(extractGpsInfoAndResizeImageWrapperCommand);
             }
         }
         catch (AggregateException ae)
