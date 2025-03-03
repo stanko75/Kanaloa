@@ -76,16 +76,7 @@ public partial class Form1 : Form
 
             foreach (DataRow dataRow in rows)
             {
-                PrepareHtmlFolderCommand prepareHtmlFolderCommand = new PrepareHtmlFolderCommand
-                {
-                    DataRow = dataRow,
-                    TemplateRootFolder = tbTemplateRootFolder.Text,
-                    Columns = _dtGalleryConfiguration.Columns
-                };
-                PrepareHtmlFolder prepareHtmlFolder = new PrepareHtmlFolder();
-                prepareHtmlFolder.Execute(prepareHtmlFolderCommand);
-
-                string[] columnsWhichCantBeNull = 
+                string[] columnsWhichCantBeNull =
                 [
                     DataTableConfigColumns.GalleryName
                     , DataTableConfigColumns.RootGalleryFolder
@@ -123,10 +114,17 @@ public partial class Form1 : Form
                             dataRow[dataColumn] = dataRow[DataTableConfigColumns.GalleryName];
                         }
 
-                        //ToDo
+                        string joomlaImgSrcPath = ConvertWindowsPathToWebPath(
+                                                      dataRow[DataTableConfigColumns.RootGalleryFolder].ToString())
+                                                  + dataRow[DataTableConfigColumns.GalleryName] + "/www/";
+                        if (dataColumn.ColumnName == DataTableConfigColumns.JoomlaImgSrcPath)
+                        {
+                            dataRow[dataColumn] = joomlaImgSrcPath;
+                        }
+
                         if (dataColumn.ColumnName == DataTableConfigColumns.JoomlaThumbsPath)
                         {
-                            dataRow[dataColumn] = dataRow[DataTableConfigColumns.GalleryName];
+                            dataRow[dataColumn] = joomlaImgSrcPath + dataRow[DataTableConfigColumns.GalleryName] + "Thumbs.json";
                         }
 
                     }
@@ -141,6 +139,15 @@ public partial class Form1 : Form
                         }
                     }
                 }
+
+                PrepareHtmlFolderCommand prepareHtmlFolderCommand = new PrepareHtmlFolderCommand
+                {
+                    DataRow = dataRow,
+                    TemplateRootFolder = tbTemplateRootFolder.Text,
+                    Columns = _dtGalleryConfiguration.Columns
+                };
+                PrepareHtmlFolder prepareHtmlFolder = new PrepareHtmlFolder();
+                prepareHtmlFolder.Execute(prepareHtmlFolderCommand);
 
                 //ResizeImageDesktopCommand resizeImageDesktopCommand = new ResizeImageDesktopCommand
                 //{
@@ -180,10 +187,10 @@ public partial class Form1 : Form
         }
     }
 
-    static string ConvertToUrl(string? path, string baseUrl)
+    static string ConvertWindowsPathToWebPath(string? path)
     {
-        if (string.IsNullOrWhiteSpace(path) || string.IsNullOrWhiteSpace(baseUrl))
-            throw new ArgumentException("Path and base URL are not allowed to be empty.");
+        if (string.IsNullOrWhiteSpace(path))
+            throw new ArgumentException("Path is not allowed to be empty.");
 
         string webPath = path.Replace("\\", "/");
 
@@ -193,9 +200,17 @@ public partial class Form1 : Form
             webPath = webPath.Substring(index);
         }
 
+        return $"{webPath.TrimEnd('/')}/";
+    }
+
+    static string ConvertToUrl(string? path, string baseUrl)
+    {
+        if (string.IsNullOrWhiteSpace(baseUrl))
+            throw new ArgumentException("URL is not allowed to be empty.");
+
         baseUrl = AddHttp(baseUrl);
 
-        return $"{baseUrl.TrimEnd('/')}{webPath.TrimEnd('/')}/";
+        return $"{baseUrl.TrimEnd('/')}{ConvertWindowsPathToWebPath(path)}";
     }
 
     private static string AddHttp(string baseUrl)
@@ -384,7 +399,7 @@ public partial class Form1 : Form
             drGalleryConfiguration[DataTableConfigColumns.OgImage] = setting["/*ogImage*/"];
             drGalleryConfiguration[DataTableConfigColumns.OgUrl] = setting["/*ogUrl*/"];
             drGalleryConfiguration[DataTableConfigColumns.PicsJson] = setting["/*picsJson*/"];
-            drGalleryConfiguration[DataTableConfigColumns.Zoom] = setting["/*zoom*/"];
+            drGalleryConfiguration[DataTableConfigColumns.Zoom] = setting.TryGetValue(setting["/*zoom*/"], out string? zoomValue) ? zoomValue : 13;
             drGalleryConfiguration[DataTableConfigColumns.ResizeImages] = setting.TryGetValue("/*resizeImages*/", out string? resizeImagesValue) ? resizeImagesValue : false;
             drGalleryConfiguration[DataTableConfigColumns.JoomlaThumbsPath] = setting["/*joomlaThumbsPath*/"];
             drGalleryConfiguration[DataTableConfigColumns.JoomlaImgSrcPath] = setting["/*joomlaImgSrcPath*/"];
