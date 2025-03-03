@@ -1,4 +1,3 @@
-using System.Buffers.Text;
 using System.Data;
 using System.Xml.Linq;
 using FastLoadImagesToMemoryAndProcessLater.Log;
@@ -13,6 +12,7 @@ public partial class Form1 : Form
     private ParallelForEachAndExtractGpsInfoWrapper _parallelForEachAndExtractGpsInfoWrapper;
     private DbHandling _dbHandling;
     private const string BaseUrl = "www.milosev.com";
+    private const string JqueryVersion = "jquery-3.6.4.js";
 
     public Form1()
     {
@@ -93,6 +93,7 @@ public partial class Form1 : Form
                 }
 
                 string galleryFullWebPath = string.Empty;
+                string relativeWebPath = string.Empty;
                 foreach (DataColumn dataColumn in _dtGalleryConfiguration.Columns)
                 {
                     if (dataRow.IsNull(dataColumn) || string.IsNullOrWhiteSpace(dataRow[dataColumn].ToString()))
@@ -114,9 +115,9 @@ public partial class Form1 : Form
                             dataRow[dataColumn] = dataRow[DataTableConfigColumns.GalleryName];
                         }
 
-                        string joomlaImgSrcPath = ConvertWindowsPathToWebPath(
-                                                      dataRow[DataTableConfigColumns.RootGalleryFolder].ToString())
-                                                  + dataRow[DataTableConfigColumns.GalleryName] + "/www/";
+                        relativeWebPath = ConvertWindowsPathToWebPath(
+                            dataRow[DataTableConfigColumns.RootGalleryFolder].ToString());
+                        string joomlaImgSrcPath = relativeWebPath + dataRow[DataTableConfigColumns.GalleryName] + "/www/";
                         if (dataColumn.ColumnName == DataTableConfigColumns.JoomlaImgSrcPath)
                         {
                             dataRow[dataColumn] = joomlaImgSrcPath;
@@ -127,15 +128,9 @@ public partial class Form1 : Form
                             dataRow[dataColumn] = joomlaImgSrcPath + dataRow[DataTableConfigColumns.GalleryName] + "Thumbs.json";
                         }
 
-                    }
-
-                    //http://www.milosev.com/gallery/allWithPics/travelBuddies/
-                    //http://www.milosev.com/thumbs/20240618_155237.jpg
-                    if (dataColumn.ColumnName == DataTableConfigColumns.OgImage)
-                    {
-                        if (!dataRow[dataColumn].ToString().ToLower().Contains(BaseUrl.ToLower()))
+                        if (dataColumn.ColumnName == DataTableConfigColumns.JqueryVersion)
                         {
-                            dataRow[dataColumn] = galleryFullWebPath + "/" + dataRow[dataColumn];
+                            dataRow[dataColumn] = JqueryVersion;
                         }
                     }
                 }
@@ -345,6 +340,7 @@ public partial class Form1 : Form
         _dtGalleryConfiguration.Columns.Add(DataTableConfigColumns.JoomlaThumbsPath, typeof(string));
         _dtGalleryConfiguration.Columns.Add(DataTableConfigColumns.JoomlaImgSrcPath, typeof(string));
         _dtGalleryConfiguration.Columns.Add(DataTableConfigColumns.IsMerged, typeof(bool));
+        _dtGalleryConfiguration.Columns.Add(DataTableConfigColumns.JqueryVersion, typeof(string));
     }
 
     private void btnSaveConfig_Click(object sender, EventArgs e)
