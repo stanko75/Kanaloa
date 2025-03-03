@@ -1,5 +1,4 @@
 ﻿using System.Collections.Concurrent;
-using System.Data;
 using System.Text.Json;
 using Common;
 using ImageHandling;

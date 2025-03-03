@@ -1,7 +1,5 @@
 ﻿using Common;
-using FastLoadImagesToMemoryAndProcessLater.Log;
 using ImageHandling;
-using System;
 using System.Collections.Concurrent;
 using System.Text.Json;
 using Timer = System.Threading.Timer;
