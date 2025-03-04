@@ -2,7 +2,7 @@
 
 namespace Pics2gMaps;
 
-public class AutomaticallyFillMissingValuesCommand
+public class AutomaticallyFillMissingValuesInDataTableCommand
 {
     public DataRow DataRow { get; set; }
     public DataColumnCollection Columns { get; set; }

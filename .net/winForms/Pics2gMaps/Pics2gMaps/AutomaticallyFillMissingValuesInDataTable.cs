@@ -3,9 +3,9 @@ using System.Data;
 
 namespace Pics2gMaps;
 
-public class AutomaticallyFillMissingValues : ICommandHandler<AutomaticallyFillMissingValuesCommand>
+public class AutomaticallyFillMissingValuesInDataTable : ICommandHandler<AutomaticallyFillMissingValuesInDataTableCommand>
 {
-    public void Execute(AutomaticallyFillMissingValuesCommand command)
+    public void Execute(AutomaticallyFillMissingValuesInDataTableCommand command)
     {
         DoAutomaticallyFillMissingValues(command.DataRow
             , command.Columns

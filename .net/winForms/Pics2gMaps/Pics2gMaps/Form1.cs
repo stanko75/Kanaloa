@@ -74,12 +74,12 @@ public partial class Form1 : Form
                 new ExtractGpsInfoAndResizeImageWrapper(_parallelForEachAndExtractGpsInfoWrapper);
             await DbHandling.EnsureTableExists();
 
-            AutomaticallyFillMissingValues automaticallyFillMissingValues = new AutomaticallyFillMissingValues();
+            AutomaticallyFillMissingValuesInDataTable automaticallyFillMissingValues = new AutomaticallyFillMissingValuesInDataTable();
 
             foreach (DataRow dataRow in rows)
             {
-                AutomaticallyFillMissingValuesCommand automaticallyFillMissingValuesCommand =
-                    new AutomaticallyFillMissingValuesCommand
+                AutomaticallyFillMissingValuesInDataTableCommand automaticallyFillMissingValuesCommand =
+                    new AutomaticallyFillMissingValuesInDataTableCommand
                     {
                         DataRow = dataRow,
                         Columns = _dtGalleryConfiguration.Columns,
