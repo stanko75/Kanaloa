@@ -274,7 +274,8 @@ public partial class Form1 : Form
             drGalleryConfiguration[DataTableConfigColumns.OgImage] = setting["/*ogImage*/"];
             drGalleryConfiguration[DataTableConfigColumns.OgUrl] = setting["/*ogUrl*/"];
             drGalleryConfiguration[DataTableConfigColumns.PicsJson] = setting["/*picsJson*/"];
-            drGalleryConfiguration[DataTableConfigColumns.Zoom] = setting.TryGetValue("/*zoom*/", out string? zoomValue) ? zoomValue : 13;
+            drGalleryConfiguration[DataTableConfigColumns.Zoom] = setting.TryGetValue("/*zoom*/", out string? zoomValue)
+                ? string.IsNullOrWhiteSpace(zoomValue) ? 13 : zoomValue : 13;
             drGalleryConfiguration[DataTableConfigColumns.ResizeImages] = setting.TryGetValue("/*resizeImages*/", out string? resizeImagesValue) ? resizeImagesValue : false;
             drGalleryConfiguration[DataTableConfigColumns.JoomlaThumbsPath] = setting["/*joomlaThumbsPath*/"];
             drGalleryConfiguration[DataTableConfigColumns.JoomlaImgSrcPath] = setting["/*joomlaImgSrcPath*/"];

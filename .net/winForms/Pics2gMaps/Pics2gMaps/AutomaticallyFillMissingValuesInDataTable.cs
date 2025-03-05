@@ -1,6 +1,5 @@
 ﻿using Common;
 using System.Data;
-using System.Security.Policy;
 
 namespace Pics2gMaps;
 
@@ -36,111 +35,44 @@ public class AutomaticallyFillMissingValuesInDataTable : ICommandHandler<Automat
             throw new Exception($"Columns: {string.Join(", ", emptyColumns)} are not allowed to be empty!");
         }
 
-        string galleryFullWebPath = string.Empty;
-        string relativeWebPath = string.Empty;
-
-        foreach (DataColumn dataColumn in columns)
-        {
-            if (dataRow.IsNull(dataColumn) || string.IsNullOrWhiteSpace(dataRow[dataColumn].ToString()))
+        var automaticallyFillMissingValuesCommand =
+            new AutomaticallyFillMissingValuesCommand
             {
-                if (dataColumn.ColumnName == DataTableConfigColumns.WebPath)
-                {
-                    dataRow[dataColumn] = ConvertToUrl(dataRow[DataTableConfigColumns.RootGalleryFolder].ToString(), baseUrl);
-                    galleryFullWebPath = dataRow[DataTableConfigColumns.WebPath] +
-                                         dataRow[DataTableConfigColumns.GalleryName].ToString();
-                }
+                GalleryName = dataRow[DataTableConfigColumns.GalleryName].ToString()
+                , RootGalleryFolder = dataRow[DataTableConfigColumns.RootGalleryFolder].ToString()
+                , WebPath = dataRow[DataTableConfigColumns.WebPath].ToString()
+                , Gapikey = dataRow[DataTableConfigColumns.Gapikey].ToString()
+                , OgTitle = dataRow[DataTableConfigColumns.OgTitle].ToString()
+                , OgImage = dataRow[DataTableConfigColumns.OgImage].ToString()
+                , OgUrl = dataRow[DataTableConfigColumns.OgUrl].ToString()
+                , PicsJson = dataRow[DataTableConfigColumns.PicsJson].ToString()
+                , Zoom = (int?)(dataRow.IsNull(DataTableConfigColumns.Zoom) ? 13 : dataRow[DataTableConfigColumns.Zoom])
+                , ResizeImages = (bool?)(dataRow.IsNull(DataTableConfigColumns.ResizeImages) ? false : dataRow[DataTableConfigColumns.ResizeImages])
+                , JoomlaThumbsPath = dataRow[DataTableConfigColumns.JoomlaThumbsPath].ToString()
+                , JoomlaImgSrcPath = dataRow[DataTableConfigColumns.JoomlaImgSrcPath].ToString()
+                , IsMerged = (bool?)(dataRow.IsNull(DataTableConfigColumns.ResizeImages) ? false : dataRow[DataTableConfigColumns.ResizeImages])
+                , JqueryVersion = jqueryVersion
+                , OgImageFullPath = dataRow[DataTableConfigColumns.OgImageFullPath].ToString()
+                , BaseUrl = baseUrl
+            };
 
-                if (dataColumn.ColumnName == DataTableConfigColumns.OgUrl)
-                {
-                    dataRow[dataColumn] = galleryFullWebPath + "/www/index.html";
-                }
+        var automaticallyFillMissingValues = new AutomaticallyFillMissingValues();
+        automaticallyFillMissingValues.Execute(automaticallyFillMissingValuesCommand);
 
-                if (dataColumn.ColumnName == DataTableConfigColumns.PicsJson)
-                {
-                    dataRow[dataColumn] = dataRow[DataTableConfigColumns.GalleryName];
-                }
-
-                relativeWebPath = ConvertWindowsPathToWebPath(
-                    dataRow[DataTableConfigColumns.RootGalleryFolder].ToString());
-                string joomlaImgSrcPath = relativeWebPath + dataRow[DataTableConfigColumns.GalleryName] + "/www/";
-                if (dataColumn.ColumnName == DataTableConfigColumns.JoomlaImgSrcPath)
-                {
-                    dataRow[dataColumn] = joomlaImgSrcPath;
-                }
-
-                if (dataColumn.ColumnName == DataTableConfigColumns.JoomlaThumbsPath)
-                {
-                    dataRow[dataColumn] = joomlaImgSrcPath + dataRow[DataTableConfigColumns.GalleryName] + "Thumbs.json";
-                }
-
-                if (dataColumn.ColumnName == DataTableConfigColumns.JqueryVersion)
-                {
-                    dataRow[dataColumn] = jqueryVersion;
-                }
-
-                if (dataColumn.ColumnName == DataTableConfigColumns.OgImageFullPath)
-                {
-                    galleryFullWebPath = GetGalleryFullWebPath(dataRow[DataTableConfigColumns.WebPath].ToString()
-                        , dataRow[DataTableConfigColumns.RootGalleryFolder].ToString()
-                        , baseUrl
-                        , dataRow[DataTableConfigColumns.GalleryName].ToString());
-
-                    dataRow[dataColumn] = galleryFullWebPath + "/" + dataRow[DataTableConfigColumns.OgImage];
-                }
-            }
-        }
-    }
-
-    private string GetGalleryFullWebPath(string webPath, string rootGalleryFolder, string baseUrl, string galleryName)
-    {
-        string galleryFullWebPath;
-        if (string.IsNullOrWhiteSpace(webPath))
-        {
-            galleryFullWebPath = ConvertToUrl(rootGalleryFolder, baseUrl) + galleryName;
-        }
-        else
-        {
-            galleryFullWebPath = webPath + galleryName;
-        }
-
-        return galleryFullWebPath;
-    }
-
-    static string ConvertToUrl(string? path, string baseUrl)
-    {
-        if (string.IsNullOrWhiteSpace(baseUrl))
-            throw new ArgumentException("URL is not allowed to be empty.");
-        baseUrl = AddHttp(baseUrl);
-
-        return $"{baseUrl.TrimEnd('/')}{ConvertWindowsPathToWebPath(path)}";
-    }
-
-    private static string AddHttp(string baseUrl)
-    {
-        if (!baseUrl.StartsWith("http://", StringComparison.OrdinalIgnoreCase) &&
-            !baseUrl.StartsWith("https://", StringComparison.OrdinalIgnoreCase))
-        {
-            baseUrl = "http://" + baseUrl;
-        }
-
-        return baseUrl;
-    }
-
-    static string ConvertWindowsPathToWebPath(string? path)
-    {
-        if (string.IsNullOrWhiteSpace(path))
-            throw new ArgumentException("Path is not allowed to be empty.");
-
-        string webPath = path.Replace("\\", "/");
-
-        int index = webPath.IndexOf("/", StringComparison.Ordinal);
-        if (index != -1)
-        {
-            webPath = webPath.Substring(index);
-        }
-
-        webPath = webPath.StartsWith("/") ? webPath : "/" + webPath;
-
-        return $"{webPath.TrimEnd('/')}/";
+        dataRow[DataTableConfigColumns.GalleryName] = automaticallyFillMissingValuesCommand.GalleryName;
+        dataRow[DataTableConfigColumns.RootGalleryFolder] = automaticallyFillMissingValuesCommand.RootGalleryFolder;
+        dataRow[DataTableConfigColumns.WebPath] = automaticallyFillMissingValuesCommand.WebPath;
+        dataRow[DataTableConfigColumns.Gapikey] = automaticallyFillMissingValuesCommand.Gapikey;
+        dataRow[DataTableConfigColumns.OgTitle] = automaticallyFillMissingValuesCommand.OgTitle;
+        dataRow[DataTableConfigColumns.OgImage] = automaticallyFillMissingValuesCommand.OgImage;
+        dataRow[DataTableConfigColumns.OgUrl] = automaticallyFillMissingValuesCommand.OgUrl;
+        dataRow[DataTableConfigColumns.PicsJson] = automaticallyFillMissingValuesCommand.PicsJson;
+        dataRow[DataTableConfigColumns.Zoom] = automaticallyFillMissingValuesCommand.Zoom;
+        dataRow[DataTableConfigColumns.ResizeImages] = automaticallyFillMissingValuesCommand.ResizeImages;
+        dataRow[DataTableConfigColumns.JoomlaThumbsPath] = automaticallyFillMissingValuesCommand.JoomlaThumbsPath;
+        dataRow[DataTableConfigColumns.JoomlaImgSrcPath] = automaticallyFillMissingValuesCommand.JoomlaImgSrcPath;
+        dataRow[DataTableConfigColumns.ResizeImages] = automaticallyFillMissingValuesCommand.IsMerged;
+        dataRow[DataTableConfigColumns.JqueryVersion] = automaticallyFillMissingValuesCommand.JqueryVersion;
+        dataRow[DataTableConfigColumns.OgImageFullPath] = automaticallyFillMissingValuesCommand.OgImageFullPath;
     }
 }
