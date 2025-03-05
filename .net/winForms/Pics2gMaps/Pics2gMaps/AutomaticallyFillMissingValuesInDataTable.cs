@@ -1,5 +1,6 @@
 ﻿using Common;
 using System.Data;
+using System.Security.Policy;
 
 namespace Pics2gMaps;
 
@@ -109,7 +110,6 @@ public class AutomaticallyFillMissingValuesInDataTable : ICommandHandler<Automat
     {
         if (string.IsNullOrWhiteSpace(baseUrl))
             throw new ArgumentException("URL is not allowed to be empty.");
-
         baseUrl = AddHttp(baseUrl);
 
         return $"{baseUrl.TrimEnd('/')}{ConvertWindowsPathToWebPath(path)}";
@@ -138,6 +138,8 @@ public class AutomaticallyFillMissingValuesInDataTable : ICommandHandler<Automat
         {
             webPath = webPath.Substring(index);
         }
+
+        webPath = webPath.StartsWith("/") ? webPath : "/" + webPath;
 
         return $"{webPath.TrimEnd('/')}/";
     }

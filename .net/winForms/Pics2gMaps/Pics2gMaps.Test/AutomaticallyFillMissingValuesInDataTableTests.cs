@@ -30,6 +30,13 @@ public sealed class AutomaticallyFillMissingValuesInDataTableTests
                 };
         AutomaticallyFillMissingValuesInDataTable automaticallyFillMissingValues = new AutomaticallyFillMissingValuesInDataTable();
         automaticallyFillMissingValues.Execute(automaticallyFillMissingValuesCommand);
+        Assert.AreEqual(dataRow[DataTableConfigColumns.WebPath], "http://www.milosev.com/test/");
+        Assert.AreEqual(dataRow[DataTableConfigColumns.OgUrl], "http://www.milosev.com/test/test/www/index.html");
+        Assert.AreEqual(dataRow[DataTableConfigColumns.PicsJson], "test");
+        Assert.AreEqual(dataRow[DataTableConfigColumns.JoomlaThumbsPath], "/test/test/www/testThumbs.json");
+        Assert.AreEqual(dataRow[DataTableConfigColumns.JoomlaImgSrcPath], "/test/test/www/");
+        Assert.AreEqual(dataRow[DataTableConfigColumns.JqueryVersion], "jquery-3.6.4.js");
+        Assert.AreEqual(dataRow[DataTableConfigColumns.OgImageFullPath], "http://www.milosev.com/test/test/test");
     }
 
     private void AddColumnsToDt(DataTable dt)
