@@ -24,33 +24,16 @@ public class AutomaticallyFillMissingValues : ICommandHandler<AutomaticallyFillM
 
         string relativeWebPath = ConvertWindowsPathToWebPath(command.RootGalleryFolder);
 
-        if (string.IsNullOrWhiteSpace(command.WebPath))
-        {
-            command.WebPath = ConvertToUrl(command.RootGalleryFolder, command.BaseUrl ?? string.Empty);
-        }
+        command.WebPath = ConvertToUrl(command.RootGalleryFolder, command.BaseUrl ?? string.Empty);
+        command.WebPath = string.IsNullOrWhiteSpace(command.WebPath) ? ConvertToUrl(command.RootGalleryFolder, command.BaseUrl ?? string.Empty) : command.WebPath;
 
         string galleryFullWebPath = command.WebPath +
                                     command.GalleryName;
 
-        if (string.IsNullOrWhiteSpace(command.OgUrl))
-        {
-            command.OgUrl = galleryFullWebPath + "/www/index.html";
-        }
-
-        if (string.IsNullOrWhiteSpace(command.PicsJson))
-        {
-            command.PicsJson = command.GalleryName;
-        }
-
-        if (string.IsNullOrWhiteSpace(command.JoomlaImgSrcPath))
-        {
-            command.JoomlaImgSrcPath = relativeWebPath + command.GalleryName + "/www/";
-        }
-
-        if (string.IsNullOrWhiteSpace(command.JoomlaThumbsPath))
-        {
-            command.JoomlaThumbsPath = command.JoomlaImgSrcPath + command.GalleryName + "Thumbs.json";
-        }
+        command.OgUrl = string.IsNullOrWhiteSpace(command.OgUrl) ? galleryFullWebPath + "/www/index.html" : command.OgUrl;
+        command.PicsJson = string.IsNullOrWhiteSpace(command.PicsJson) ? command.GalleryName : command.PicsJson;
+        command.JoomlaImgSrcPath = string.IsNullOrWhiteSpace(command.JoomlaImgSrcPath) ? relativeWebPath + command.GalleryName + "/www/" : command.JoomlaImgSrcPath;
+        command.JoomlaThumbsPath = string.IsNullOrWhiteSpace(command.JoomlaThumbsPath) ? command.JoomlaImgSrcPath + command.GalleryName + "Thumbs.json" : command.JoomlaThumbsPath;
 
         if (string.IsNullOrWhiteSpace(command.OgImageFullPath))
         {
