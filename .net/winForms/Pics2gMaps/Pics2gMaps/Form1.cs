@@ -82,7 +82,6 @@ public partial class Form1 : Form
                     new AutomaticallyFillMissingValuesInDataTableCommand
                     {
                         DataRow = dataRow,
-                        Columns = _dtGalleryConfiguration.Columns,
                         BaseUrl = BaseUrl,
                         JqueryVersion = JqueryVersion
                     };

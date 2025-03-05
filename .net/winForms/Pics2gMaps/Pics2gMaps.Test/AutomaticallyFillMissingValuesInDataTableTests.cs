@@ -24,7 +24,6 @@ public sealed class AutomaticallyFillMissingValuesInDataTableTests
                 new AutomaticallyFillMissingValuesInDataTableCommand
                 {
                     DataRow = dataRow,
-                    Columns = dt.Columns,
                     BaseUrl = baseUrl,
                     JqueryVersion = jqueryVersion
                 };

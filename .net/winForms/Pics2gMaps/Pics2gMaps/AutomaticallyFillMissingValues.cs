@@ -33,7 +33,13 @@ public class AutomaticallyFillMissingValues : ICommandHandler<AutomaticallyFillM
         command.OgUrl = string.IsNullOrWhiteSpace(command.OgUrl) ? galleryFullWebPath + "/www/index.html" : command.OgUrl;
         command.PicsJson = string.IsNullOrWhiteSpace(command.PicsJson) ? command.GalleryName : command.PicsJson;
         command.JoomlaImgSrcPath = string.IsNullOrWhiteSpace(command.JoomlaImgSrcPath) ? relativeWebPath + command.GalleryName + "/www/" : command.JoomlaImgSrcPath;
+        command.JoomlaImgSrcPath = command.JoomlaImgSrcPath.StartsWith('/')
+            ? command.JoomlaImgSrcPath
+            : "/" + command.JoomlaImgSrcPath;
         command.JoomlaThumbsPath = string.IsNullOrWhiteSpace(command.JoomlaThumbsPath) ? command.JoomlaImgSrcPath + command.GalleryName + "Thumbs.json" : command.JoomlaThumbsPath;
+        command.JoomlaThumbsPath = command.JoomlaThumbsPath.StartsWith('/')
+            ? command.JoomlaThumbsPath
+            : "/" + command.JoomlaThumbsPath;
 
         if (string.IsNullOrWhiteSpace(command.OgImageFullPath))
         {
@@ -68,8 +74,9 @@ public class AutomaticallyFillMissingValues : ICommandHandler<AutomaticallyFillM
             throw new ArgumentException("URL is not allowed to be empty.");
 
         baseUrl = AddHttp(baseUrl);
+        baseUrl = baseUrl.EndsWith("/") ? baseUrl : baseUrl + "/";
 
-        return $"{baseUrl.TrimEnd('/')}{ConvertWindowsPathToWebPath(path)}";
+        return $"{baseUrl}{ConvertWindowsPathToWebPath(path).TrimStart('/')}";
     }
 
     private static string AddHttp(string baseUrl)

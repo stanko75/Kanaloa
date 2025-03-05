@@ -8,14 +8,12 @@ public class AutomaticallyFillMissingValuesInDataTable : ICommandHandler<Automat
     public void Execute(AutomaticallyFillMissingValuesInDataTableCommand command)
     {
         DoAutomaticallyFillMissingValues(command.DataRow
-            , command.Columns
             , command.BaseUrl
             , command.JqueryVersion);
     }
 
     private void DoAutomaticallyFillMissingValues(
         DataRow dataRow
-        , DataColumnCollection columns
         , string baseUrl
         , string jqueryVersion)
     {
