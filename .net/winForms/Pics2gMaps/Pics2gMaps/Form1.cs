@@ -71,11 +71,12 @@ public partial class Form1 : Form
             //_dbHandling = new DbHandling();
             //await DbHandling.EnsureTableExists();
 
-            _parallelForEachAndExtractGpsInfoWrapper = new ParallelForEachAndExtractGpsInfoWrapper(recordCountProgress);
+            _parallelForEachAndExtractGpsInfoWrapper = new ParallelForEachAndExtractGpsInfoWrapper();
             var extractGpsInfoAndResizeImageWrapper = new ExtractGpsInfoAndResizeImageWrapper(_parallelForEachAndExtractGpsInfoWrapper);
             var automaticallyFillMissingValuesInDataTable = new AutomaticallyFillMissingValuesInDataTable();
             var createWebPageDataTable = new CreateWebPageDataTable(automaticallyFillMissingValuesInDataTable, extractGpsInfoAndResizeImageWrapper);
             var createWebPageDataTableCommand = new CreateWebPageDataTableCommand();
+            createWebPageDataTableCommand.RecordCountProgress = recordCountProgress;
 
             foreach (DataRow dataRow in rows)
             {

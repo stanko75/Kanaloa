@@ -4,7 +4,7 @@ using System.Collections.Concurrent;
 
 namespace Pics2gMaps;
 
-public class ParallelForEachAndExtractGpsInfoWrapper(IProgress<int> recordCountProgress)
+public class ParallelForEachAndExtractGpsInfoWrapper
     : ICommandHandlerAsync<ParallelForEachAndExtractGpsInfoWrapperCommand>
 {
 
@@ -88,7 +88,7 @@ public class ParallelForEachAndExtractGpsInfoWrapper(IProgress<int> recordCountP
         RecordCount = Interlocked.Increment(ref _recordCount);
         //if (RecordCount % progressStep == 0)
         {
-            recordCountProgress.Report(RecordCount);
+            parallelForEachAndExtractGpsInfoWrapperCommand.RecordCountProgress?.Report(RecordCount);
         }
     }
 }

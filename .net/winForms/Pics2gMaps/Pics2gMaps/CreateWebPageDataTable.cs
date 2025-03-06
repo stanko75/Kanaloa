@@ -11,17 +11,17 @@ public class CreateWebPageDataTable(AutomaticallyFillMissingValuesInDataTable au
         AutomaticallyFillMissingValuesInDataTableCommand automaticallyFillMissingValuesCommand =
             new AutomaticallyFillMissingValuesInDataTableCommand
             {
-                DataRow = command.DataRow,
-                BaseUrl = command.BaseUrl,
-                JqueryVersion = command.JqueryVersion
+                DataRow = command.DataRow
+                , BaseUrl = command.BaseUrl
+                , JqueryVersion = command.JqueryVersion
             };
         automaticallyFillMissingValues.Execute(automaticallyFillMissingValuesCommand);
 
         PrepareHtmlFolderDataTableCommand prepareHtmlFolderCommand = new PrepareHtmlFolderDataTableCommand
         {
-            DataRow = command.DataRow,
-            TemplateRootFolder = command.TemplateRootFolder,
-            Columns = command.Columns
+            DataRow = command.DataRow
+            , TemplateRootFolder = command.TemplateRootFolder
+            , Columns = command.Columns
         };
         PrepareHtmlFolderDataTable prepareHtmlFolder = new PrepareHtmlFolderDataTable();
         prepareHtmlFolder.Execute(prepareHtmlFolderCommand);
@@ -30,6 +30,7 @@ public class CreateWebPageDataTable(AutomaticallyFillMissingValuesInDataTable au
             new ExtractGpsInfoAndResizeImageWrapperCommand
             {
                 DataRow = command.DataRow
+                , RecordCountProgress = command.RecordCountProgress
             };
 
         await extractGpsInfoAndResizeImageWrapper.Execute(extractGpsInfoAndResizeImageWrapperCommand);

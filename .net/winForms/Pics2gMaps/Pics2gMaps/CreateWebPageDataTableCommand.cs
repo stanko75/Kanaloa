@@ -9,4 +9,5 @@ public class CreateWebPageDataTableCommand
     public string? JqueryVersion { get; set; }
     public string? TemplateRootFolder { get; set; }
     public DataColumnCollection? Columns { get; set; }
+    public IProgress<int>? RecordCountProgress { get; set; }
 }
