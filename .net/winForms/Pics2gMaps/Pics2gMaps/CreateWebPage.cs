@@ -10,7 +10,7 @@ public class CreateWebPage : ICommandHandlerAsync<CreateWebPageCommand>
     public CreateWebPage()
     {
         var automaticallyFillMissingValues = new AutomaticallyFillMissingValues();
-        var prepareHtmlFolder = new PrepareHtmlFolder();
+        var prepareHtmlFolder = new PrepareHtmlFolderDataTable();
 
         IProgress<int> recordCountProgress = new Progress<int>(UpdateRecordCount);
         var parallelForEachAndExtractGpsInfoWrapper = new ParallelForEachAndExtractGpsInfoWrapper(recordCountProgress);

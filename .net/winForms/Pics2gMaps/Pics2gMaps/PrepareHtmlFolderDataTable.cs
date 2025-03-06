@@ -6,9 +6,9 @@ using System.Data;
 
 namespace Pics2gMaps;
 
-public class PrepareHtmlFolder : ICommandHandler<PrepareHtmlFolderCommand>
+public class PrepareHtmlFolderDataTable : ICommandHandler<PrepareHtmlFolderDataTableCommand>
 {
-    public void Execute(PrepareHtmlFolderCommand command)
+    public void Execute(PrepareHtmlFolderDataTableCommand command)
     {
         Dictionary<string, string> listOfKeyValuesToReplaceInFiles = new Dictionary<string, string>();
         foreach (DataColumn dataColumn in command.Columns)

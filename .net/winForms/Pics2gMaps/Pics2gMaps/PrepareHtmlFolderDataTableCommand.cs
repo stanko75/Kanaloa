@@ -2,7 +2,7 @@
 
 namespace Pics2gMaps;
 
-public class PrepareHtmlFolderCommand
+public class PrepareHtmlFolderDataTableCommand
 {
     public string TemplateRootFolder { get; set; }
     public DataRow DataRow { get; set; }
