@@ -2,12 +2,12 @@
 
 namespace Pics2gMaps;
 
-public class CreateWebPage : ICommandHandlerAsync<CreateWebPageCommand>
+public class CreateWebPageDataTable : ICommandHandlerAsync<CreateWebPageDataTableCommand>
 {
     public ToolStripStatusLabel? TsslRecordCount { get; set; }
     public Form? Form { get; set; }
 
-    public CreateWebPage()
+    public CreateWebPageDataTable()
     {
         var automaticallyFillMissingValues = new AutomaticallyFillMissingValues();
         var prepareHtmlFolder = new PrepareHtmlFolderDataTable();
@@ -33,7 +33,7 @@ public class CreateWebPage : ICommandHandlerAsync<CreateWebPageCommand>
 */
     }
 
-    public Task Execute(CreateWebPageCommand command)
+    public Task Execute(CreateWebPageDataTableCommand command)
     {
         throw new NotImplementedException();
     }
