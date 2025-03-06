@@ -1,6 +1,12 @@
-﻿namespace Pics2gMaps;
+﻿using System.Data;
+
+namespace Pics2gMaps;
 
 public class CreateWebPageDataTableCommand
 {
-    
+    public DataRow? DataRow { get; set; }
+    public string? BaseUrl { get; set; }
+    public string? JqueryVersion { get; set; }
+    public string? TemplateRootFolder { get; set; }
+    public DataColumnCollection? Columns { get; set; }
 }

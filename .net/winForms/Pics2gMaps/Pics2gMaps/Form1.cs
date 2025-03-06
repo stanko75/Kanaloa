@@ -67,42 +67,25 @@ public partial class Form1 : Form
         try
         {
             IProgress<int> recordCountProgress = new Progress<int>(UpdateRecordCount);
-            _parallelForEachAndExtractGpsInfoWrapper = new ParallelForEachAndExtractGpsInfoWrapper(recordCountProgress);
             //_parallelForEachAndExtractGpsInfoWrapper.OnGpsInfoFromImageExtracted += OnGpsInfoFromImageExtractedAddToMsSqlServer;
-            _dbHandling = new DbHandling();
-            var extractGpsInfoAndResizeImageWrapper =
-                new ExtractGpsInfoAndResizeImageWrapper(_parallelForEachAndExtractGpsInfoWrapper);
-            await DbHandling.EnsureTableExists();
+            //_dbHandling = new DbHandling();
+            //await DbHandling.EnsureTableExists();
 
-            AutomaticallyFillMissingValuesInDataTable automaticallyFillMissingValues = new AutomaticallyFillMissingValuesInDataTable();
+            _parallelForEachAndExtractGpsInfoWrapper = new ParallelForEachAndExtractGpsInfoWrapper(recordCountProgress);
+            var extractGpsInfoAndResizeImageWrapper = new ExtractGpsInfoAndResizeImageWrapper(_parallelForEachAndExtractGpsInfoWrapper);
+            var automaticallyFillMissingValuesInDataTable = new AutomaticallyFillMissingValuesInDataTable();
+            var createWebPageDataTable = new CreateWebPageDataTable(automaticallyFillMissingValuesInDataTable, extractGpsInfoAndResizeImageWrapper);
+            var createWebPageDataTableCommand = new CreateWebPageDataTableCommand();
 
             foreach (DataRow dataRow in rows)
             {
-                AutomaticallyFillMissingValuesInDataTableCommand automaticallyFillMissingValuesCommand =
-                    new AutomaticallyFillMissingValuesInDataTableCommand
-                    {
-                        DataRow = dataRow,
-                        BaseUrl = BaseUrl,
-                        JqueryVersion = JqueryVersion
-                    };
-                automaticallyFillMissingValues.Execute(automaticallyFillMissingValuesCommand);
+                createWebPageDataTableCommand.DataRow = dataRow;
+                createWebPageDataTableCommand.BaseUrl = BaseUrl;
+                createWebPageDataTableCommand.Columns = _dtGalleryConfiguration.Columns;
+                createWebPageDataTableCommand.JqueryVersion = JqueryVersion;
+                createWebPageDataTableCommand.TemplateRootFolder = tbTemplateRootFolder.Text;
 
-                PrepareHtmlFolderDataTableCommand prepareHtmlFolderCommand = new PrepareHtmlFolderDataTableCommand
-                {
-                    DataRow = dataRow,
-                    TemplateRootFolder = tbTemplateRootFolder.Text,
-                    Columns = _dtGalleryConfiguration.Columns
-                };
-                PrepareHtmlFolderDataTable prepareHtmlFolder = new PrepareHtmlFolderDataTable();
-                prepareHtmlFolder.Execute(prepareHtmlFolderCommand);
-
-                var extractGpsInfoAndResizeImageWrapperCommand =
-                    new ExtractGpsInfoAndResizeImageWrapperCommand
-                    {
-                        DataRow = dataRow
-                    };
-
-                await extractGpsInfoAndResizeImageWrapper.Execute(extractGpsInfoAndResizeImageWrapperCommand);
+                await createWebPageDataTable.Execute(createWebPageDataTableCommand);
             }
         }
         catch (AggregateException ae)
@@ -239,7 +222,7 @@ public partial class Form1 : Form
                 { "/*resizeImages*/", string.IsNullOrWhiteSpace(row[DataTableConfigColumns.ResizeImages].ToString()) ? "false" : row[DataTableConfigColumns.ResizeImages].ToString() },
                 { "/*joomlaThumbsPath*/", row[DataTableConfigColumns.JoomlaThumbsPath].ToString() },
                 { "/*joomlaImgSrcPath*/", row[DataTableConfigColumns.JoomlaImgSrcPath].ToString() },
-                { "/*isMerged*/", string.IsNullOrWhiteSpace(row[DataTableConfigColumns.IsMerged].ToString()) ? "false" : row[DataTableConfigColumns.IsMerged].ToString()},
+                { "/*isMerged*/", string.IsNullOrWhiteSpace(row[DataTableConfigColumns.IsMerged].ToString()) ? "false" : row[DataTableConfigColumns.IsMerged].ToString() },
                 { "/*jqueryVersion*/", row[DataTableConfigColumns.JqueryVersion].ToString() },
                 { "/*ogImageFullPath*/", row[DataTableConfigColumns.OgImageFullPath].ToString() }
             };
@@ -258,6 +241,7 @@ public partial class Form1 : Form
         {
             AddColumnsToDt();
         }
+
         dgvGalleryConfiguration.DataSource = _dtGalleryConfiguration;
 
         var galleries = JsonConvert.DeserializeObject<List<Dictionary<string, string>>>(File.ReadAllText(tbJsonFile.Text));

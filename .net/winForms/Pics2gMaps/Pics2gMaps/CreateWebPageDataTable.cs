@@ -2,39 +2,36 @@
 
 namespace Pics2gMaps;
 
-public class CreateWebPageDataTable : ICommandHandlerAsync<CreateWebPageDataTableCommand>
+public class CreateWebPageDataTable(AutomaticallyFillMissingValuesInDataTable automaticallyFillMissingValues
+, ExtractGpsInfoAndResizeImageWrapper extractGpsInfoAndResizeImageWrapper) : ICommandHandlerAsync<CreateWebPageDataTableCommand>
 {
-    public ToolStripStatusLabel? TsslRecordCount { get; set; }
-    public Form? Form { get; set; }
 
-    public CreateWebPageDataTable()
+    public async Task Execute(CreateWebPageDataTableCommand command)
     {
-        var automaticallyFillMissingValues = new AutomaticallyFillMissingValues();
-        var prepareHtmlFolder = new PrepareHtmlFolderDataTable();
+        AutomaticallyFillMissingValuesInDataTableCommand automaticallyFillMissingValuesCommand =
+            new AutomaticallyFillMissingValuesInDataTableCommand
+            {
+                DataRow = command.DataRow,
+                BaseUrl = command.BaseUrl,
+                JqueryVersion = command.JqueryVersion
+            };
+        automaticallyFillMissingValues.Execute(automaticallyFillMissingValuesCommand);
 
-        IProgress<int> recordCountProgress = new Progress<int>(UpdateRecordCount);
-        var parallelForEachAndExtractGpsInfoWrapper = new ParallelForEachAndExtractGpsInfoWrapper(recordCountProgress);
-        var extractGpsInfoAndResizeImageWrapper = new ExtractGpsInfoAndResizeImageWrapper(parallelForEachAndExtractGpsInfoWrapper);
-    }
-
-    private void UpdateRecordCount(int obj)
-    {
-/*
-        if (Form is { IsDisposed: true }) return;
-
-        if (FormInvokeRequired)
+        PrepareHtmlFolderDataTableCommand prepareHtmlFolderCommand = new PrepareHtmlFolderDataTableCommand
         {
-            BeginInvoke(() => UpdateStatus(recordCount));
-        }
-        else
-        {
-            UpdateStatus(recordCount);
-        }
-*/
-    }
+            DataRow = command.DataRow,
+            TemplateRootFolder = command.TemplateRootFolder,
+            Columns = command.Columns
+        };
+        PrepareHtmlFolderDataTable prepareHtmlFolder = new PrepareHtmlFolderDataTable();
+        prepareHtmlFolder.Execute(prepareHtmlFolderCommand);
 
-    public Task Execute(CreateWebPageDataTableCommand command)
-    {
-        throw new NotImplementedException();
+        var extractGpsInfoAndResizeImageWrapperCommand =
+            new ExtractGpsInfoAndResizeImageWrapperCommand
+            {
+                DataRow = command.DataRow
+            };
+
+        await extractGpsInfoAndResizeImageWrapper.Execute(extractGpsInfoAndResizeImageWrapperCommand);
     }
 }
