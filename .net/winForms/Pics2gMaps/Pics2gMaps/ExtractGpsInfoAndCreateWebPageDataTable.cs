@@ -2,7 +2,7 @@
 
 namespace Pics2gMaps;
 
-public class CreateWebPageDataTable(AutomaticallyFillMissingValuesInDataTable automaticallyFillMissingValues
+public class ExtractGpsInfoAndCreateWebPageDataTable(AutomaticallyFillMissingValuesInDataTable automaticallyFillMissingValues
 , ExtractGpsInfoAndResizeImageWrapper extractGpsInfoAndResizeImageWrapper) : ICommandHandlerAsync<CreateWebPageDataTableCommand>
 {
 
