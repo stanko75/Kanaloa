@@ -8,14 +8,14 @@ public class ExtractGpsInfoAndCreateWebPageDataTable(AutomaticallyFillMissingVal
 
     public async Task Execute(ExtractGpsInfoAndCreateWebPageDataTableCommand command)
     {
-        AutomaticallyFillMissingValuesInDataTableCommand automaticallyFillMissingValuesCommand =
+        AutomaticallyFillMissingValuesInDataTableCommand automaticallyFillMissingValuesInDataTableCommand =
             new AutomaticallyFillMissingValuesInDataTableCommand
             {
                 DataRow = command.DataRow
                 , BaseUrl = command.BaseUrl
                 , JqueryVersion = command.JqueryVersion
             };
-        automaticallyFillMissingValues.Execute(automaticallyFillMissingValuesCommand);
+        automaticallyFillMissingValues.Execute(automaticallyFillMissingValuesInDataTableCommand);
 
         PrepareHtmlFolderDataTableCommand prepareHtmlFolderCommand = new PrepareHtmlFolderDataTableCommand
         {
