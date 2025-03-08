@@ -75,7 +75,7 @@ public partial class Form1 : Form
             var extractGpsInfoAndResizeImageWrapper = new ExtractGpsInfoAndResizeImageWrapper(_parallelForEachAndExtractGpsInfoWrapper);
             var automaticallyFillMissingValuesInDataTable = new AutomaticallyFillMissingValuesInDataTable();
             var createWebPageDataTable = new ExtractGpsInfoAndCreateWebPageDataTable(automaticallyFillMissingValuesInDataTable, extractGpsInfoAndResizeImageWrapper);
-            var createWebPageDataTableCommand = new CreateWebPageDataTableCommand();
+            var createWebPageDataTableCommand = new ExtractGpsInfoAndCreateWebPageDataTableCommand();
             createWebPageDataTableCommand.RecordCountProgress = recordCountProgress;
 
             foreach (DataRow dataRow in rows)

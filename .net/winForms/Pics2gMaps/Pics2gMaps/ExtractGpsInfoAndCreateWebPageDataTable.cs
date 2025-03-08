@@ -3,10 +3,10 @@
 namespace Pics2gMaps;
 
 public class ExtractGpsInfoAndCreateWebPageDataTable(AutomaticallyFillMissingValuesInDataTable automaticallyFillMissingValues
-, ExtractGpsInfoAndResizeImageWrapper extractGpsInfoAndResizeImageWrapper) : ICommandHandlerAsync<CreateWebPageDataTableCommand>
+, ExtractGpsInfoAndResizeImageWrapper extractGpsInfoAndResizeImageWrapper) : ICommandHandlerAsync<ExtractGpsInfoAndCreateWebPageDataTableCommand>
 {
 
-    public async Task Execute(CreateWebPageDataTableCommand command)
+    public async Task Execute(ExtractGpsInfoAndCreateWebPageDataTableCommand command)
     {
         AutomaticallyFillMissingValuesInDataTableCommand automaticallyFillMissingValuesCommand =
             new AutomaticallyFillMissingValuesInDataTableCommand

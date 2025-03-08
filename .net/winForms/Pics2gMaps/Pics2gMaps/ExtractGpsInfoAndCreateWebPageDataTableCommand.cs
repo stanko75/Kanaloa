@@ -2,7 +2,7 @@
 
 namespace Pics2gMaps;
 
-public class CreateWebPageDataTableCommand
+public class ExtractGpsInfoAndCreateWebPageDataTableCommand
 {
     public DataRow? DataRow { get; set; }
     public string? BaseUrl { get; set; }
