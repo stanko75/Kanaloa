@@ -74,7 +74,7 @@ public partial class Form1 : Form
             _parallelForEachAndExtractGpsInfoWrapper = new ParallelForEachAndExtractGpsInfoWrapper();
             var extractGpsInfoAndResizeImageWrapper = new ExtractGpsInfoAndResizeImageWrapper(_parallelForEachAndExtractGpsInfoWrapper);
             var automaticallyFillMissingValuesInDataTable = new AutomaticallyFillMissingValuesInDataTable();
-            var createWebPageDataTable = new ExtractGpsInfoAndCreateWebPageDataTable(automaticallyFillMissingValuesInDataTable, extractGpsInfoAndResizeImageWrapper);
+            var extractGpsInfoAndCreateWebPageDataTable = new ExtractGpsInfoAndCreateWebPageDataTable(automaticallyFillMissingValuesInDataTable, extractGpsInfoAndResizeImageWrapper);
             var extractGpsInfoAndCreateWebPageDataTableCommand = new ExtractGpsInfoAndCreateWebPageDataTableCommand();
             extractGpsInfoAndCreateWebPageDataTableCommand.RecordCountProgress = recordCountProgress;
 
@@ -86,7 +86,7 @@ public partial class Form1 : Form
                 extractGpsInfoAndCreateWebPageDataTableCommand.JqueryVersion = JqueryVersion;
                 extractGpsInfoAndCreateWebPageDataTableCommand.TemplateRootFolder = tbTemplateRootFolder.Text;
 
-                await createWebPageDataTable.Execute(extractGpsInfoAndCreateWebPageDataTableCommand);
+                await extractGpsInfoAndCreateWebPageDataTable.Execute(extractGpsInfoAndCreateWebPageDataTableCommand);
             }
         }
         catch (AggregateException ae)
