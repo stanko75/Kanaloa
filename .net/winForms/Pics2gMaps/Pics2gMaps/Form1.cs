@@ -75,18 +75,18 @@ public partial class Form1 : Form
             var extractGpsInfoAndResizeImageWrapper = new ExtractGpsInfoAndResizeImageWrapper(_parallelForEachAndExtractGpsInfoWrapper);
             var automaticallyFillMissingValuesInDataTable = new AutomaticallyFillMissingValuesInDataTable();
             var createWebPageDataTable = new ExtractGpsInfoAndCreateWebPageDataTable(automaticallyFillMissingValuesInDataTable, extractGpsInfoAndResizeImageWrapper);
-            var createWebPageDataTableCommand = new ExtractGpsInfoAndCreateWebPageDataTableCommand();
-            createWebPageDataTableCommand.RecordCountProgress = recordCountProgress;
+            var extractGpsInfoAndCreateWebPageDataTableCommand = new ExtractGpsInfoAndCreateWebPageDataTableCommand();
+            extractGpsInfoAndCreateWebPageDataTableCommand.RecordCountProgress = recordCountProgress;
 
             foreach (DataRow dataRow in rows)
             {
-                createWebPageDataTableCommand.DataRow = dataRow;
-                createWebPageDataTableCommand.BaseUrl = BaseUrl;
-                createWebPageDataTableCommand.Columns = _dtGalleryConfiguration.Columns;
-                createWebPageDataTableCommand.JqueryVersion = JqueryVersion;
-                createWebPageDataTableCommand.TemplateRootFolder = tbTemplateRootFolder.Text;
+                extractGpsInfoAndCreateWebPageDataTableCommand.DataRow = dataRow;
+                extractGpsInfoAndCreateWebPageDataTableCommand.BaseUrl = BaseUrl;
+                extractGpsInfoAndCreateWebPageDataTableCommand.Columns = _dtGalleryConfiguration.Columns;
+                extractGpsInfoAndCreateWebPageDataTableCommand.JqueryVersion = JqueryVersion;
+                extractGpsInfoAndCreateWebPageDataTableCommand.TemplateRootFolder = tbTemplateRootFolder.Text;
 
-                await createWebPageDataTable.Execute(createWebPageDataTableCommand);
+                await createWebPageDataTable.Execute(extractGpsInfoAndCreateWebPageDataTableCommand);
             }
         }
         catch (AggregateException ae)
