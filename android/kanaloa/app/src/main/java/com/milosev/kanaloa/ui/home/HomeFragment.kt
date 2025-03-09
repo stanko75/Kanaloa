@@ -1,10 +1,13 @@
 package com.milosev.kanaloa.ui.home
 
+import android.app.Activity
+import android.os.Build
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.annotation.RequiresApi
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import com.milosev.kanaloa.R
@@ -21,6 +24,7 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
     private lateinit var mapView: MapView
     private lateinit var googleMap: GoogleMap
 
+    @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -29,13 +33,14 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
             ViewModelProvider(this).get(HomeViewModel::class.java)
 
         val rootView = inflater.inflate(R.layout.fragment_home, container, false)
+        val activity = getActivity() as Activity // Safe cast to AppCompatActivity if needed
 
         val bottomNavigationView = rootView.findViewById<BottomNavigationView>(R.id.bottom_navigation_view)
         bottomNavigationView.setOnItemSelectedListener { item ->
             when (item.itemId) {
                 R.id.navigation_home -> {
                     val serviceStarter = StartForegroundService()
-                    serviceStarter.startForegroundService(context)
+                    serviceStarter.startForegroundService(context, activity)
                     true
                 }
                 R.id.navigation_dashboard -> {

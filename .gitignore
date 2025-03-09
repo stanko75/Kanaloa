@@ -80,3 +80,5 @@ html/templateForBlog/index.html
 android/kanaloa/secrets.properties
 /.net/winForms/Pics2gMaps/Pics2gMaps/app.config
 /.net/winForms/Pics2gMaps/Pics2gMaps/appsettings.json
+android/kanaloa/app/src/main/res/raw/config.properties
+android/kanaloa/app/src/main/res/raw/config.properties
