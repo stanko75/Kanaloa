@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import com.milosev.kanaloa.R
@@ -15,6 +16,8 @@ import com.google.android.gms.maps.MapView
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
+import com.google.android.material.bottomnavigation.BottomNavigationView
+import com.milosev.kanaloa.ui.gallery.GalleryViewModel
 
 class HomeFragment : Fragment(), OnMapReadyCallback {
 
@@ -25,7 +28,29 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
+        val homeViewModel =
+            ViewModelProvider(this).get(HomeViewModel::class.java)
+
         val rootView = inflater.inflate(R.layout.fragment_home, container, false)
+
+        val bottomNavigationView = rootView.findViewById<BottomNavigationView>(R.id.bottom_navigation_view)
+        bottomNavigationView.setOnItemSelectedListener { item ->
+            when (item.itemId) {
+                R.id.navigation_home -> {
+                    Toast.makeText(context, "Home Clicked", Toast.LENGTH_LONG).show()
+                    true
+                }
+                R.id.navigation_dashboard -> {
+                    Toast.makeText(context, "Navigation Clicked", Toast.LENGTH_LONG).show()
+                    true
+                }
+                R.id.navigation_notifications -> {
+                    Toast.makeText(context, "Notification Clicked", Toast.LENGTH_LONG).show()
+                    true
+                }
+                else -> false
+            }
+        }
 
         mapView = rootView.findViewById(R.id.map_view)
         mapView.onCreate(savedInstanceState)
