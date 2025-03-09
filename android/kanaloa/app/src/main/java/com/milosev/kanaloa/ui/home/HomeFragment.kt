@@ -4,12 +4,10 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import com.milosev.kanaloa.R
-import com.milosev.kanaloa.databinding.FragmentHomeBinding
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.MapView
@@ -17,7 +15,6 @@ import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
 import com.google.android.material.bottomnavigation.BottomNavigationView
-import com.milosev.kanaloa.ui.gallery.GalleryViewModel
 
 class HomeFragment : Fragment(), OnMapReadyCallback {
 
@@ -37,7 +34,8 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
         bottomNavigationView.setOnItemSelectedListener { item ->
             when (item.itemId) {
                 R.id.navigation_home -> {
-                    Toast.makeText(context, "Home Clicked", Toast.LENGTH_LONG).show()
+                    val serviceStarter = StartForegroundService()
+                    serviceStarter.startForegroundService(context)
                     true
                 }
                 R.id.navigation_dashboard -> {
