@@ -31,6 +31,21 @@
             </intent-filter>
         </activity>
 
+        <receiver
+            android:name=".foregroundtickservice.BroadcastTickReceiver"
+            android:enabled="true"
+            android:exported="true"
+            android:permission="TODO"
+            tools:ignore="ExportedReceiver" />
+
+        <service
+            android:name=".foregroundtickservice.ForegroundTickService"
+            android:enabled="true"
+            android:exported="false"
+            android:permission="TODO"
+            android:process=":ForegroundTickService"
+            android:foregroundServiceType="location"/>
+
         <meta-data
             android:name="com.google.android.geo.API_KEY"
             android:value="${MAPS_API_KEY}" />

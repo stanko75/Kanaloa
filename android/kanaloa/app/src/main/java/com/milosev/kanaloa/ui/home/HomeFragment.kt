@@ -33,14 +33,14 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
             ViewModelProvider(this).get(HomeViewModel::class.java)
 
         val rootView = inflater.inflate(R.layout.fragment_home, container, false)
-        val activity = getActivity() as Activity // Safe cast to AppCompatActivity if needed
+        val activity = activity as Activity // Safe cast to AppCompatActivity if needed
 
         val bottomNavigationView = rootView.findViewById<BottomNavigationView>(R.id.bottom_navigation_view)
         bottomNavigationView.setOnItemSelectedListener { item ->
             when (item.itemId) {
                 R.id.navigation_home -> {
                     val serviceStarter = StartForegroundService()
-                    serviceStarter.startForegroundService(context, activity)
+                    context?.let { serviceStarter.startForegroundService(it, activity, this.requireView()) }
                     true
                 }
                 R.id.navigation_dashboard -> {
