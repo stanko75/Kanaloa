@@ -20,6 +20,9 @@
         android:theme="@style/Theme.Kanaloa"
         tools:targetApi="31">
         <activity
+            android:name=".ui.settings.SettingsActivity"
+            android:exported="false" />
+        <activity
             android:name=".MainActivity"
             android:exported="true"
             android:label="@string/app_name"
@@ -42,14 +45,13 @@
             android:name=".foregroundtickservice.ForegroundTickService"
             android:enabled="true"
             android:exported="false"
+            android:foregroundServiceType="location"
             android:permission="TODO"
-            android:process=":ForegroundTickService"
-            android:foregroundServiceType="location"/>
+            android:process=":ForegroundTickService" />
 
         <meta-data
             android:name="com.google.android.geo.API_KEY"
             android:value="${MAPS_API_KEY}" />
-
     </application>
 
 </manifest>
