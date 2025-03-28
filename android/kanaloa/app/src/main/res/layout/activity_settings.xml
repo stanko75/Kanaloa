@@ -7,4 +7,124 @@
     android:layout_height="match_parent"
     tools:context=".ui.settings.SettingsActivity">
 
+    <TextView
+        android:id="@+id/textView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="108dp"
+        android:text="@string/how_often_to_update_location_in_seconds"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <EditText
+        android:id="@+id/txtRequestUpdates"
+        android:layout_width="64dp"
+        android:layout_height="50dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="248dp"
+        android:autofillHints=""
+        android:ems="10"
+        android:hint="@string/_30"
+        android:inputType="number"
+        android:minHeight="48dp"
+        android:textColorHint="#757575"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="@+id/textView"
+        app:layout_constraintTop_toBottomOf="@+id/textView" />
+
+    <Button
+        android:id="@+id/btnOpenBatteryOptimization"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="100dp"
+        android:text="@string/open_battery_optimization"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.657"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/editTextPass"
+        app:layout_constraintVertical_bias="1.0" />
+
+    <EditText
+        android:id="@+id/editTextHost"
+        android:layout_width="150dp"
+        android:layout_height="48dp"
+        android:layout_marginTop="100dp"
+        android:layout_marginEnd="76dp"
+        android:autofillHints=""
+        android:ems="10"
+        android:hint="@string/defaultFileName"
+        android:inputType="text"
+        android:textColorHint="#757575"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.868"
+        app:layout_constraintStart_toEndOf="@+id/textViewHost"
+        app:layout_constraintTop_toBottomOf="@+id/textView" />
+
+    <TextView
+        android:id="@+id/textViewPass"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/pass"
+        app:layout_constraintBottom_toBottomOf="@+id/editTextPass"
+        app:layout_constraintEnd_toStartOf="@+id/editTextPass"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="@+id/textViewUser"
+        app:layout_constraintTop_toTopOf="@+id/editTextPass" />
+
+    <EditText
+        android:id="@+id/editTextPass"
+        android:layout_width="150dp"
+        android:layout_height="48dp"
+        android:layout_marginTop="20dp"
+        android:autofillHints=""
+        android:ems="10"
+        android:hint="@string/pass"
+        android:inputType="textPassword"
+        android:textColorHint="#757575"
+        app:layout_constraintEnd_toEndOf="@+id/editTextUser"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="@+id/editTextUser"
+        app:layout_constraintTop_toBottomOf="@+id/editTextUser" />
+
+    <TextView
+        android:id="@+id/textViewUser"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/user"
+        app:layout_constraintBottom_toBottomOf="@+id/editTextUser"
+        app:layout_constraintEnd_toStartOf="@+id/editTextUser"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="@+id/textViewHost"
+        app:layout_constraintTop_toTopOf="@+id/editTextUser"
+        app:layout_constraintVertical_bias="0.724" />
+
+    <TextView
+        android:id="@+id/textViewHost"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/host"
+        app:layout_constraintBottom_toBottomOf="@+id/editTextHost"
+        app:layout_constraintStart_toStartOf="@+id/txtRequestUpdates"
+        app:layout_constraintTop_toTopOf="@+id/editTextHost"
+        app:layout_constraintVertical_bias="0.551" />
+
+    <EditText
+        android:id="@+id/editTextUser"
+        android:layout_width="150dp"
+        android:layout_height="48dp"
+        android:layout_marginTop="24dp"
+        android:autofillHints=""
+        android:ems="10"
+        android:hint="@string/defaultHost"
+        android:inputType="text"
+        android:textColorHint="#757575"
+        app:layout_constraintEnd_toEndOf="@+id/editTextHost"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="@+id/editTextHost"
+        app:layout_constraintTop_toBottomOf="@+id/editTextHost" />
+
+
 </androidx.constraintlayout.widget.ConstraintLayout>

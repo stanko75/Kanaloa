@@ -13,4 +13,15 @@
     <string name="title_start">Start</string>
     <string name="title_dashboard">Dashboard</string>
     <string name="title_notifications">Notifications</string>
+
+    <string name="how_often_to_update_location_in_seconds">How often to update location in seconds:</string>
+    <string name="number_of_ticks">Number of ticks</string>
+    <string name="open_battery_optimization">Open battery optimization</string>
+    <string name="_30">30</string>
+    <string name="pass">Pass</string>
+    <string name="user">User</string>
+    <string name="defaultHost">ftp.host.com</string>
+    <string name="defaultFileName">default.kml</string>
+    <string name="host">Host</string>
+
 </resources>
