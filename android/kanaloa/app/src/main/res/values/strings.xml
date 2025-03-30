@@ -9,7 +9,6 @@
 
     <string name="menu_home">Home</string>
     <string name="menu_gallery">Gallery</string>
-    <string name="menu_slideshow">Slideshow</string>
     <string name="title_start">Start</string>
     <string name="title_dashboard">Dashboard</string>
     <string name="title_notifications">Notifications</string>
@@ -24,5 +23,6 @@
     <string name="defaultFileName">default.kml</string>
     <string name="host">Host</string>
     <string name="saveSettings">Save settings</string>
+    <string name="menu_log">Log</string>
 
 </resources>
