@@ -38,14 +38,14 @@
         android:id="@+id/btnOpenBatteryOptimization"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="100dp"
+        android:layout_marginTop="60dp"
         android:text="@string/open_battery_optimization"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.657"
+        app:layout_constraintHorizontal_bias="0.59"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/editTextPass"
-        app:layout_constraintVertical_bias="1.0" />
+        app:layout_constraintTop_toBottomOf="@+id/btnSaveSettings"
+        app:layout_constraintVertical_bias="0.0" />
 
     <EditText
         android:id="@+id/editTextHost"
@@ -125,6 +125,17 @@
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="@+id/editTextHost"
         app:layout_constraintTop_toBottomOf="@+id/editTextHost" />
+
+    <Button
+        android:id="@+id/btnSaveSettings"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="40dp"
+        android:text="@string/saveSettings"
+        app:layout_constraintEnd_toEndOf="@+id/editTextPass"
+        app:layout_constraintHorizontal_bias="0.666"
+        app:layout_constraintStart_toStartOf="@+id/textViewPass"
+        app:layout_constraintTop_toBottomOf="@+id/editTextPass" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

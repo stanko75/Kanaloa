@@ -23,5 +23,6 @@
     <string name="defaultHost">ftp.host.com</string>
     <string name="defaultFileName">default.kml</string>
     <string name="host">Host</string>
+    <string name="saveSettings">Save settings</string>
 
 </resources>
