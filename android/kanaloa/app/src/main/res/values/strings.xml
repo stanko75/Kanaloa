@@ -24,5 +24,6 @@
     <string name="host">Host</string>
     <string name="saveSettings">Save settings</string>
     <string name="menu_log">Log</string>
+    <string name="log">Log</string>
 
 </resources>

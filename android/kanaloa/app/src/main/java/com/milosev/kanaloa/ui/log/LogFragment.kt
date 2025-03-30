@@ -28,10 +28,12 @@ class LogFragment : Fragment() {
         _binding = FragmentLogBinding.inflate(inflater, container, false)
         val root: View = binding.root
 
+        /*
         val textView: TextView = binding.textSlideshow
         logViewModel.text.observe(viewLifecycleOwner) {
             textView.text = it
         }
+         */
         return root
     }
 
