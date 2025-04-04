@@ -18,6 +18,10 @@ import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
 import com.google.android.material.bottomnavigation.BottomNavigationView
+import com.milosev.kanaloa.foregroundtickservice.ForegroundServiceBroadcastReceiver
+import com.milosev.kanaloa.foregroundtickservice.ForegroundServiceBroadcastReceiverOnReceive
+import com.milosev.kanaloa.logger.LogViewModelLogger
+import com.milosev.kanaloa.ui.log.LogViewModel
 
 class HomeFragment : Fragment(), OnMapReadyCallback {
 
@@ -29,18 +33,20 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        val homeViewModel =
-            ViewModelProvider(this).get(HomeViewModel::class.java)
-
         val rootView = inflater.inflate(R.layout.fragment_home, container, false)
         val activity = activity as Activity // Safe cast to AppCompatActivity if needed
-
+        val viewModel = ViewModelProvider(requireActivity())[LogViewModel::class.java]
         val bottomNavigationView = rootView.findViewById<BottomNavigationView>(R.id.bottom_navigation_view)
         bottomNavigationView.setOnItemSelectedListener { item ->
             when (item.itemId) {
                 R.id.navigation_home -> {
+
+                    val broadCastReceiver = ForegroundServiceBroadcastReceiver(
+                        ForegroundServiceBroadcastReceiverOnReceive(LogViewModelLogger(viewModel))
+                    )
+
                     val serviceStarter = StartForegroundService()
-                    context?.let { serviceStarter.startForegroundService(it, activity, this.requireView()) }
+                    context?.let { serviceStarter.startForegroundService(it, activity, this.requireView(), broadCastReceiver) }
                     true
                 }
                 R.id.navigation_dashboard -> {

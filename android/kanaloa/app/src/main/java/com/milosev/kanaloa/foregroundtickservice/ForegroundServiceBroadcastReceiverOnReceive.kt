@@ -1,15 +1,12 @@
 package com.milosev.kanaloa.foregroundtickservice
 
-import android.app.Activity
 import android.content.Context
 import android.content.Intent
-import android.view.View
-import android.widget.TextView
-import com.milosev.kanaloa.R
-import com.milosev.kanaloa.logger.ActivityLogger
+import com.milosev.kanaloa.logger.LogViewModelLogger
 import com.milosev.kanaloa.logger.LoggerExtensions
 
-class ForegroundServiceBroadcastReceiverOnReceive(private val activity: Activity): IForegroundServiceBroadcastReceiverOnReceive {
+class ForegroundServiceBroadcastReceiverOnReceive(private val logViewModelLogger: LogViewModelLogger): IForegroundServiceBroadcastReceiverOnReceive {
+
     override fun onReceive(context: Context, intent: Intent) {
         when (intent.action) {
             IntentAction.NUM_OF_TICKS -> {
@@ -27,21 +24,16 @@ class ForegroundServiceBroadcastReceiverOnReceive(private val activity: Activity
     }
 
     override fun onNumOfTicksReceived(numOfTicks: Int) {
-        TODO("Not yet implemented")
-        /*
-        val numberOfTicks: TextView =
-            activity.findViewById<View>(R.id.textViewNumberOfTicks) as TextView
-        numberOfTicks.text = numOfTicks.toString()
-         */
+        logViewModelLogger.setTicks(numOfTicks)
     }
 
     override fun onRetrofitResponseReceived(retrofitMessage: String?, context: Context) {
         if (retrofitMessage != null) {
-            LoggerExtensions().log(ActivityLogger(activity), retrofitMessage)
+            LoggerExtensions().log(logViewModelLogger, retrofitMessage)
         }
     }
 
     override fun onUnknownActionReceived(context: Context) {
-        LoggerExtensions().log(ActivityLogger(activity), "else")
+        LoggerExtensions().log(logViewModelLogger, "else")
     }
 }

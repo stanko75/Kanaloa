@@ -6,8 +6,21 @@ import androidx.lifecycle.ViewModel
 
 class LogViewModel : ViewModel() {
 
-    private val _text = MutableLiveData<String>().apply {
-        value = "This is slideshow Fragment"
+    private val _numOfTicks = MutableLiveData<Int>().apply {
+        value = 0
     }
-    val text: LiveData<String> = _text
+    val numOfTicks: LiveData<Int> = _numOfTicks
+
+    fun setTicks(value: Int) {
+        _numOfTicks.value = value
+    }
+
+    private val _log = MutableLiveData<String>().apply {
+        value = ""
+    }
+    val log: LiveData<String> get() = _log
+
+    fun appendLog(entry: String) {
+        _log.value += entry
+    }
 }

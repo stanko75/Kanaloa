@@ -4,7 +4,6 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import com.milosev.kanaloa.databinding.FragmentLogBinding
@@ -23,17 +22,19 @@ class LogFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         val logViewModel =
-            ViewModelProvider(this).get(LogViewModel::class.java)
+            ViewModelProvider(requireActivity())[LogViewModel::class.java]
+
+        logViewModel.numOfTicks.observe(viewLifecycleOwner) { ticks ->
+            binding.textViewNumberOfTicks.text = ticks.toString()
+        }
+
+        logViewModel.log.observe(viewLifecycleOwner) { logText ->
+            binding.editTextTextMultiLineLog.setText(logText)
+        }
 
         _binding = FragmentLogBinding.inflate(inflater, container, false)
         val root: View = binding.root
 
-        /*
-        val textView: TextView = binding.textSlideshow
-        logViewModel.text.observe(viewLifecycleOwner) {
-            textView.text = it
-        }
-         */
         return root
     }
 
