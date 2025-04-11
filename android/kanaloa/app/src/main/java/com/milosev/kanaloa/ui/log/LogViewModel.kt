@@ -21,6 +21,8 @@ class LogViewModel : ViewModel() {
     val log: LiveData<String> get() = _log
 
     fun appendLog(entry: String) {
-        _log.value += entry
+        val newLog = _log.value.orEmpty() + entry
+        _log.postValue(newLog)
+        //_log.value += entry
     }
 }
