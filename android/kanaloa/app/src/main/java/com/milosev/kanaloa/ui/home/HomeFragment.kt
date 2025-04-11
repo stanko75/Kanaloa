@@ -18,15 +18,22 @@ import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
 import com.google.android.material.bottomnavigation.BottomNavigationView
+import com.google.maps.android.data.kml.KmlLayer
 import com.milosev.kanaloa.foregroundtickservice.ForegroundServiceBroadcastReceiver
 import com.milosev.kanaloa.foregroundtickservice.ForegroundServiceBroadcastReceiverOnReceive
+import com.milosev.kanaloa.logger.LogEntry
 import com.milosev.kanaloa.logger.LogViewModelLogger
+import com.milosev.kanaloa.logger.LoggingEventType
+import com.milosev.kanaloa.ui.log.LogFragment
 import com.milosev.kanaloa.ui.log.LogViewModel
+import java.net.URL
 
 class HomeFragment : Fragment(), OnMapReadyCallback {
 
     private lateinit var mapView: MapView
     private lateinit var googleMap: GoogleMap
+    private lateinit var viewModel: LogViewModel
+    private lateinit var logViewModelLogger: LogViewModelLogger
 
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreateView(
@@ -35,14 +42,15 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
     ): View {
         val rootView = inflater.inflate(R.layout.fragment_home, container, false)
         val activity = activity as Activity // Safe cast to AppCompatActivity if needed
-        val viewModel = ViewModelProvider(requireActivity())[LogViewModel::class.java]
+        viewModel = ViewModelProvider(requireActivity())[LogViewModel::class.java]
+        logViewModelLogger = LogViewModelLogger(viewModel)
         val bottomNavigationView = rootView.findViewById<BottomNavigationView>(R.id.bottom_navigation_view)
         bottomNavigationView.setOnItemSelectedListener { item ->
             when (item.itemId) {
                 R.id.navigation_home -> {
 
                     val broadCastReceiver = ForegroundServiceBroadcastReceiver(
-                        ForegroundServiceBroadcastReceiverOnReceive(LogViewModelLogger(viewModel))
+                        ForegroundServiceBroadcastReceiverOnReceive(logViewModelLogger)
                     )
 
                     val serviceStarter = StartForegroundService()
@@ -72,9 +80,24 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
         googleMap = map
 
         // Initialize map settings and move the camera to a default location
-        val defaultLocation = LatLng(37.7749, -122.4194) // San Francisco, for milosev
+        val defaultLocation = LatLng(50.1140208, 8.6846595) // San Francisco, for milosev
         googleMap.addMarker(MarkerOptions().position(defaultLocation).title("Marker in San Francisco"))
-        googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(defaultLocation, 10f))
+        googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(defaultLocation, 15f))
+        loadKmlFromUrl("http://www.milosev.com/kmlTestDelete/kml.kml")
+    }
+
+    private fun loadKmlFromUrl(url: String) {
+        Thread {
+            try {
+                val inputStream = URL(url).openStream()
+                val kmlLayer = KmlLayer(googleMap, inputStream, context)
+                requireActivity().runOnUiThread {
+                    kmlLayer.addLayerToMap()
+                }
+            } catch (e: Exception) {
+                logViewModelLogger.Log(LogEntry(LoggingEventType.Error, e.message, e))
+            }
+        }.start()
     }
 
     override fun onResume() {

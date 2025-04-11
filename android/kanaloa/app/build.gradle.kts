@@ -70,4 +70,5 @@ dependencies {
     implementation(libs.retrofit2.converter.scalars)
 
     implementation(libs.google.maps)
+    implementation(libs.android.maps.utils);
 }
