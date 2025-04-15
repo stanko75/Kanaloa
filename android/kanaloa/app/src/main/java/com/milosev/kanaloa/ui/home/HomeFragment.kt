@@ -10,23 +10,22 @@ import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
-import com.milosev.kanaloa.R
+import androidx.lifecycle.lifecycleScope
 import com.google.android.gms.maps.CameraUpdateFactory
+import com.milosev.kanaloa.R
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.MapView
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.model.LatLng
+import com.google.android.gms.maps.model.Marker
 import com.google.android.gms.maps.model.MarkerOptions
 import com.google.android.material.bottomnavigation.BottomNavigationView
-import com.google.maps.android.data.kml.KmlLayer
 import com.milosev.kanaloa.foregroundtickservice.ForegroundServiceBroadcastReceiver
 import com.milosev.kanaloa.foregroundtickservice.ForegroundServiceBroadcastReceiverOnReceive
-import com.milosev.kanaloa.logger.LogEntry
+import com.milosev.kanaloa.location.LiveLocationUpdater
 import com.milosev.kanaloa.logger.LogViewModelLogger
-import com.milosev.kanaloa.logger.LoggingEventType
-import com.milosev.kanaloa.ui.log.LogFragment
 import com.milosev.kanaloa.ui.log.LogViewModel
-import java.net.URL
+import okhttp3.OkHttpClient
 
 class HomeFragment : Fragment(), OnMapReadyCallback {
 
@@ -34,6 +33,9 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
     private lateinit var googleMap: GoogleMap
     private lateinit var viewModel: LogViewModel
     private lateinit var logViewModelLogger: LogViewModelLogger
+    private val client = OkHttpClient()
+
+    private var marker: Marker? = null
 
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreateView(
@@ -52,6 +54,10 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
                     val broadCastReceiver = ForegroundServiceBroadcastReceiver(
                         ForegroundServiceBroadcastReceiverOnReceive(logViewModelLogger)
                     )
+
+                    val liveUpdater = LiveLocationUpdater(googleMap, client, lifecycleScope)
+                    liveUpdater.marker = marker;
+                    liveUpdater.start(googleMap, context, requireActivity(), logViewModelLogger, "https://kanaloa.azurewebsites.net/default/default.kml")
 
                     val serviceStarter = StartForegroundService()
                     context?.let { serviceStarter.startForegroundService(it, activity, this.requireView(), broadCastReceiver) }
@@ -80,24 +86,14 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
         googleMap = map
 
         // Initialize map settings and move the camera to a default location
-        val defaultLocation = LatLng(50.1140208, 8.6846595) // San Francisco, for milosev
-        googleMap.addMarker(MarkerOptions().position(defaultLocation).title("Marker in San Francisco"))
+        val defaultLocation = LatLng(37.3489817, -122.0661283) // San Francisco, for milosev
+        marker = googleMap.addMarker(
+            MarkerOptions()
+                .position(defaultLocation)
+                .title("Live Marker")
+        )
         googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(defaultLocation, 15f))
-        loadKmlFromUrl("http://www.milosev.com/kmlTestDelete/kml.kml")
-    }
-
-    private fun loadKmlFromUrl(url: String) {
-        Thread {
-            try {
-                val inputStream = URL(url).openStream()
-                val kmlLayer = KmlLayer(googleMap, inputStream, context)
-                requireActivity().runOnUiThread {
-                    kmlLayer.addLayerToMap()
-                }
-            } catch (e: Exception) {
-                logViewModelLogger.Log(LogEntry(LoggingEventType.Error, e.message, e))
-            }
-        }.start()
+        //loadKmlFromUrl("https://kanaloa.azurewebsites.net/default/default.kml")
     }
 
     override fun onResume() {
