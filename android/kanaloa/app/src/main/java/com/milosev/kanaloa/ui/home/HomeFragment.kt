@@ -86,7 +86,7 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
         googleMap = map
 
         // Initialize map settings and move the camera to a default location
-        val defaultLocation = LatLng(37.3489817, -122.0661283) // San Francisco, for milosev
+        val defaultLocation = LatLng(37.3489817, -122.0661283)
         marker = googleMap.addMarker(
             MarkerOptions()
                 .position(defaultLocation)
