@@ -1,12 +1,12 @@
 package com.milosev.kanaloa.ui.gallery
 
+import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
+import androidx.core.content.edit
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModelProvider
 import com.milosev.kanaloa.databinding.FragmentGalleryBinding
 
 class GalleryFragment : Fragment() {
@@ -22,16 +22,34 @@ class GalleryFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        val galleryViewModel =
-            ViewModelProvider(this).get(GalleryViewModel::class.java)
-
         _binding = FragmentGalleryBinding.inflate(inflater, container, false)
         val root: View = binding.root
 
+        /*
+        val galleryViewModel =
+            ViewModelProvider(this)[GalleryViewModel::class.java]
         val textView: TextView = binding.textGallery
         galleryViewModel.text.observe(viewLifecycleOwner) {
             textView.text = it
         }
+         */
+
+        val sharedPreferences = requireContext().getSharedPreferences("settings", Context.MODE_PRIVATE)
+
+        val fileName = sharedPreferences.getString("kmlFileName", "default")
+        val folderName = sharedPreferences.getString("folderName", "default")
+
+        _binding!!.editTextFileName.setText(fileName)
+        _binding!!.editTextFolderName.setText(folderName)
+
+        _binding!!.btnSaveSettings.setOnClickListener {
+            sharedPreferences.edit {
+                putString("kmlFileName", binding.editTextFileName.text.toString())
+                putString("folderName", binding.editTextFolderName.text.toString())
+            }
+            requireActivity().onBackPressedDispatcher.onBackPressed()
+        }
+
         return root
     }
 

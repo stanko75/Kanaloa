@@ -26,4 +26,7 @@
     <string name="menu_log">Log</string>
     <string name="log">Log</string>
 
+    <string name="folderName">Folder name:</string>
+    <string name="defaultFolder">default</string>
+    <string name="fileName">File name:</string>
 </resources>
