@@ -59,7 +59,7 @@ class LiveLocationUpdater(
                         }
                     }
                 } catch (e: Exception) {
-                    e.printStackTrace()
+                    logViewModelLogger.Log(LogEntry(LoggingEventType.Error, e.message, e))
                 }
 
                 delay(updateInterval)
