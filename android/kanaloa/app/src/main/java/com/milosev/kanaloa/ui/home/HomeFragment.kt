@@ -1,6 +1,7 @@
 package com.milosev.kanaloa.ui.home
 
 import android.app.Activity
+import android.content.Context
 import android.os.Build
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -20,6 +21,7 @@ import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.Marker
 import com.google.android.gms.maps.model.MarkerOptions
 import com.google.android.material.bottomnavigation.BottomNavigationView
+import com.milosev.kanaloa.Config
 import com.milosev.kanaloa.foregroundtickservice.ForegroundServiceBroadcastReceiver
 import com.milosev.kanaloa.foregroundtickservice.ForegroundServiceBroadcastReceiverOnReceive
 import com.milosev.kanaloa.location.LiveLocationUpdater
@@ -51,13 +53,19 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
             when (item.itemId) {
                 R.id.navigation_home -> {
 
+                    val sharedPreferences = requireContext().getSharedPreferences("settings", Context.MODE_PRIVATE)
+                    val fileName = sharedPreferences.getString("kmlFileName", "default.kml")
+                    val folderName = sharedPreferences.getString("folderName", "default")
+                    val webHost = context?.let { Config(it).webHost }
+                    val kmlUrl = "$webHost/$folderName/$fileName"
+
                     val broadCastReceiver = ForegroundServiceBroadcastReceiver(
                         ForegroundServiceBroadcastReceiverOnReceive(logViewModelLogger)
                     )
 
                     val liveUpdater = LiveLocationUpdater(googleMap, client, lifecycleScope)
                     liveUpdater.marker = marker;
-                    liveUpdater.start(googleMap, context, requireActivity(), logViewModelLogger, "https://kanaloa.azurewebsites.net/default/default.kml")
+                    liveUpdater.start(googleMap, context, requireActivity(), logViewModelLogger, kmlUrl)
 
                     val serviceStarter = StartForegroundService()
                     context?.let { serviceStarter.startForegroundService(it, activity, this.requireView(), broadCastReceiver) }
