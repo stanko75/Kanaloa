@@ -1,7 +1,6 @@
-package com.milosev.kanaloa.foregroundtickservice
+package com.milosev.kanaloa
 
 import android.content.Context
-import com.milosev.kanaloa.R
 import java.util.Properties
 
 class Config(val context: Context) {

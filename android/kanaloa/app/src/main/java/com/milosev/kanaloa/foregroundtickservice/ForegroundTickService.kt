@@ -13,6 +13,7 @@ import android.os.IBinder
 import android.os.PowerManager
 import androidx.annotation.RequiresApi
 import androidx.core.app.NotificationCompat
+import com.milosev.kanaloa.Config
 import com.milosev.kanaloa.R
 import com.milosev.kanaloa.filehandling.WriteFileOnInternalStorage
 import com.milosev.kanaloa.location.CreateLocationRequestBuilder
