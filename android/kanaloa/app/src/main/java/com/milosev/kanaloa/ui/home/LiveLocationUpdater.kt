@@ -1,4 +1,4 @@
-package com.milosev.kanaloa.location
+package com.milosev.kanaloa.ui.home
 
 import android.content.Context
 import androidx.fragment.app.FragmentActivity
