@@ -69,7 +69,7 @@ class LiveLocationUpdater(
 
     private suspend fun fetchLiveLocation(): LatLng? = withContext(Dispatchers.IO) {
         val request = Request.Builder()
-            .url("https://kanaloa.azurewebsites.net/html/live/test.json")
+            .url("https://kanaloa.azurewebsites.net/live.json")
             .build()
 
         client.newCall(request).execute().use { response ->
