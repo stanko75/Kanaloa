@@ -36,15 +36,21 @@ class GalleryFragment : Fragment() {
 
         val sharedPreferences = requireContext().getSharedPreferences("settings", Context.MODE_PRIVATE)
 
-        val fileName = sharedPreferences.getString("kmlFileName", "default")
+        var fileName = sharedPreferences.getString("kmlFileName", "default")
         val folderName = sharedPreferences.getString("folderName", "default")
 
         _binding!!.editTextFileName.setText(fileName)
         _binding!!.editTextFolderName.setText(folderName)
 
         _binding!!.btnSaveSettings.setOnClickListener {
+
+            fileName = binding.editTextFileName.text.toString()
+            if (!fileName!!.endsWith(".kml", ignoreCase = true)) {
+                fileName += ".kml"
+            }
+                        
             sharedPreferences.edit {
-                putString("kmlFileName", binding.editTextFileName.text.toString())
+                putString("kmlFileName", fileName)
                 putString("folderName", binding.editTextFolderName.text.toString())
             }
             requireActivity().onBackPressedDispatcher.onBackPressed()
