@@ -64,6 +64,9 @@ class LiveLocationUpdater(
                     logViewModelLogger.Log(LogEntry(LoggingEventType.Error, e.message, e))
                 }
 
+                val sharedPreferences = context?.getSharedPreferences("settings", Context.MODE_PRIVATE)
+                val intervalString = sharedPreferences?.getString("requestUpdates", "30") ?: "30"
+                val updateInterval = intervalString.toLongOrNull()?.times(1000) ?: 30_000L
                 delay(updateInterval)
             }
         }

@@ -30,21 +30,24 @@ class SettingsActivity : AppCompatActivity() {
         binding = ActivitySettingsBinding.inflate(layoutInflater)
         setContentView(binding.root)
         val sharedPreferences =
-            getSharedPreferences("ftpSettings", Context.MODE_PRIVATE)
+            getSharedPreferences("settings", Context.MODE_PRIVATE)
 
         val host = sharedPreferences.getString("host", "ftp.host.com")
         val user = sharedPreferences.getString("user", "user")
         val pass = sharedPreferences.getString("pass", "pass")
+        val requestUpdates = sharedPreferences.getString("requestUpdates", "30")
 
         binding.editTextHost.setText(host)
         binding.editTextUser.setText(user)
         binding.editTextPass.setText(pass)
+        binding.txtRequestUpdates.setText(requestUpdates)
 
         binding.btnSaveSettings.setOnClickListener {
             sharedPreferences.edit() {
                 putString("host", binding.editTextHost.text.toString())
                 putString("user", binding.editTextUser.text.toString())
                 putString("pass", binding.editTextPass.text.toString())
+                putString("requestUpdates", binding.txtRequestUpdates.text.toString())
             }
             finish()
         }
