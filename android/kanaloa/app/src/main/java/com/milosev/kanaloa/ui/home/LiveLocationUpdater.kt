@@ -13,6 +13,7 @@ import com.milosev.kanaloa.logger.LogViewModelLogger
 import com.milosev.kanaloa.logger.LoggingEventType
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
@@ -29,6 +30,7 @@ class LiveLocationUpdater(
 ) {
     var marker: Marker? = null
     private val updateInterval = 30_000L
+    private var updateJob: Job? = null
 
     fun start(
         googleMap: GoogleMap,
@@ -37,7 +39,7 @@ class LiveLocationUpdater(
         logViewModelLogger: LogViewModelLogger,
         kmlUrl: String
     ) {
-        coroutineScope.launch {
+        updateJob = coroutineScope.launch {
             while (isActive) {
                 try {
                     loadKmlFromUrl(kmlUrl, googleMap, context, requireActivity, logViewModelLogger)
@@ -65,6 +67,10 @@ class LiveLocationUpdater(
                 delay(updateInterval)
             }
         }
+    }
+
+    fun stop() {
+        updateJob?.cancel()
     }
 
     private suspend fun fetchLiveLocation(): LatLng? = withContext(Dispatchers.IO) {

@@ -27,7 +27,6 @@ import com.milosev.kanaloa.foregroundtickservice.ForegroundServiceBroadcastRecei
 import com.milosev.kanaloa.logger.LogViewModelLogger
 import com.milosev.kanaloa.ui.log.LogViewModel
 import okhttp3.OkHttpClient
-import androidx.core.view.size
 import androidx.core.view.get
 
 class HomeFragment : Fragment(), OnMapReadyCallback {
@@ -37,6 +36,7 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
     private lateinit var viewModel: LogViewModel
     private lateinit var logViewModelLogger: LogViewModelLogger
     private val client = OkHttpClient()
+    private lateinit var liveUpdater: LiveLocationUpdater
 
     private var marker: Marker? = null
 
@@ -57,6 +57,7 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
         val broadCastReceiver = ForegroundServiceBroadcastReceiver(
             ForegroundServiceBroadcastReceiverOnReceive(logViewModelLogger)
         )
+
         bottomNavigationView.setOnItemSelectedListener { item ->
             when (item.itemId) {
                 R.id.navigation_home -> {
@@ -67,7 +68,6 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
                     val webHost = context?.let { Config(it).webHost }
                     val kmlUrl = "$webHost/$folderName/$fileName"
 
-                    val liveUpdater = LiveLocationUpdater(googleMap, client, lifecycleScope)
                     liveUpdater.marker = marker;
                     liveUpdater.start(googleMap, context, requireActivity(), logViewModelLogger, kmlUrl)
 
@@ -78,6 +78,7 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
                 R.id.navigation_dashboard -> {
                     val serviceStopper = StopForegroundService()
                     context?.let { serviceStopper.stopForegroundService(it, activity, broadCastReceiver) }
+                    liveUpdater.stop()
                     true
                 }
                 R.id.navigation_notifications -> {
@@ -106,7 +107,7 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
                 .title("Live Marker")
         )
         googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(defaultLocation, 15f))
-        //loadKmlFromUrl("https://kanaloa.azurewebsites.net/default/default.kml")
+        liveUpdater = LiveLocationUpdater(googleMap, client, lifecycleScope)
     }
 
     override fun onResume() {
