@@ -33,9 +33,13 @@ class StartForegroundService {
         val intentStartForegroundTickService =
             Intent(context, ForegroundTickService::class.java)
         intentStartForegroundTickService.action = IntentAction.START_FOREGROUND_TICK_SERVICE
+
+        val sharedPreferences = context.getSharedPreferences("settings", Context.MODE_PRIVATE)
+        val intervalString = sharedPreferences?.getString("requestUpdates", "30") ?: "30"
+        val updateInterval = intervalString.toLongOrNull()?.times(1000) ?: 30_000L
         intentStartForegroundTickService.putExtra(
             IntentExtras.NUM_OF_SECONDS_FOR_TICK,
-            0
+            updateInterval
         )
 
         val inputMethodManager =
@@ -49,7 +53,6 @@ class StartForegroundService {
             PackageManager.DONT_KILL_APP
         )
 
-        val sharedPreferences = context.getSharedPreferences("settings", Context.MODE_PRIVATE)
         val fileName = sharedPreferences.getString("kmlFileName", "default")
         val folderName = sharedPreferences.getString("folderName", "default")
 
