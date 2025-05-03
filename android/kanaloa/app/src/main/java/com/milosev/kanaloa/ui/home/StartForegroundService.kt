@@ -16,8 +16,6 @@ import com.milosev.kanaloa.foregroundtickservice.ForegroundTickService
 import com.milosev.kanaloa.foregroundtickservice.IntentAction
 import com.milosev.kanaloa.foregroundtickservice.IntentExtras
 import android.content.IntentFilter
-import android.widget.TextView
-import com.milosev.kanaloa.R
 
 class StartForegroundService {
     @RequiresApi(Build.VERSION_CODES.O)

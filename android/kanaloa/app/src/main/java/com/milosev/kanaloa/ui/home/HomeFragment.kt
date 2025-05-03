@@ -27,6 +27,8 @@ import com.milosev.kanaloa.foregroundtickservice.ForegroundServiceBroadcastRecei
 import com.milosev.kanaloa.logger.LogViewModelLogger
 import com.milosev.kanaloa.ui.log.LogViewModel
 import okhttp3.OkHttpClient
+import androidx.core.view.size
+import androidx.core.view.get
 
 class HomeFragment : Fragment(), OnMapReadyCallback {
 
@@ -48,6 +50,13 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
         viewModel = ViewModelProvider(requireActivity())[LogViewModel::class.java]
         logViewModelLogger = LogViewModelLogger(viewModel)
         val bottomNavigationView = rootView.findViewById<BottomNavigationView>(R.id.bottom_navigation_view)
+
+        bottomNavigationView.menu.setGroupCheckable(0, true, true)
+        bottomNavigationView.menu[1].isChecked = true
+
+        val broadCastReceiver = ForegroundServiceBroadcastReceiver(
+            ForegroundServiceBroadcastReceiverOnReceive(logViewModelLogger)
+        )
         bottomNavigationView.setOnItemSelectedListener { item ->
             when (item.itemId) {
                 R.id.navigation_home -> {
@@ -58,10 +67,6 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
                     val webHost = context?.let { Config(it).webHost }
                     val kmlUrl = "$webHost/$folderName/$fileName"
 
-                    val broadCastReceiver = ForegroundServiceBroadcastReceiver(
-                        ForegroundServiceBroadcastReceiverOnReceive(logViewModelLogger)
-                    )
-
                     val liveUpdater = LiveLocationUpdater(googleMap, client, lifecycleScope)
                     liveUpdater.marker = marker;
                     liveUpdater.start(googleMap, context, requireActivity(), logViewModelLogger, kmlUrl)
@@ -71,7 +76,8 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
                     true
                 }
                 R.id.navigation_dashboard -> {
-                    Toast.makeText(context, "Navigation Clicked", Toast.LENGTH_LONG).show()
+                    val serviceStopper = StopForegroundService()
+                    context?.let { serviceStopper.stopForegroundService(it, activity, broadCastReceiver) }
                     true
                 }
                 R.id.navigation_notifications -> {
