@@ -1,6 +1,7 @@
 package com.milosev.kanaloa.ui.home
 
 import android.content.Context
+import android.net.Uri
 import androidx.fragment.app.FragmentActivity
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
@@ -23,6 +24,7 @@ import okhttp3.OkHttpClient
 import okhttp3.Request
 import org.json.JSONObject
 import java.net.URL
+import androidx.core.net.toUri
 
 class LiveLocationUpdater(
     private val map: GoogleMap,
@@ -79,20 +81,24 @@ class LiveLocationUpdater(
     }
 
     private suspend fun fetchLiveLocation(url: String?): LatLng? = withContext(Dispatchers.IO) {
-        val request = url?.let {
+        val fullUrl = url?.toUri()
+            ?.buildUpon()
+            ?.appendPath("live.json")
+            ?.build()
+            .toString()
+
+        val request = fullUrl.let {
             Request.Builder()
                 .url(it)
                 .build()
         }
 
-        if (request != null) {
-            client.newCall(request).execute().use { response ->
-                if (response.isSuccessful) {
-                    val json = JSONObject(response.body.string())
-                    val lat = json.getDouble("lat")
-                    val lng = json.getDouble("lng")
-                    return@withContext LatLng(lat, lng)
-                }
+        client.newCall(request).execute().use { response ->
+            if (response.isSuccessful) {
+                val json = JSONObject(response.body.string())
+                val lat = json.getDouble("lat")
+                val lng = json.getDouble("lng")
+                return@withContext LatLng(lat, lng)
             }
         }
         null
