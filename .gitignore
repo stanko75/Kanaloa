@@ -83,3 +83,4 @@ android/kanaloa/secrets.properties
 android/kanaloa/app/src/main/res/raw/config.properties
 android/kanaloa/app/src/main/res/raw/config.properties
 *.kml
+.net/webApi/Kanaloa/Properties/ServiceDependencies/kanaloa - Web Deploy/profile.arm.json
