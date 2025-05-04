@@ -12,6 +12,7 @@ public class WriteConfigurationToJsonFile : ICommandHandlerAsync<WriteConfigurat
 
         if (File.Exists(command.ConfigFileName))
         {
+            //System.IO.IOException: 'The process cannot access the file 'C:\home\site\wwwroot\config.json' because it is being used by another process.'
             string strExistingConfig = await File.ReadAllTextAsync(command.ConfigFileName);
             JObject jsonObjectExistingConfig = JObject.Parse(strExistingConfig);
             liveExistingConfigModel = jsonObjectExistingConfig.ToObject<LiveConfigModel>() ??

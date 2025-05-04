@@ -36,7 +36,7 @@ class StartForegroundService {
 
         val sharedPreferences = context.getSharedPreferences("settings", Context.MODE_PRIVATE)
         val intervalString = sharedPreferences?.getString("requestUpdates", "30") ?: "30"
-        val updateInterval = intervalString.toLongOrNull()?.times(1000) ?: 30_000L
+        val updateInterval = intervalString.toLongOrNull() ?: 30L
         intentStartForegroundTickService.putExtra(
             IntentExtras.NUM_OF_SECONDS_FOR_TICK,
             updateInterval

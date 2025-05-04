@@ -8,6 +8,7 @@ import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.Marker
 import com.google.android.gms.maps.model.MarkerOptions
 import com.google.maps.android.data.kml.KmlLayer
+import com.milosev.kanaloa.Config
 import com.milosev.kanaloa.logger.LogEntry
 import com.milosev.kanaloa.logger.LogViewModelLogger
 import com.milosev.kanaloa.logger.LoggingEventType
@@ -39,12 +40,13 @@ class LiveLocationUpdater(
         logViewModelLogger: LogViewModelLogger,
         kmlUrl: String
     ) {
+        val url = context?.let { Config(it).webHost };
         updateJob = coroutineScope.launch {
             while (isActive) {
                 try {
                     loadKmlFromUrl(kmlUrl, googleMap, context, requireActivity, logViewModelLogger)
 
-                    val newLocation = fetchLiveLocation()
+                    val newLocation = fetchLiveLocation(url)
                     newLocation?.let {
                         withContext(Dispatchers.Main) {
                             if (marker == null) {
@@ -76,17 +78,21 @@ class LiveLocationUpdater(
         updateJob?.cancel()
     }
 
-    private suspend fun fetchLiveLocation(): LatLng? = withContext(Dispatchers.IO) {
-        val request = Request.Builder()
-            .url("https://kanaloa.azurewebsites.net/live.json")
-            .build()
+    private suspend fun fetchLiveLocation(url: String?): LatLng? = withContext(Dispatchers.IO) {
+        val request = url?.let {
+            Request.Builder()
+                .url(it)
+                .build()
+        }
 
-        client.newCall(request).execute().use { response ->
-            if (response.isSuccessful) {
-                val json = JSONObject(response.body.string())
-                val lat = json.getDouble("lat")
-                val lng = json.getDouble("lng")
-                return@withContext LatLng(lat, lng)
+        if (request != null) {
+            client.newCall(request).execute().use { response ->
+                if (response.isSuccessful) {
+                    val json = JSONObject(response.body.string())
+                    val lat = json.getDouble("lat")
+                    val lng = json.getDouble("lng")
+                    return@withContext LatLng(lat, lng)
+                }
             }
         }
         null
