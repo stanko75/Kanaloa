@@ -29,7 +29,7 @@ class LogFragment : Fragment() {
         }
 
         logViewModel.log.observe(viewLifecycleOwner) { logText ->
-            binding.editTextTextMultiLineLog.setText(logText)
+            binding.editTextTextMultiLineLog.append(logText)
         }
 
         _binding = FragmentLogBinding.inflate(inflater, container, false)
