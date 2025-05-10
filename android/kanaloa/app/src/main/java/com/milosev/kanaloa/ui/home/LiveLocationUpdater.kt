@@ -32,7 +32,6 @@ class LiveLocationUpdater(
     private val coroutineScope: CoroutineScope
 ) {
     var marker: Marker? = null
-    private val updateInterval = 30_000L
     private var updateJob: Job? = null
 
     fun start(
