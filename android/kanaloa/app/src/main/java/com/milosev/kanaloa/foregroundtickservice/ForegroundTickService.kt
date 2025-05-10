@@ -13,6 +13,7 @@ import android.os.IBinder
 import android.os.PowerManager
 import androidx.annotation.RequiresApi
 import androidx.core.app.NotificationCompat
+import androidx.core.content.edit
 import com.milosev.kanaloa.Config
 import com.milosev.kanaloa.R
 import com.milosev.kanaloa.filehandling.WriteFileOnInternalStorage
@@ -80,9 +81,23 @@ class ForegroundTickService : Service(), CoroutineScope by MainScope() {
                         )
                         , CreateLocationRequestBuilder().buildLocationRequest(numOfSecondsForTick)
                     )
+
+                val sharedPreferences =
+                    getSharedPreferences("foregroundTickServiceStatus", Context.MODE_PRIVATE)
+                sharedPreferences.edit {
+                    putString("status", "started")
+                }
+
                 startForegroundTickService.requestLocationUpdates(context)
             }
             IntentAction.STOP_FOREGROUND_TICK_SERVICE -> {
+
+                val sharedPreferences =
+                    getSharedPreferences("foregroundTickServiceStatus", Context.MODE_PRIVATE)
+                sharedPreferences.edit {
+                    putString("status", "stopped")
+                }
+
                 stopSelf(startId)
                 stopSelfResult(startId)
             }

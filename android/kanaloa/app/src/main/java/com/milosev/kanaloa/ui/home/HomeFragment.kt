@@ -32,12 +32,15 @@ import kotlinx.coroutines.launch
 
 class HomeFragment : Fragment(), OnMapReadyCallback {
 
+    private var isMapReady: Boolean = false
+    private var shouldStartLiveUpdater: Boolean = false
     private lateinit var mapView: MapView
     private lateinit var googleMap: GoogleMap
     private lateinit var viewModel: LogViewModel
     private lateinit var logViewModelLogger: LogViewModelLogger
     private val client = OkHttpClient()
     private lateinit var liveUpdater: LiveLocationUpdater
+    private lateinit var bottomNavigationView: BottomNavigationView
 
     private var marker: Marker? = null
 
@@ -50,7 +53,7 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
         val activity = activity as Activity // Safe cast to AppCompatActivity if needed
         viewModel = ViewModelProvider(requireActivity())[LogViewModel::class.java]
         logViewModelLogger = LogViewModelLogger(viewModel)
-        val bottomNavigationView = rootView.findViewById<BottomNavigationView>(R.id.bottom_navigation_view)
+        bottomNavigationView = rootView.findViewById<BottomNavigationView>(R.id.bottom_navigation_view)
 
         bottomNavigationView.menu.setGroupCheckable(0, true, true)
         bottomNavigationView.menu[1].isChecked = true
@@ -105,6 +108,7 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
 
     override fun onMapReady(map: GoogleMap) {
         googleMap = map
+        isMapReady = true
 
         // Initialize map settings and move the camera to a default location
         val defaultLocation = LatLng(37.3489817, -122.0661283)
@@ -114,19 +118,50 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
                 .title("Live Marker")
         )
         googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(defaultLocation, 15f))
+
+        if (shouldStartLiveUpdater) {
+            startLiveUpdaterNow()
+        }
+    }
+
+    private fun startLiveUpdaterNow() {
+        val sharedPreferences =
+            requireContext().getSharedPreferences(
+                "foregroundTickServiceStatus",
+                Context.MODE_PRIVATE
+            )
+        val foregroundTickServiceStatus = sharedPreferences.getString("status", "stopped")
+
+        val kmlUrl = getKmlUrl()
         liveUpdater = LiveLocationUpdater(googleMap, client, lifecycleScope)
-
-        liveUpdater.loadKmlFromUrl(getKmlUrl(), googleMap, context, this.requireActivity(), logViewModelLogger)
-
-        val url = context?.let { Config(it).webHost };
-        lifecycleScope.launch {
-            liveUpdater.loadLocationFromUrlAndMoveCamera(url, googleMap)
+        if (foregroundTickServiceStatus == "started") {
+            bottomNavigationView.menu[0].isChecked = true
+            liveUpdater.marker = marker;
+            liveUpdater.start(googleMap, context, requireActivity(), logViewModelLogger, kmlUrl)
+        } else {
+            liveUpdater.loadKmlFromUrl(
+                kmlUrl,
+                googleMap,
+                context,
+                this.requireActivity(),
+                logViewModelLogger
+            )
+            val url = context?.let { Config(it).webHost };
+            lifecycleScope.launch {
+                liveUpdater.loadLocationFromUrlAndMoveCamera(url, googleMap)
+            }
         }
     }
 
     override fun onResume() {
         super.onResume()
         mapView.onResume()
+
+        if (isMapReady) {
+            startLiveUpdaterNow()
+        } else {
+            shouldStartLiveUpdater = true
+        }
     }
 
     override fun onPause() {
