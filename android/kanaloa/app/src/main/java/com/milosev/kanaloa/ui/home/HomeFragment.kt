@@ -28,6 +28,7 @@ import com.milosev.kanaloa.logger.LogViewModelLogger
 import com.milosev.kanaloa.ui.log.LogViewModel
 import okhttp3.OkHttpClient
 import androidx.core.view.get
+import kotlinx.coroutines.launch
 
 class HomeFragment : Fragment(), OnMapReadyCallback {
 
@@ -62,11 +63,7 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
             when (item.itemId) {
                 R.id.navigation_home -> {
 
-                    val sharedPreferences = requireContext().getSharedPreferences("settings", Context.MODE_PRIVATE)
-                    val fileName = sharedPreferences.getString("kmlFileName", "default.kml")
-                    val folderName = sharedPreferences.getString("folderName", "default")
-                    val webHost = context?.let { Config(it).webHost }
-                    val kmlUrl = "$webHost/$folderName/$fileName"
+                    val kmlUrl = getKmlUrl()
 
                     liveUpdater.marker = marker;
                     liveUpdater.start(googleMap, context, requireActivity(), logViewModelLogger, kmlUrl)
@@ -96,6 +93,16 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
         return rootView
     }
 
+    private fun getKmlUrl(): String {
+        val sharedPreferences =
+            requireContext().getSharedPreferences("settings", Context.MODE_PRIVATE)
+        val fileName = sharedPreferences.getString("kmlFileName", "default.kml")
+        val folderName = sharedPreferences.getString("folderName", "default")
+        val webHost = context?.let { Config(it).webHost }
+        val kmlUrl = "$webHost/$folderName/$fileName"
+        return kmlUrl
+    }
+
     override fun onMapReady(map: GoogleMap) {
         googleMap = map
 
@@ -108,6 +115,13 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
         )
         googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(defaultLocation, 15f))
         liveUpdater = LiveLocationUpdater(googleMap, client, lifecycleScope)
+
+        liveUpdater.loadKmlFromUrl(getKmlUrl(), googleMap, context, this.requireActivity(), logViewModelLogger)
+
+        val url = context?.let { Config(it).webHost };
+        lifecycleScope.launch {
+            liveUpdater.loadLocationFromUrlAndMoveCamera(url, googleMap)
+        }
     }
 
     override fun onResume() {

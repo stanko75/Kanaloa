@@ -47,22 +47,7 @@ class LiveLocationUpdater(
                 try {
                     loadKmlFromUrl(kmlUrl, googleMap, context, requireActivity, logViewModelLogger)
 
-                    val newLocation = fetchLiveLocation(url)
-                    newLocation?.let {
-                        withContext(Dispatchers.Main) {
-                            if (marker == null) {
-                                marker = map.addMarker(
-                                    MarkerOptions()
-                                        .position(it)
-                                        .title("Live Marker")
-                                )
-                            } else {
-                                marker?.position = it
-                                marker?.title = "Updated at ${System.currentTimeMillis() / 1000}"
-                            }
-                            googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(it, 15f))
-                        }
-                    }
+                    loadLocationFromUrlAndMoveCamera(url, googleMap)
                 } catch (e: Exception) {
                     logViewModelLogger.Log(LogEntry(LoggingEventType.Error, e.message, e))
                 }
@@ -71,6 +56,28 @@ class LiveLocationUpdater(
                 val intervalString = sharedPreferences?.getString("requestUpdates", "30") ?: "30"
                 val updateInterval = intervalString.toLongOrNull()?.times(1000) ?: 30_000L
                 delay(updateInterval)
+            }
+        }
+    }
+
+    suspend fun loadLocationFromUrlAndMoveCamera(
+        url: String?,
+        googleMap: GoogleMap
+    ) {
+        val newLocation = fetchLiveLocation(url)
+        newLocation?.let {
+            withContext(Dispatchers.Main) {
+                if (marker == null) {
+                    marker = map.addMarker(
+                        MarkerOptions()
+                            .position(it)
+                            .title("Live Marker")
+                    )
+                } else {
+                    marker?.position = it
+                    marker?.title = "Updated at ${System.currentTimeMillis() / 1000}"
+                }
+                googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(it, 15f))
             }
         }
     }
@@ -103,7 +110,7 @@ class LiveLocationUpdater(
         null
     }
 
-    private fun loadKmlFromUrl(url: String, googleMap: GoogleMap, context: Context?, requireActivity: FragmentActivity, logViewModelLogger: LogViewModelLogger) {
+    fun loadKmlFromUrl(url: String, googleMap: GoogleMap, context: Context?, requireActivity: FragmentActivity, logViewModelLogger: LogViewModelLogger) {
         Thread {
             try {
                 val inputStream = URL(url).openStream()
