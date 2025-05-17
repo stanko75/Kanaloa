@@ -1,6 +1,0 @@
-@Kanaloa_HostAddress = http://localhost:5134
-
-GET {{Kanaloa_HostAddress}}/weatherforecast/
-Accept: application/json
-
-###

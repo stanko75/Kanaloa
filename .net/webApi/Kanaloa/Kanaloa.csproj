@@ -7,25 +7,23 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="MetadataExtractor" Version="2.8.1" />
-    <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="9.0.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="9.0.5" />
+    <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="9.0.5" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
-    <PackageReference Include="Swashbuckle.AspNetCore" Version="7.2.0" />
-    <PackageReference Include="System.Drawing.Common" Version="9.0.0" />
   </ItemGroup>
 
   <ItemGroup>
     <Reference Include="Common">
-      <HintPath>..\..\lib\FileHandling\bin\Debug\net8.0\Common.dll</HintPath>
+      <HintPath>..\..\lib\HtmlHandling\bin\Debug\net9.0\Common.dll</HintPath>
     </Reference>
     <Reference Include="FileHandling">
-      <HintPath>..\..\lib\FileHandling\bin\Debug\net8.0\FileHandling.dll</HintPath>
+      <HintPath>..\..\lib\FileHandling\bin\Debug\net9.0\FileHandling.dll</HintPath>
     </Reference>
     <Reference Include="ImageHandling">
-      <HintPath>..\..\lib\ImageHandling\bin\Debug\net8.0\ImageHandling.dll</HintPath>
+      <HintPath>..\..\lib\ImageHandling\bin\Debug\net9.0\ImageHandling.dll</HintPath>
     </Reference>
     <Reference Include="KmlHandling">
-      <HintPath>..\..\lib\KmlHandling\bin\Debug\net8.0\KmlHandling.dll</HintPath>
+      <HintPath>..\..\lib\KmlHandling\bin\Debug\net9.0\KmlHandling.dll</HintPath>
     </Reference>
   </ItemGroup>
 
