@@ -2,6 +2,7 @@ using Common;
 using FileHandling;
 using Kanaloa;
 using KmlHandling;
+using Microsoft.Extensions.FileProviders;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllers();
@@ -26,6 +27,15 @@ if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();
 }
+
+app.UseStaticFiles(new StaticFileOptions
+{
+    FileProvider = new PhysicalFileProvider(Path.Combine(Directory.GetCurrentDirectory())),
+    RequestPath = "",
+    ServeUnknownFileTypes = true,
+    DefaultContentType = "text/plain"
+});
+
 app.UseHttpsRedirection();
 app.UseAuthorization();
 app.MapControllers();
