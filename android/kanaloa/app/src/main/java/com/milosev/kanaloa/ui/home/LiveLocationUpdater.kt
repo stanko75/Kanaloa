@@ -2,36 +2,28 @@ package com.milosev.kanaloa.ui.home
 
 import android.content.Context
 import androidx.fragment.app.FragmentActivity
-import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
-import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.Marker
-import com.google.android.gms.maps.model.MarkerOptions
 import com.milosev.kanaloa.Config
 import com.milosev.kanaloa.logger.LogEntry
 import com.milosev.kanaloa.logger.LogViewModelLogger
 import com.milosev.kanaloa.logger.LoggingEventType
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
-import okhttp3.OkHttpClient
-import okhttp3.Request
-import androidx.core.net.toUri
 import com.google.maps.android.data.kml.KmlLayer
 import com.milosev.kanaloa.retrofit.CreateRetrofitBuilder
 import com.milosev.kanaloa.retrofit.IGetKml
+import com.milosev.kanaloa.retrofit.fetchlivelocation.IFetchLiveLocation
 import okhttp3.ResponseBody
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
 class LiveLocationUpdater(
-    private val map: GoogleMap,
-    private val client: OkHttpClient,
+    private val fetchLiveLocation: IFetchLiveLocation,
     private val coroutineScope: CoroutineScope
 ) {
     var marker: Marker? = null
@@ -50,7 +42,14 @@ class LiveLocationUpdater(
                 try {
                     loadKmlFromUrl(kmlUrl, googleMap, context, requireActivity, logViewModelLogger)
 
-                    loadLocationFromUrlAndMoveCamera(url, googleMap)
+                    if (context != null)
+                    {
+                        fetchLiveLocation.fetchLiveLocation(context, url, googleMap)
+                    }
+                    else
+                    {
+                        logViewModelLogger.Log(LogEntry(LoggingEventType.Error, "Context is null"))
+                    }
                 } catch (e: Exception) {
                     logViewModelLogger.Log(LogEntry(LoggingEventType.Error, e.message, e))
                 }
@@ -63,56 +62,8 @@ class LiveLocationUpdater(
         }
     }
 
-    suspend fun loadLocationFromUrlAndMoveCamera(
-        url: String?,
-        googleMap: GoogleMap
-    ) {
-        val newLocation = fetchLiveLocation(url)
-        newLocation?.let {
-            withContext(Dispatchers.Main) {
-                if (marker == null) {
-                    marker = map.addMarker(
-                        MarkerOptions()
-                            .position(it)
-                            .title("Live Marker")
-                    )
-                } else {
-                    marker?.position = it
-                    marker?.title = "Updated at ${System.currentTimeMillis() / 1000}"
-                }
-                googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(it, 15f))
-            }
-        }
-    }
-
     fun stop() {
         updateJob?.cancel()
-    }
-
-    private suspend fun fetchLiveLocation(url: String?): LatLng? = withContext(Dispatchers.IO) {
-        val fullUrl = url?.toUri()
-            ?.buildUpon()
-            ?.appendPath("live.json")
-            ?.build()
-            .toString()
-
-        val request = fullUrl.let {
-            Request.Builder()
-                .url(it)
-                .build()
-        }
-
-        /*
-        client.newCall(request).execute().use { response ->
-            if (response.isSuccessful) {
-                val json = JSONObject(response.body.string())
-                val lat = json.getDouble("lat")
-                val lng = json.getDouble("lng")
-                return@withContext LatLng(lat, lng)
-            }
-        }
-         */
-        null
     }
 
     fun loadKmlFromUrl(url: String, googleMap: GoogleMap, context: Context?, requireActivity: FragmentActivity, logViewModelLogger: LogViewModelLogger) {

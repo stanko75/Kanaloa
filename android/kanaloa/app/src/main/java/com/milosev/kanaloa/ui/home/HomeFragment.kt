@@ -26,8 +26,10 @@ import com.milosev.kanaloa.foregroundtickservice.ForegroundServiceBroadcastRecei
 import com.milosev.kanaloa.foregroundtickservice.ForegroundServiceBroadcastReceiverOnReceive
 import com.milosev.kanaloa.logger.LogViewModelLogger
 import com.milosev.kanaloa.ui.log.LogViewModel
-import okhttp3.OkHttpClient
 import androidx.core.view.get
+import com.milosev.kanaloa.retrofit.CreateRetrofitBuilder
+import com.milosev.kanaloa.retrofit.fetchlivelocation.FetchLiveLocation
+import com.milosev.kanaloa.retrofit.fetchlivelocation.IGetLiveLocationApiService
 import kotlinx.coroutines.launch
 
 class HomeFragment : Fragment(), OnMapReadyCallback {
@@ -38,7 +40,6 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
     private lateinit var googleMap: GoogleMap
     private lateinit var viewModel: LogViewModel
     private lateinit var logViewModelLogger: LogViewModelLogger
-    private val client = OkHttpClient()
     private lateinit var liveUpdater: LiveLocationUpdater
     private lateinit var bottomNavigationView: BottomNavigationView
 
@@ -53,7 +54,7 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
         val activity = activity as Activity // Safe cast to AppCompatActivity if needed
         viewModel = ViewModelProvider(requireActivity())[LogViewModel::class.java]
         logViewModelLogger = LogViewModelLogger(viewModel)
-        bottomNavigationView = rootView.findViewById<BottomNavigationView>(R.id.bottom_navigation_view)
+        bottomNavigationView = rootView.findViewById(R.id.bottom_navigation_view)
 
         bottomNavigationView.menu.setGroupCheckable(0, true, true)
         bottomNavigationView.menu[1].isChecked = true
@@ -133,7 +134,10 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
         val foregroundTickServiceStatus = sharedPreferences.getString("status", "stopped")
 
         val kmlUrl = getKmlUrl()
-        liveUpdater = LiveLocationUpdater(googleMap, client, lifecycleScope)
+        val fetchLiveLocation = FetchLiveLocation(
+            CreateRetrofitBuilder().createRetrofitBuilder(Config(context).webHost)
+                .create(IGetLiveLocationApiService::class.java), logViewModelLogger)
+        liveUpdater = LiveLocationUpdater(fetchLiveLocation, lifecycleScope)
         if (foregroundTickServiceStatus == "started") {
             bottomNavigationView.menu[0].isChecked = true
             liveUpdater.marker = marker;
@@ -148,7 +152,7 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
             )
             val url = context?.let { Config(it).webHost };
             lifecycleScope.launch {
-                liveUpdater.loadLocationFromUrlAndMoveCamera(url, googleMap)
+                context?.let { fetchLiveLocation.fetchLiveLocation (it, url, googleMap) }
             }
         }
     }
