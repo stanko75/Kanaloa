@@ -42,6 +42,7 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
     private lateinit var logViewModelLogger: LogViewModelLogger
     private lateinit var liveUpdater: LiveLocationUpdater
     private lateinit var bottomNavigationView: BottomNavigationView
+    private lateinit var fetchLiveLocation: FetchLiveLocation
 
     private var marker: Marker? = null
 
@@ -58,6 +59,11 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
 
         bottomNavigationView.menu.setGroupCheckable(0, true, true)
         bottomNavigationView.menu[1].isChecked = true
+
+        fetchLiveLocation = FetchLiveLocation(
+            CreateRetrofitBuilder().createRetrofitBuilder(Config(context).webHost)
+                .create(IGetLiveLocationApiService::class.java), logViewModelLogger)
+        liveUpdater = LiveLocationUpdater(fetchLiveLocation, lifecycleScope)
 
         val broadCastReceiver = ForegroundServiceBroadcastReceiver(
             ForegroundServiceBroadcastReceiverOnReceive(logViewModelLogger)
@@ -121,11 +127,11 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
         googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(defaultLocation, 15f))
 
         if (shouldStartLiveUpdater) {
-            startLiveUpdaterNow()
+            startLiveUpdaterNow(fetchLiveLocation)
         }
     }
 
-    private fun startLiveUpdaterNow() {
+    private fun startLiveUpdaterNow(fetchLiveLocation: FetchLiveLocation) {
         val sharedPreferences =
             requireContext().getSharedPreferences(
                 "foregroundTickServiceStatus",
@@ -134,10 +140,6 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
         val foregroundTickServiceStatus = sharedPreferences.getString("status", "stopped")
 
         val kmlUrl = getKmlUrl()
-        val fetchLiveLocation = FetchLiveLocation(
-            CreateRetrofitBuilder().createRetrofitBuilder(Config(context).webHost)
-                .create(IGetLiveLocationApiService::class.java), logViewModelLogger)
-        liveUpdater = LiveLocationUpdater(fetchLiveLocation, lifecycleScope)
         if (foregroundTickServiceStatus == "started") {
             bottomNavigationView.menu[0].isChecked = true
             liveUpdater.marker = marker;
@@ -162,7 +164,7 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
         mapView.onResume()
 
         if (isMapReady) {
-            startLiveUpdaterNow()
+            startLiveUpdaterNow(fetchLiveLocation)
         } else {
             shouldStartLiveUpdater = true
         }
