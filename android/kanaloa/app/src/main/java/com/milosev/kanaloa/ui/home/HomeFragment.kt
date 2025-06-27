@@ -85,7 +85,7 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
                 R.id.navigation_dashboard -> {
                     val serviceStopper = StopForegroundService()
                     context?.let { serviceStopper.stopForegroundService(it, activity, broadCastReceiver) }
-                    liveUpdater.stop()
+                    liveUpdater.stop(logViewModelLogger)
                     true
                 }
                 R.id.navigation_notifications -> {

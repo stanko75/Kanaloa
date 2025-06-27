@@ -62,7 +62,24 @@ class LiveLocationUpdater(
         }
     }
 
-    fun stop() {
+    fun stop(logViewModelLogger: LogViewModelLogger) {
+
+        logViewModelLogger.Log(
+            LogEntry(
+                LoggingEventType.Information,
+                "...Stop..."
+            )
+        )
+
+        if (updateJob == null) {
+            logViewModelLogger.Log(
+                LogEntry(
+                    LoggingEventType.Error,
+                    "Update job is null!"
+                )
+            )
+        }
+
         updateJob?.cancel()
     }
 
