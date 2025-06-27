@@ -38,7 +38,7 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
     private var shouldStartLiveUpdater: Boolean = false
     private lateinit var mapView: MapView
     private lateinit var googleMap: GoogleMap
-    private lateinit var viewModel: LogViewModel
+    private lateinit var logViewModel: LogViewModel
     private lateinit var logViewModelLogger: LogViewModelLogger
     private lateinit var liveUpdater: LiveLocationUpdater
     private lateinit var bottomNavigationView: BottomNavigationView
@@ -53,8 +53,8 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
     ): View {
         val rootView = inflater.inflate(R.layout.fragment_home, container, false)
         val activity = activity as Activity // Safe cast to AppCompatActivity if needed
-        viewModel = ViewModelProvider(requireActivity())[LogViewModel::class.java]
-        logViewModelLogger = LogViewModelLogger(viewModel)
+        logViewModel = ViewModelProvider(requireActivity())[LogViewModel::class.java]
+        logViewModelLogger = LogViewModelLogger(logViewModel)
         bottomNavigationView = rootView.findViewById(R.id.bottom_navigation_view)
 
         bottomNavigationView.menu.setGroupCheckable(0, true, true)
