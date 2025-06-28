@@ -30,6 +30,8 @@ import androidx.core.view.get
 import com.milosev.kanaloa.retrofit.CreateRetrofitBuilder
 import com.milosev.kanaloa.retrofit.fetchlivelocation.FetchLiveLocation
 import com.milosev.kanaloa.retrofit.fetchlivelocation.IGetLiveLocationApiService
+import com.milosev.kanaloa.retrofit.loadkmlfromurl.ILoadKmlFromUrl
+import com.milosev.kanaloa.retrofit.loadkmlfromurl.LoadKmlFromUrl
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 
@@ -42,6 +44,7 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
     private lateinit var logViewModel: LogViewModel
     private lateinit var logViewModelLogger: LogViewModelLogger
     private lateinit var liveUpdater: LiveLocationUpdater
+    private lateinit var loadKmlFromUrl: ILoadKmlFromUrl
     private lateinit var bottomNavigationView: BottomNavigationView
     private lateinit var fetchLiveLocation: FetchLiveLocation
     private var updateJob: Job? = null
@@ -65,7 +68,8 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
         fetchLiveLocation = FetchLiveLocation(
             CreateRetrofitBuilder().createRetrofitBuilder(Config(context).webHost)
                 .create(IGetLiveLocationApiService::class.java), logViewModelLogger)
-        liveUpdater = LiveLocationUpdater(fetchLiveLocation)
+        loadKmlFromUrl = LoadKmlFromUrl(logViewModelLogger)
+        liveUpdater = LiveLocationUpdater(fetchLiveLocation, loadKmlFromUrl)
 
         val broadCastReceiver = ForegroundServiceBroadcastReceiver(
             ForegroundServiceBroadcastReceiverOnReceive(logViewModelLogger)
@@ -147,12 +151,11 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
             liveUpdater.marker = marker;
             updateJob = liveUpdater.start(googleMap, context, requireActivity(), logViewModelLogger, kmlUrl)
         } else {
-            liveUpdater.loadKmlFromUrl(
+            loadKmlFromUrl.loadKmlFromUrl(
                 kmlUrl,
                 googleMap,
                 context,
-                this.requireActivity(),
-                logViewModelLogger
+                this.requireActivity()
             )
             val url = context?.let { Config(it).webHost };
             lifecycleScope.launch {

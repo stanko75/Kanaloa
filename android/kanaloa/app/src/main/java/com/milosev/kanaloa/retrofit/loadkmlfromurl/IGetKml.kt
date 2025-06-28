@@ -1,4 +1,4 @@
-package com.milosev.kanaloa.retrofit
+package com.milosev.kanaloa.retrofit.loadkmlfromurl
 
 import okhttp3.ResponseBody
 import retrofit2.Call
