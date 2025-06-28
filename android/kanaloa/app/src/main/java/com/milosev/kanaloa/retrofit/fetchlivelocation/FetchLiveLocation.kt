@@ -34,11 +34,6 @@ class FetchLiveLocation(private var getLiveLocation: IGetLiveLocationApiService,
             .toString()
 
         context.let { Config(it).webHost }.let {
-            /*
-            val getLiveLocation = CreateRetrofitBuilder().createRetrofitBuilder(it)
-                .create(IGetLiveLocation::class.java)
-            */
-
             logViewModelLogger.Log(
                 LogEntry(
                     LoggingEventType.Information,
