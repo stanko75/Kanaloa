@@ -24,8 +24,7 @@ import retrofit2.Callback
 import retrofit2.Response
 
 class LiveLocationUpdater(
-    private val fetchLiveLocation: IFetchLiveLocation,
-    private val coroutineScope: CoroutineScope
+    private val fetchLiveLocation: IFetchLiveLocation
 ) {
     var marker: Marker? = null
 

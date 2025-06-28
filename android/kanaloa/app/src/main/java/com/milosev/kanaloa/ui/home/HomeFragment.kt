@@ -65,7 +65,7 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
         fetchLiveLocation = FetchLiveLocation(
             CreateRetrofitBuilder().createRetrofitBuilder(Config(context).webHost)
                 .create(IGetLiveLocationApiService::class.java), logViewModelLogger)
-        liveUpdater = LiveLocationUpdater(fetchLiveLocation, lifecycleScope)
+        liveUpdater = LiveLocationUpdater(fetchLiveLocation)
 
         val broadCastReceiver = ForegroundServiceBroadcastReceiver(
             ForegroundServiceBroadcastReceiverOnReceive(logViewModelLogger)
