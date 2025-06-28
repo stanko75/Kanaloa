@@ -6,12 +6,12 @@ plugins {
 
 android {
     namespace = "com.milosev.kanaloa"
-    compileSdk = 35
+    compileSdk = 36
 
     defaultConfig {
         applicationId = "com.milosev.kanaloa"
         minSdk = 24
-        targetSdk = 34
+        targetSdk = 35
         versionCode = 1
         versionName = "1.0"
 
