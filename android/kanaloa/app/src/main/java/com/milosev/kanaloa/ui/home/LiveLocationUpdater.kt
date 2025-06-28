@@ -17,6 +17,7 @@ import com.google.maps.android.data.kml.KmlLayer
 import com.milosev.kanaloa.retrofit.CreateRetrofitBuilder
 import com.milosev.kanaloa.retrofit.IGetKml
 import com.milosev.kanaloa.retrofit.fetchlivelocation.IFetchLiveLocation
+import kotlinx.coroutines.Dispatchers
 import okhttp3.ResponseBody
 import retrofit2.Call
 import retrofit2.Callback
@@ -27,7 +28,6 @@ class LiveLocationUpdater(
     private val coroutineScope: CoroutineScope
 ) {
     var marker: Marker? = null
-    private var updateJob: Job? = null
 
     fun start(
         googleMap: GoogleMap,
@@ -35,34 +35,53 @@ class LiveLocationUpdater(
         requireActivity: FragmentActivity,
         logViewModelLogger: LogViewModelLogger,
         kmlUrl: String
-    ) {
+    ): Job {
+
+        logViewModelLogger.Log(
+            LogEntry(
+                LoggingEventType.Information,
+                "...Start..."
+            )
+        )
+
+        val updateJob = Job()
         val url = context?.let { Config(it).webHost };
-        updateJob = coroutineScope.launch {
-            while (isActive) {
-                try {
-                    loadKmlFromUrl(kmlUrl, googleMap, context, requireActivity, logViewModelLogger)
+        CoroutineScope(Dispatchers.Main).launch(updateJob) {
+                updateLocationOnUi(kmlUrl, googleMap, context, requireActivity, logViewModelLogger, url)
+        }
 
-                    if (context != null)
-                    {
-                        fetchLiveLocation.fetchLiveLocation(context, url, googleMap)
-                    }
-                    else
-                    {
-                        logViewModelLogger.Log(LogEntry(LoggingEventType.Error, "Context is null"))
-                    }
-                } catch (e: Exception) {
-                    logViewModelLogger.Log(LogEntry(LoggingEventType.Error, e.message, e))
+        return updateJob
+    }
+
+    private suspend fun CoroutineScope.updateLocationOnUi(
+        kmlUrl: String,
+        googleMap: GoogleMap,
+        context: Context?,
+        requireActivity: FragmentActivity,
+        logViewModelLogger: LogViewModelLogger,
+        url: String?
+    ) {
+        while (isActive) {
+            try {
+                loadKmlFromUrl(kmlUrl, googleMap, context, requireActivity, logViewModelLogger)
+
+                if (context != null) {
+                    fetchLiveLocation.fetchLiveLocation(context, url, googleMap)
+                } else {
+                    logViewModelLogger.Log(LogEntry(LoggingEventType.Error, "Context is null"))
                 }
-
-                val sharedPreferences = context?.getSharedPreferences("settings", Context.MODE_PRIVATE)
-                val intervalString = sharedPreferences?.getString("requestUpdates", "30") ?: "30"
-                val updateInterval = intervalString.toLongOrNull()?.times(1000) ?: 30_000L
-                delay(updateInterval)
+            } catch (e: Exception) {
+                logViewModelLogger.Log(LogEntry(LoggingEventType.Error, e.message, e))
             }
+
+            val sharedPreferences = context?.getSharedPreferences("settings", Context.MODE_PRIVATE)
+            val intervalString = sharedPreferences?.getString("requestUpdates", "30") ?: "30"
+            val updateInterval = intervalString.toLongOrNull()?.times(1000) ?: 30_000L
+            delay(updateInterval)
         }
     }
 
-    fun stop(logViewModelLogger: LogViewModelLogger) {
+    fun stop(logViewModelLogger: LogViewModelLogger, updateJob: Job?) {
 
         logViewModelLogger.Log(
             LogEntry(

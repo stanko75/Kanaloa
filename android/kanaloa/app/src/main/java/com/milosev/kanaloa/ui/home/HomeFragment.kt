@@ -30,6 +30,7 @@ import androidx.core.view.get
 import com.milosev.kanaloa.retrofit.CreateRetrofitBuilder
 import com.milosev.kanaloa.retrofit.fetchlivelocation.FetchLiveLocation
 import com.milosev.kanaloa.retrofit.fetchlivelocation.IGetLiveLocationApiService
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 
 class HomeFragment : Fragment(), OnMapReadyCallback {
@@ -43,6 +44,7 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
     private lateinit var liveUpdater: LiveLocationUpdater
     private lateinit var bottomNavigationView: BottomNavigationView
     private lateinit var fetchLiveLocation: FetchLiveLocation
+    private var updateJob: Job? = null
 
     private var marker: Marker? = null
 
@@ -76,7 +78,7 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
                     val kmlUrl = getKmlUrl()
 
                     liveUpdater.marker = marker;
-                    liveUpdater.start(googleMap, context, requireActivity(), logViewModelLogger, kmlUrl)
+                    updateJob = liveUpdater.start(googleMap, context, requireActivity(), logViewModelLogger, kmlUrl)
 
                     val serviceStarter = StartForegroundService()
                     context?.let { serviceStarter.startForegroundService(it, activity, this.requireView(), broadCastReceiver) }
@@ -85,7 +87,7 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
                 R.id.navigation_dashboard -> {
                     val serviceStopper = StopForegroundService()
                     context?.let { serviceStopper.stopForegroundService(it, activity, broadCastReceiver) }
-                    liveUpdater.stop(logViewModelLogger)
+                    liveUpdater.stop(logViewModelLogger, updateJob)
                     true
                 }
                 R.id.navigation_notifications -> {
@@ -143,7 +145,7 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
         if (foregroundTickServiceStatus == "started") {
             bottomNavigationView.menu[0].isChecked = true
             liveUpdater.marker = marker;
-            liveUpdater.start(googleMap, context, requireActivity(), logViewModelLogger, kmlUrl)
+            updateJob = liveUpdater.start(googleMap, context, requireActivity(), logViewModelLogger, kmlUrl)
         } else {
             liveUpdater.loadKmlFromUrl(
                 kmlUrl,
