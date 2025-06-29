@@ -8,6 +8,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.RequiresApi
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
@@ -27,11 +28,16 @@ import com.milosev.kanaloa.foregroundtickservice.ForegroundServiceBroadcastRecei
 import com.milosev.kanaloa.logger.LogViewModelLogger
 import com.milosev.kanaloa.ui.log.LogViewModel
 import androidx.core.view.get
+import com.milosev.kanaloa.logger.ActivityLogger
 import com.milosev.kanaloa.retrofit.CreateRetrofitBuilder
 import com.milosev.kanaloa.retrofit.fetchlivelocation.FetchLiveLocation
 import com.milosev.kanaloa.retrofit.fetchlivelocation.IGetLiveLocationApiService
 import com.milosev.kanaloa.retrofit.loadkmlfromurl.ILoadKmlFromUrl
 import com.milosev.kanaloa.retrofit.loadkmlfromurl.LoadKmlFromUrl
+import com.milosev.kanaloa.retrofit.uploadimages.GsonConverter
+import com.milosev.kanaloa.retrofit.uploadimages.IUploadImagesApiService
+import com.milosev.kanaloa.retrofit.uploadimages.UploadImages
+import com.milosev.kanaloa.retrofit.uploadimages.UploadImagesCallbacks
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 
@@ -48,6 +54,12 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
     private lateinit var bottomNavigationView: BottomNavigationView
     private lateinit var fetchLiveLocation: FetchLiveLocation
     private var updateJob: Job? = null
+
+    private var uploadPictures: UploadPictures? = null
+    private val galleryLauncher =
+        this.registerForActivityResult(ActivityResultContracts.GetMultipleContents()) { images ->
+            uploadPictures?.uploadImages(images)
+        }
 
     private var marker: Marker? = null
 
@@ -71,13 +83,23 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
         loadKmlFromUrl = LoadKmlFromUrl(logViewModelLogger)
         liveUpdater = LiveLocationUpdater(fetchLiveLocation, loadKmlFromUrl)
 
+        uploadPictures = context?.let {
+            UploadPictures(
+                UploadImages(
+                    CreateRetrofitBuilder().createRetrofitBuilder(Config(it).webHost, GsonConverter()).create(
+                        IUploadImagesApiService::class.java
+                    ), UploadImagesCallbacks(logViewModelLogger)
+                ), it
+            )
+        }
+
         val broadCastReceiver = ForegroundServiceBroadcastReceiver(
             ForegroundServiceBroadcastReceiverOnReceive(logViewModelLogger)
         )
 
         bottomNavigationView.setOnItemSelectedListener { item ->
             when (item.itemId) {
-                R.id.navigation_home -> {
+                R.id.navigation_start -> {
 
                     val kmlUrl = getKmlUrl()
 
@@ -88,14 +110,17 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
                     context?.let { serviceStarter.startForegroundService(it, activity, this.requireView(), broadCastReceiver) }
                     true
                 }
-                R.id.navigation_dashboard -> {
+                R.id.navigation_stop -> {
                     val serviceStopper = StopForegroundService()
                     context?.let { serviceStopper.stopForegroundService(it, activity, broadCastReceiver) }
                     liveUpdater.stop(logViewModelLogger, updateJob)
                     true
                 }
-                R.id.navigation_notifications -> {
-                    Toast.makeText(context, "Notification Clicked", Toast.LENGTH_LONG).show()
+                R.id.navigation_photo -> {
+
+
+                    uploadPictures?.openGallery(galleryLauncher)
+                    //Toast.makeText(context, "Notification Clicked", Toast.LENGTH_LONG).show()
                     true
                 }
                 else -> false
