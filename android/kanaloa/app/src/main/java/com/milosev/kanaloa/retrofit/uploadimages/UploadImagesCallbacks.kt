@@ -2,7 +2,6 @@ package com.milosev.kanaloa.retrofit.uploadimages
 
 import com.milosev.kanaloa.logger.ILogger
 import com.milosev.kanaloa.logger.LogEntry
-import com.milosev.kanaloa.logger.LoggerExtensions
 import com.milosev.kanaloa.logger.LoggingEventType
 import retrofit2.Call
 import retrofit2.Response
