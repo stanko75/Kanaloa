@@ -138,6 +138,8 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
     }
 
     private fun startLiveUpdaterNow(fetchLiveLocation: FetchLiveLocation) {
+        //ToDo SharedPreferences do not work in multi process mode
+        //do it with ContentProviders
         val sharedPreferences =
             requireContext().getSharedPreferences(
                 "foregroundTickServiceStatus",

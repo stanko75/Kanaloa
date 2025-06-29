@@ -91,7 +91,8 @@ class ForegroundTickService : Service(), CoroutineScope by MainScope() {
                 startForegroundTickService.requestLocationUpdates(context)
             }
             IntentAction.STOP_FOREGROUND_TICK_SERVICE -> {
-
+                //ToDo SharedPreferences do not work in multi process mode
+                //do it with ContentProviders
                 val sharedPreferences =
                     getSharedPreferences("foregroundTickServiceStatus", Context.MODE_PRIVATE)
                 sharedPreferences.edit {
