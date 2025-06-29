@@ -8,6 +8,6 @@ import retrofit2.http.POST
 
 interface IUploadImagesApiService {
     @Headers("Content-Type: text/json")
-    @POST("/api/UpdateCoordinates/UploadImage")
+    @POST("/api/UploadImages/UploadImage")
     fun uploadImage(@Body image: JsonObject): Call<UploadImagesResponse>
 }
