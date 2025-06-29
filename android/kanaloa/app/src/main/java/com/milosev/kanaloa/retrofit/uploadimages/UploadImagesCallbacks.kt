@@ -36,7 +36,8 @@ class UploadImagesCallbacks(var logViewModelLogger: ILogger): IUploadImagesCallb
                         "${sendResponse}${response.message()}"
                     )
                 )
-            }        }
+            }
+        }
     }
 
     override fun onFailure(call: Call<UploadImagesResponse>, t: Throwable) {

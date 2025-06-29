@@ -1,5 +1,6 @@
 using Common;
 using FileHandling;
+using ImageHandling;
 using Kanaloa;
 using KmlHandling;
 using Microsoft.Extensions.FileProviders;
@@ -18,9 +19,14 @@ builder.Services.AddSingleton<ICommandHandler<UpdateKmlIfExistsOrCreateNewIfNotC
 builder.Services.AddSingleton<ICommandHandlerAsync<AddFileWithLastKnownGpsPositionCommand>, AddFileWithLastKnownGpsPosition>();
 builder.Services.AddSingleton<ICommandHandlerAsync<WriteConfigurationToJsonFileCommand>, WriteConfigurationToJsonFile>();
 builder.Services.AddSingleton<ISaveKmlUpdateLivePositionSaveConfigFile, SaveKmlUpdateLivePositionSaveConfigFile>();
+builder.Services.AddScoped<ICommandHandlerAsync<PrepareToResizeImageDecoratorCommand>, PrepareToResizeImageDecorator>();
+builder.Services.AddScoped<ICommandHandler<ResizeImageCommand>, ResizeImage>();
+builder.Services.AddScoped<ICommandHandler<ExtractGpsInfoFromImageCommand>, ExtractGpsInfoFromImage>();
+builder.Services.AddScoped<ICommandHandler<UpdateOrCreateJsonFileWithListOfImagesForThumbsCommand>, UpdateOrCreateJsonFileWithListOfImagesForThumbs>();
+builder.Services.AddScoped<ICommandHandler<UpdateJsonIfExistsOrCreateNewIfNotCommand>, UpdateJsonIfExistsOrCreateNewIfNot>();
+builder.Services.AddScoped<ICommandHandler<UpdateOrCreateJsonFileWithListOfImagesCommand>, UpdateOrCreateJsonFileWithListOfImages>();
 
 builder.Services.Configure<KanaloaSettings>(builder.Configuration.GetSection("KanaloaSettings"));
-
 
 var app = builder.Build();
 if (app.Environment.IsDevelopment())
