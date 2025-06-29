@@ -17,25 +17,37 @@ class UploadImagesCallbacks(var logViewModelLogger: ILogger): IUploadImagesCallb
         }
         else {
             val sendResponse = "${response.code()}: "
-            if (response.errorBody()?.charStream() != null
-                && response.errorBody()?.charStream()?.readText() != null
-                && response.errorBody()!!.charStream().readText().isNotBlank()
-            ) {
+
+            val errorMessage = response.errorBody()?.string()
+
+            if (errorMessage != null) {
                 logViewModelLogger.Log(
                     LogEntry(
                         LoggingEventType.Error,
-                        "${sendResponse}${
-                            response.errorBody()!!.charStream().readText()
-                        }"
+                        "${sendResponse}${errorMessage}"
                     )
                 )
             } else {
-                logViewModelLogger.Log(
-                    LogEntry(
-                        LoggingEventType.Error,
-                        "${sendResponse}${response.message()}"
+                if (response.errorBody()?.charStream() != null
+                    && response.errorBody()?.charStream()?.readText() != null
+                    && response.errorBody()!!.charStream().readText().isNotBlank()
+                ) {
+                    logViewModelLogger.Log(
+                        LogEntry(
+                            LoggingEventType.Error,
+                            "${sendResponse}${
+                                response.errorBody()!!.charStream().readText()
+                            }"
+                        )
                     )
-                )
+                } else {
+                    logViewModelLogger.Log(
+                        LogEntry(
+                            LoggingEventType.Error,
+                            "${sendResponse}${response.message()}"
+                        )
+                    )
+                }
             }
         }
     }
