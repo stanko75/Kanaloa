@@ -10,8 +10,8 @@
     <string name="menu_home">Home</string>
     <string name="menu_gallery">Gallery</string>
     <string name="title_start">Start</string>
-    <string name="title_dashboard">Dashboard</string>
-    <string name="title_notifications">Notifications</string>
+    <string name="title_stop">Stop</string>
+    <string name="title_photo">Photo</string>
 
     <string name="how_often_to_update_location_in_seconds">How often to update location in seconds:</string>
     <string name="number_of_ticks">Number of ticks</string>
