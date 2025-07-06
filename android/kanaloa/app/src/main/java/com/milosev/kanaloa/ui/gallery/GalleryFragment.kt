@@ -1,5 +1,6 @@
 package com.milosev.kanaloa.ui.gallery
 
+import android.app.Activity
 import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -7,7 +8,18 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.core.content.edit
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.ViewModelProvider
+import com.google.gson.Gson
+import com.google.gson.GsonBuilder
+import com.milosev.kanaloa.Config
 import com.milosev.kanaloa.databinding.FragmentGalleryBinding
+import com.milosev.kanaloa.logger.LogViewModelLogger
+import com.milosev.kanaloa.retrofit.CreateRetrofitBuilder
+import com.milosev.kanaloa.retrofit.uploadtoblog.FtpModel
+import com.milosev.kanaloa.retrofit.uploadtoblog.IUploadToBlogApiService
+import com.milosev.kanaloa.retrofit.uploadtoblog.UploadToBlog
+import com.milosev.kanaloa.retrofit.uploadtoblog.UploadToBlogCallbacks
+import com.milosev.kanaloa.ui.log.LogViewModel
 
 class GalleryFragment : Fragment() {
 
@@ -54,6 +66,22 @@ class GalleryFragment : Fragment() {
                 putString("folderName", binding.editTextFolderName.text.toString())
             }
             requireActivity().onBackPressedDispatcher.onBackPressed()
+        }
+
+        _binding!!.btnUpload.setOnClickListener {
+
+            val builder = GsonBuilder()
+            val gson: Gson = builder.create()
+            val ftpModel = FtpModel()
+            val activity = activity as Activity
+
+            val uploadToBlogCallbacks =
+                UploadToBlogCallbacks(LogViewModelLogger(ViewModelProvider(requireActivity())[LogViewModel::class.java]), activity, ftpModel.folderName);
+
+            var ok = UploadToBlog(
+                CreateRetrofitBuilder().createRetrofitBuilder(Config(context).webHost)
+                    .create(IUploadToBlogApiService::class.java), uploadToBlogCallbacks
+            ).uploadToBlogHttpPost(gson.toJson(ftpModel));
         }
 
         return root

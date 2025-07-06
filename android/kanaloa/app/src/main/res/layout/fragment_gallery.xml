@@ -66,11 +66,22 @@
         android:id="@+id/btnSaveSettings"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="96dp"
+        android:layout_marginTop="80dp"
         android:text="@string/saveSettings"
         app:layout_constraintEnd_toEndOf="@+id/editTextFolderName"
-        app:layout_constraintHorizontal_bias="0.598"
+        app:layout_constraintHorizontal_bias="0.627"
         app:layout_constraintStart_toStartOf="@+id/textViewFolder"
         app:layout_constraintTop_toBottomOf="@+id/editTextFolderName" />
+
+    <Button
+        android:id="@+id/btnUpload"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="64dp"
+        android:text="@string/upload"
+        app:layout_constraintEnd_toEndOf="@+id/btnSaveSettings"
+        app:layout_constraintHorizontal_bias="0.491"
+        app:layout_constraintStart_toStartOf="@+id/btnSaveSettings"
+        app:layout_constraintTop_toBottomOf="@+id/btnSaveSettings" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
