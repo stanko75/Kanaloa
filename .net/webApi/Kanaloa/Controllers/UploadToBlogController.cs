@@ -31,7 +31,7 @@ public class UploadToBlogController : ControllerBase
             string remoteRootFolder = "/allWithPics/travelBuddies";
 
             CopyHtmlFilesCommand copyHtmlFilesCommand = new CopyHtmlFilesCommand();
-            copyHtmlFilesCommand.HtmlTemplateFolderWithRelativePath = @"html\blog\www";
+            copyHtmlFilesCommand.HtmlTemplateFolderWithRelativePath = @"html\templateForBlog";
             copyHtmlFilesCommand.KmlFileName = Path.Join(folder, kmlFileName);
             copyHtmlFilesCommand.NameOfAlbum = folder;
             copyHtmlFilesCommand.PrepareForUploadFolder = "prepareForUpload";

@@ -82,15 +82,15 @@ public class CopyHtmlFiles: ICommandHandler<CopyHtmlFilesCommand>
         {
             string fileNameOnly = Path.GetFileName(file);
             string savewwwFiles = Path.Join(wwwFolder, fileNameOnly);
-            if (file.ToLower().Contains(@"www\script"))
+            if (file.ToLower().Contains(@"script"))
             {
                 savewwwFiles = Path.Join(wwwFolder, Path.Join("script", fileNameOnly));
             } 
-            else if (file.ToLower().Contains(@"www\css"))
+            else if (file.ToLower().Contains(@"css"))
             {
                 savewwwFiles = Path.Join(wwwFolder, Path.Join("css", fileNameOnly));
             }
-            else if (file.ToLower().Contains(@"www\lib"))
+            else if (file.ToLower().Contains(@"lib"))
             {
                 savewwwFiles = Path.Join(wwwFolder, Path.Join("lib", fileNameOnly));
             }
