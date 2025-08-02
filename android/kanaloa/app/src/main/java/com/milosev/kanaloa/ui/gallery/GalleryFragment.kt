@@ -73,6 +73,19 @@ class GalleryFragment : Fragment() {
             val builder = GsonBuilder()
             val gson: Gson = builder.create()
             val ftpModel = FtpModel()
+
+            val ftpSharedPreferences =
+                activity?.getSharedPreferences("ftpSettings", Context.MODE_PRIVATE)
+
+            val fileAndFolderNameSharedPreferences =
+                context?.getSharedPreferences("settings", Context.MODE_PRIVATE)
+
+            ftpModel.host = ftpSharedPreferences?.getString("host", "ftp.host.com")
+            ftpModel.user = ftpSharedPreferences?.getString("user", "")
+            ftpModel.pass = ftpSharedPreferences?.getString("pass", "")
+            ftpModel.folderName = fileAndFolderNameSharedPreferences?.getString("folderName", "")
+            ftpModel.kmlFileName = fileAndFolderNameSharedPreferences?.getString("kmlFileName","")
+
             val activity = activity as Activity
 
             val uploadToBlogCallbacks =
