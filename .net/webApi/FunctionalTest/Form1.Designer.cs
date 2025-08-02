@@ -32,6 +32,10 @@
             panel1 = new Panel();
             log = new TextBox();
             panel2 = new Panel();
+            label10 = new Label();
+            tbOgImage = new TextBox();
+            label9 = new Label();
+            tbOgTitle = new TextBox();
             label8 = new Label();
             tbFtpHost = new TextBox();
             label7 = new Label();
@@ -59,7 +63,7 @@
             // PostGpsPositionsFromFilesWithFileName
             // 
             PostGpsPositionsFromFilesWithFileName.Dock = DockStyle.Bottom;
-            PostGpsPositionsFromFilesWithFileName.Location = new Point(0, 343);
+            PostGpsPositionsFromFilesWithFileName.Location = new Point(0, 470);
             PostGpsPositionsFromFilesWithFileName.Name = "PostGpsPositionsFromFilesWithFileName";
             PostGpsPositionsFromFilesWithFileName.Size = new Size(800, 23);
             PostGpsPositionsFromFilesWithFileName.TabIndex = 0;
@@ -71,9 +75,9 @@
             // 
             panel1.Controls.Add(log);
             panel1.Dock = DockStyle.Fill;
-            panel1.Location = new Point(0, 260);
+            panel1.Location = new Point(0, 301);
             panel1.Name = "panel1";
-            panel1.Size = new Size(800, 83);
+            panel1.Size = new Size(800, 169);
             panel1.TabIndex = 1;
             // 
             // log
@@ -83,11 +87,15 @@
             log.Multiline = true;
             log.Name = "log";
             log.ScrollBars = ScrollBars.Both;
-            log.Size = new Size(800, 83);
+            log.Size = new Size(800, 169);
             log.TabIndex = 0;
             // 
             // panel2
             // 
+            panel2.Controls.Add(label10);
+            panel2.Controls.Add(tbOgImage);
+            panel2.Controls.Add(label9);
+            panel2.Controls.Add(tbOgTitle);
             panel2.Controls.Add(label8);
             panel2.Controls.Add(tbFtpHost);
             panel2.Controls.Add(label7);
@@ -107,8 +115,40 @@
             panel2.Dock = DockStyle.Top;
             panel2.Location = new Point(0, 0);
             panel2.Name = "panel2";
-            panel2.Size = new Size(800, 260);
+            panel2.Size = new Size(800, 301);
             panel2.TabIndex = 2;
+            // 
+            // label10
+            // 
+            label10.AutoSize = true;
+            label10.Location = new Point(12, 269);
+            label10.Name = "label10";
+            label10.Size = new Size(57, 15);
+            label10.TabIndex = 19;
+            label10.Text = "ogImage:";
+            // 
+            // tbOgImage
+            // 
+            tbOgImage.Location = new Point(118, 266);
+            tbOgImage.Name = "tbOgImage";
+            tbOgImage.Size = new Size(608, 23);
+            tbOgImage.TabIndex = 9;
+            // 
+            // label9
+            // 
+            label9.AutoSize = true;
+            label9.Location = new Point(12, 240);
+            label9.Name = "label9";
+            label9.Size = new Size(47, 15);
+            label9.TabIndex = 17;
+            label9.Text = "ogTitle:";
+            // 
+            // tbOgTitle
+            // 
+            tbOgTitle.Location = new Point(118, 237);
+            tbOgTitle.Name = "tbOgTitle";
+            tbOgTitle.Size = new Size(608, 23);
+            tbOgTitle.TabIndex = 8;
             // 
             // label8
             // 
@@ -241,7 +281,7 @@
             // UploadImage
             // 
             UploadImage.Dock = DockStyle.Bottom;
-            UploadImage.Location = new Point(0, 366);
+            UploadImage.Location = new Point(0, 493);
             UploadImage.Name = "UploadImage";
             UploadImage.Size = new Size(800, 23);
             UploadImage.TabIndex = 3;
@@ -252,7 +292,7 @@
             // UploadToBlog
             // 
             UploadToBlog.Dock = DockStyle.Bottom;
-            UploadToBlog.Location = new Point(0, 389);
+            UploadToBlog.Location = new Point(0, 516);
             UploadToBlog.Name = "UploadToBlog";
             UploadToBlog.Size = new Size(800, 23);
             UploadToBlog.TabIndex = 4;
@@ -263,7 +303,7 @@
             // btnCancel
             // 
             btnCancel.Dock = DockStyle.Bottom;
-            btnCancel.Location = new Point(0, 412);
+            btnCancel.Location = new Point(0, 539);
             btnCancel.Name = "btnCancel";
             btnCancel.Size = new Size(800, 23);
             btnCancel.TabIndex = 5;
@@ -275,7 +315,7 @@
             // 
             linkLabel1.AutoSize = true;
             linkLabel1.Dock = DockStyle.Bottom;
-            linkLabel1.Location = new Point(0, 435);
+            linkLabel1.Location = new Point(0, 562);
             linkLabel1.Name = "linkLabel1";
             linkLabel1.Size = new Size(298, 15);
             linkLabel1.TabIndex = 7;
@@ -287,7 +327,7 @@
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(800, 450);
+            ClientSize = new Size(800, 577);
             Controls.Add(panel1);
             Controls.Add(panel2);
             Controls.Add(PostGpsPositionsFromFilesWithFileName);
@@ -332,5 +372,9 @@
         private TextBox tbFtpUser;
         private Button btnCancel;
         private LinkLabel linkLabel1;
+        private Label label9;
+        private TextBox tbOgTitle;
+        private Label label10;
+        private TextBox tbOgImage;
     }
 }

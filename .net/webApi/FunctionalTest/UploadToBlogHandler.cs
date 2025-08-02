@@ -15,6 +15,7 @@ public class UploadToBlogHandler(ILogger logger) : ICommandHandler<UploadToBlogC
         string ftpHost = command.FtpHost;
         string ftpUser = command.FtpUser;
         string ftpPass = command.FtpPass;
+        string ogTitle = command.OgTitle;
 
         if (CancellationTokenSource is not null)
         {
@@ -27,14 +28,15 @@ public class UploadToBlogHandler(ILogger logger) : ICommandHandler<UploadToBlogC
                 ["kmlFileName"] = kmlFileName,
                 ["host"] = ftpHost,
                 ["user"] = ftpUser,
-                ["pass"] = ftpPass
+                ["pass"] = ftpPass,
+                ["ogTitle"] = ogTitle
             };
 
             string jsonContent = jObjectKmlFileFolder.ToString();
             StringContent content = new StringContent(jsonContent);
             content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
 
-            string requestUri = Path.Combine(addressText, @"api/UpdateCoordinates/UploadToBlog");
+            string requestUri = Path.Combine(addressText, @"api/UploadToBlog/UploadToBlog");
             logger.Log("Sending");
 
             try

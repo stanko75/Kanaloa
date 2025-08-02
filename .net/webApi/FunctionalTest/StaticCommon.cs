@@ -39,7 +39,7 @@ public class StaticCommon
                 StringComparison.InvariantCultureIgnoreCase))
         {
             string message =
-                $"There is an error in config.json! {fileNameInConfigJsonOnWeb} is not equal {fileNameUri.AbsoluteUri}!";
+                $"There is an error in config.json! {fileNameInConfigJsonOnWeb} is not equal {fileNameUri.AbsoluteUri}! Check appsettings.json";
             logger.Log(new Exception(message));
             throw new Exception(message);
         }

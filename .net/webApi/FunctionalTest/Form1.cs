@@ -113,7 +113,9 @@ public partial class Form1 : Form
             HttpClientPost = HttpClientPost,
             FtpHost = tbFtpHost.Text,
             FtpPass = tbFtpPass.Text,
-            FtpUser = tbFtpUser.Text
+            FtpUser = tbFtpUser.Text,
+
+            OgTitle = tbOgTitle.Text,
         };
 
         await _cancellationDecoratorUploadToBlog.Execute(command);

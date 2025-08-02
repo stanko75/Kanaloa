@@ -1,29 +1,17 @@
-﻿namespace HtmlHandling;
+﻿using Common;
 
-public class CopyHtmlFiles: ICopyHtmlFiles
+namespace HtmlHandling;
+
+public class CopyHtmlFiles: ICommandHandler<CopyHtmlFilesCommand>
 {
-    //copy HTML template for blog (html/blog) to another folder (prepareForUpload/nameofAlbum)
-    public void CopyHtmlTemplateForBlog_old(
-        string htmlTemplateFolderWithRelativePath
-        , string rootFolderWithRelativePathToCopy
-        , string nameOfAlbum
-        , string kmlFileName)
+
+    public void Execute(CopyHtmlFilesCommand command)
     {
-        if (!Directory.Exists(htmlTemplateFolderWithRelativePath))
-        {
-            throw new DirectoryNotFoundException($"The folder {Path.GetFullPath(htmlTemplateFolderWithRelativePath)} does not exist!");
-        }
-
-        if (!File.Exists(kmlFileName))
-        {
-            throw new FileNotFoundException(
-                $"The file {kmlFileName} does not exist. Absolute path: {Path.GetFullPath(kmlFileName)}");
-        }
-
-        CopyFilesRecursively(htmlTemplateFolderWithRelativePath,
-            Path.Join(rootFolderWithRelativePathToCopy, nameOfAlbum));
-
-        File.Copy(kmlFileName,  Path.Join(rootFolderWithRelativePathToCopy, Path.Join(nameOfAlbum, Path.GetFileName(kmlFileName))), true);
+        CopyHtmlTemplateForBlog(
+            command.HtmlTemplateFolderWithRelativePath //"html\blog\www"
+            , command.PrepareForUploadFolder //"prepareForUpload"
+            , command.NameOfAlbum
+            , command.KmlFileName);
     }
 
     /*
