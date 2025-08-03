@@ -32,6 +32,8 @@
             panel1 = new Panel();
             log = new TextBox();
             panel2 = new Panel();
+            label11 = new Label();
+            tbBaseUrl = new TextBox();
             label10 = new Label();
             tbOgImage = new TextBox();
             label9 = new Label();
@@ -75,9 +77,9 @@
             // 
             panel1.Controls.Add(log);
             panel1.Dock = DockStyle.Fill;
-            panel1.Location = new Point(0, 301);
+            panel1.Location = new Point(0, 328);
             panel1.Name = "panel1";
-            panel1.Size = new Size(800, 169);
+            panel1.Size = new Size(800, 142);
             panel1.TabIndex = 1;
             // 
             // log
@@ -87,11 +89,13 @@
             log.Multiline = true;
             log.Name = "log";
             log.ScrollBars = ScrollBars.Both;
-            log.Size = new Size(800, 169);
+            log.Size = new Size(800, 142);
             log.TabIndex = 0;
             // 
             // panel2
             // 
+            panel2.Controls.Add(label11);
+            panel2.Controls.Add(tbBaseUrl);
             panel2.Controls.Add(label10);
             panel2.Controls.Add(tbOgImage);
             panel2.Controls.Add(label9);
@@ -115,8 +119,24 @@
             panel2.Dock = DockStyle.Top;
             panel2.Location = new Point(0, 0);
             panel2.Name = "panel2";
-            panel2.Size = new Size(800, 301);
+            panel2.Size = new Size(800, 328);
             panel2.TabIndex = 2;
+            // 
+            // label11
+            // 
+            label11.AutoSize = true;
+            label11.Location = new Point(12, 298);
+            label11.Name = "label11";
+            label11.Size = new Size(49, 15);
+            label11.TabIndex = 21;
+            label11.Text = "BaseUrl:";
+            // 
+            // tbBaseUrl
+            // 
+            tbBaseUrl.Location = new Point(118, 295);
+            tbBaseUrl.Name = "tbBaseUrl";
+            tbBaseUrl.Size = new Size(608, 23);
+            tbBaseUrl.TabIndex = 20;
             // 
             // label10
             // 
@@ -376,5 +396,7 @@
         private TextBox tbOgTitle;
         private Label label10;
         private TextBox tbOgImage;
+        private Label label11;
+        private TextBox tbBaseUrl;
     }
 }

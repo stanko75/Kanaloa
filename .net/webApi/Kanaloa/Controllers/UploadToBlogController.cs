@@ -1,10 +1,13 @@
 ﻿using Common;
 using FileHandling;
 using FtpHandling;
+using HtmlHandling;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System.Data;
-using HtmlHandling;
+using System.Reflection;
+using Kanaloa.Controllers.uploadToBlog;
 
 namespace Kanaloa.Controllers;
 
@@ -39,32 +42,45 @@ public class UploadToBlogController : ControllerBase
             CopyHtmlFiles copyHtmlFiles = new CopyHtmlFiles();
             copyHtmlFiles.Execute(copyHtmlFilesCommand);
 
-            //DoAutomaticallyFillMissingValues
-            //galleryName = folder
-            //rootGalleryFolder not allowed to be empty, but it will be
-            //List<Dictionary<string, string>> jsonList = new List<Dictionary<string, string>>();
-            //    var jsonObj = new Dictionary<string, string>
-            //    {
-            //        { "/*galleryName*/", data[DataTableConfigColumns.GalleryName].ToString() },
-            //        { "/*rootGalleryFolder*/", data[DataTableConfigColumns.RootGalleryFolder].ToString() },
-            //        { "/*webPath*/", data[DataTableConfigColumns.WebPath].ToString() },
-            //        { "/*gapikey*/", data[DataTableConfigColumns.Gapikey].ToString() },
-            //        { "/*ogTitle*/", data[DataTableConfigColumns.OgTitle].ToString() },
-            //        { "/*ogDescription*/", data[DataTableConfigColumns.OgDescription].ToString() },
-            //        { "/*ogImage*/", data[DataTableConfigColumns.OgImage].ToString() },
-            //        { "/*ogUrl*/", data[DataTableConfigColumns.OgUrl].ToString() },
-            //        { "/*picsJson*/", data[DataTableConfigColumns.PicsJson].ToString() },
-            //        { "/*zoom*/", data[DataTableConfigColumns.Zoom].ToString() },
-            //        { "/*resizeImages*/", string.IsNullOrWhiteSpace(data[DataTableConfigColumns.ResizeImages].ToString()) ? "false" : data[DataTableConfigColumns.ResizeImages].ToString() },
-            //        { "/*joomlaThumbsPath*/", data[DataTableConfigColumns.JoomlaThumbsPath].ToString() },
-            //        { "/*joomlaImgSrcPath*/", data[DataTableConfigColumns.JoomlaImgSrcPath].ToString() },
-            //        { "/*isMerged*/", string.IsNullOrWhiteSpace(data[DataTableConfigColumns.IsMerged].ToString()) ? "false" : data[DataTableConfigColumns.IsMerged].ToString() },
-            //        { "/*jqueryVersion*/", data[DataTableConfigColumns.JqueryVersion].ToString() },
-            //        { "/*ogImageFullPath*/", data[DataTableConfigColumns.OgImageFullPath].ToString() }
-            //    };
+            ReplaceKeysInFilesCommand replaceKeysInFilesCommand = new ReplaceKeysInFilesCommand();
 
-            //    jsonList.Add(jsonObj);
+            string listOfFilesToReplaceAndCopyFileName =
+                Path.Join(copyHtmlFilesCommand.HtmlTemplateFolderWithRelativePath, "listOfFilesToReplaceAndCopy.json");
+            replaceKeysInFilesCommand.ListOfFilesToReplace =
+                JsonConvert.DeserializeObject<IEnumerable<string>>(
+                    System.IO.File.ReadAllText(listOfFilesToReplaceAndCopyFileName)) ??
+                throw new InvalidOperationException();
 
+            var listOfKeyValuesToReplaceInFiles = new Dictionary<string, string>();
+            FillListOfKeyValuesToReplaceInFiles(listOfKeyValuesToReplaceInFiles, data);
+            listOfKeyValuesToReplaceInFiles["galleryName"] = folder;
+            listOfKeyValuesToReplaceInFiles["rootGalleryFolder"] = copyHtmlFilesCommand.PrepareForUploadFolder;
+
+            AutomaticallyFillMissingValuesCommand automaticallyFillMissingValuesCommand =
+                new AutomaticallyFillMissingValuesCommand();
+            FillProperties(automaticallyFillMissingValuesCommand, listOfKeyValuesToReplaceInFiles);
+            AutomaticallyFillMissingValues automaticallyFillMissingValues = new AutomaticallyFillMissingValues();
+            automaticallyFillMissingValues.Execute(automaticallyFillMissingValuesCommand);
+
+            FillDictionary(automaticallyFillMissingValuesCommand, listOfKeyValuesToReplaceInFiles);
+
+            var keys = listOfKeyValuesToReplaceInFiles.Keys.ToList();
+
+            foreach (var oldKey in keys)
+            {
+                var value = listOfKeyValuesToReplaceInFiles[oldKey];
+                listOfKeyValuesToReplaceInFiles.Remove(oldKey);
+                listOfKeyValuesToReplaceInFiles[$"/*{oldKey}*/"] = value;
+            }
+
+            replaceKeysInFilesCommand.ListOfKeyValuesToReplaceInFiles = listOfKeyValuesToReplaceInFiles;
+
+            replaceKeysInFilesCommand.TemplateRootFolder = Path.Join(copyHtmlFilesCommand.PrepareForUploadFolder, folder);
+            replaceKeysInFilesCommand.TemplateRootFolder = Path.Join(replaceKeysInFilesCommand.TemplateRootFolder, "www");
+            replaceKeysInFilesCommand.SaveToPath = replaceKeysInFilesCommand.TemplateRootFolder;
+
+            ReplaceKeysInFiles replaceKeysInFiles = new ReplaceKeysInFiles();
+            replaceKeysInFiles.Execute(replaceKeysInFilesCommand);
 
             return Ok(@$"Uploaded: {remoteRootFolder}/{folder}/{kmlFileName}");
         }
@@ -72,6 +88,29 @@ public class UploadToBlogController : ControllerBase
         {
             return BadRequest($"Exception message: {e.Message}, inner exception: {e.InnerException}");
         }
+    }
+
+    private void FillDictionary(AutomaticallyFillMissingValuesCommand automaticallyFillMissingValuesCommand, Dictionary<string, string> listOfKeyValuesToReplaceInFiles)
+    {
+        foreach (var prop in automaticallyFillMissingValuesCommand.GetType().GetProperties(BindingFlags.Public | BindingFlags.Instance))
+        {
+            if (prop.CanRead)
+            {
+                var value = prop.GetValue(automaticallyFillMissingValuesCommand);
+
+                string key = FirstCharToLower(prop.Name);
+                if (listOfKeyValuesToReplaceInFiles.ContainsKey(key))
+                {
+                    listOfKeyValuesToReplaceInFiles[key] = value?.ToString() ?? string.Empty;
+                }
+                else
+                {
+                    throw new InvalidOperationException($"Property {key} not found in the dictionary.");
+                }
+            }
+        }
+
+        //return dict;
     }
 
     public static T? GetValue<T>(object source, string columnName)
@@ -85,4 +124,83 @@ public class UploadToBlogController : ControllerBase
             _ => throw new ArgumentException("Unsupported object type.")
         };
     }
+
+    private void FillListOfKeyValuesToReplaceInFiles(Dictionary<string, string> listOfKeyValuesToReplaceInFiles,
+        JObject data)
+    {
+        FieldInfo[] fields = typeof(DataTableConfigColumns)
+            .GetFields(BindingFlags.Public | BindingFlags.Static);
+
+        foreach (FieldInfo field in fields)
+        {
+            string columnName = field.GetValue(null)?.ToString() ?? throw new InvalidOperationException();
+            listOfKeyValuesToReplaceInFiles.Add($"{FirstCharToLower(columnName)}", GetValue<string>(data, columnName) ?? string.Empty);
+        }
+    }
+
+    private List<string> GetListOfFields_old()
+    {
+        FieldInfo[] fields = typeof(DataTableConfigColumns)
+            .GetFields(BindingFlags.Public | BindingFlags.Static);
+
+        List<string> columnNames = new List<string>();
+        foreach (FieldInfo field in fields)
+        {
+            string columnName = field.GetValue(null)?.ToString() ?? throw new InvalidOperationException();
+            columnNames.Add(columnName);
+        }
+
+        return columnNames;
+    }
+
+    private IEnumerable<string> GetListOfFields()
+    {
+        FieldInfo[] fields = typeof(DataTableConfigColumns)
+            .GetFields(BindingFlags.Public | BindingFlags.Static);
+
+        foreach (FieldInfo field in fields)
+        {
+            yield return field.GetValue(null)?.ToString() ?? throw new InvalidOperationException();
+        }
+    }
+
+    private static void FillProperties(object target, Dictionary<string, string> listOfKeyValuesToReplaceInFiles)
+    {
+        IEnumerable<PropertyInfo> properties = target.GetType()
+            .GetProperties(BindingFlags.Public | BindingFlags.Instance)
+            .Where(p => p.CanWrite);
+
+        foreach (PropertyInfo prop in properties)
+        {
+            //string field = prop.Name.Substring(0, 1).ToLower() + prop.Name.Substring(1, prop.Name.Length - 1);
+            string field = FirstCharToLower(prop.Name);
+            Type type = Nullable.GetUnderlyingType(prop.PropertyType) ?? prop.PropertyType;
+
+            if (listOfKeyValuesToReplaceInFiles.ContainsKey(field))
+            {
+                object? value = type switch
+                {
+                    { } t when t == typeof(string) => listOfKeyValuesToReplaceInFiles[field],
+                    { } t when t == typeof(int) => string.IsNullOrWhiteSpace(listOfKeyValuesToReplaceInFiles[field])
+                        ? 0
+                        : int.Parse(listOfKeyValuesToReplaceInFiles[field]),
+                    { } t when t == typeof(bool) =>
+                        !string.IsNullOrWhiteSpace(listOfKeyValuesToReplaceInFiles[field]) &&
+                        bool.Parse(listOfKeyValuesToReplaceInFiles[field]),
+                    _ => null
+                };
+
+                prop.SetValue(target, value);
+            }
+        }
+    }
+
+    private static string FirstCharToLower(string input)
+    {
+        if (string.IsNullOrEmpty(input))
+            return input;
+
+        return char.ToLower(input[0]) + input.Substring(1);
+    }
+
 }

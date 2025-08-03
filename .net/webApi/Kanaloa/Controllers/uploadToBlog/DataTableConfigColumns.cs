@@ -18,4 +18,5 @@ public readonly struct DataTableConfigColumns
     public static readonly string IsMerged = "IsMerged";
     public static readonly string JqueryVersion = "jqueryVersion";
     public static readonly string OgImageFullPath = "ogImageFullPath";
+    public static readonly string BaseUrl = "baseUrl";
 }

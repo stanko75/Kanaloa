@@ -16,6 +16,8 @@ public class UploadToBlogHandler(ILogger logger) : ICommandHandler<UploadToBlogC
         string ftpUser = command.FtpUser;
         string ftpPass = command.FtpPass;
         string ogTitle = command.OgTitle;
+        string ogImage = command.OgImage;
+        string baseUrl = command.BaseUrl;
 
         if (CancellationTokenSource is not null)
         {
@@ -29,7 +31,9 @@ public class UploadToBlogHandler(ILogger logger) : ICommandHandler<UploadToBlogC
                 ["host"] = ftpHost,
                 ["user"] = ftpUser,
                 ["pass"] = ftpPass,
-                ["ogTitle"] = ogTitle
+                ["ogTitle"] = ogTitle,
+                ["ogImage"] = ogImage,
+                ["baseUrl"] = baseUrl
             };
 
             string jsonContent = jObjectKmlFileFolder.ToString();

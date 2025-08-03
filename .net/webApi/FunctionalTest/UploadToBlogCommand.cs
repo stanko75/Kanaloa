@@ -10,4 +10,6 @@ public class UploadToBlogCommand
     public string FtpPass { get; set; }
     public HttpClient HttpClientPost { get; set; }
     public string OgTitle { get; set; }
+    public string OgImage { get; set; }
+    public string BaseUrl { get; set; }
 }

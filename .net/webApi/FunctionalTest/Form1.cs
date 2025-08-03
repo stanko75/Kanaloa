@@ -54,6 +54,15 @@ public partial class Form1 : Form
 
             string? strFolderName = configuration.GetSection("folderName").Value;
             if (strFolderName is not null) folderName.Text = strFolderName;
+
+            string? strOgImage = configuration.GetSection("ogImage").Value;
+            if (strOgImage is not null) tbOgImage.Text = strOgImage;
+
+            string? strOgTitle = configuration.GetSection("ogTitle").Value;
+            if (strOgTitle is not null) tbOgTitle.Text = strOgTitle;
+
+            string? strBaseUrl = configuration.GetSection("baseUrl").Value;
+            if (strBaseUrl is not null) tbBaseUrl.Text = strBaseUrl;
         }
     }
 
@@ -68,7 +77,10 @@ public partial class Form1 : Form
             ["ftpPass"] = tbFtpPass.Text,
             ["folderName"] = folderName.Text,
             ["kmlFileName"] = kmlFileName.Text,
-            ["imagesPath"] = imagesPath.Text
+            ["imagesPath"] = imagesPath.Text,
+            ["ogTitle"] = tbOgTitle.Text,
+            ["ogImage"] = tbOgImage.Text,
+            ["baseUrl"] = tbBaseUrl.Text
         };
 
         string json = jsonConfig.ToString(Formatting.Indented);
@@ -116,6 +128,8 @@ public partial class Form1 : Form
             FtpUser = tbFtpUser.Text,
 
             OgTitle = tbOgTitle.Text,
+            OgImage = tbOgImage.Text,
+            BaseUrl = tbBaseUrl.Text,
         };
 
         await _cancellationDecoratorUploadToBlog.Execute(command);
