@@ -30,4 +30,7 @@
     <string name="folderName">Folder name:</string>
     <string name="defaultFolder">default</string>
     <string name="fileName">File name:</string>
+    <string name="ogTitle">OgTitle:</string>
+    <string name="ogImage">OgImage:</string>
+    <string name="baseUrl">BaseUrl:</string>
 </resources>
