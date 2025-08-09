@@ -1,6 +1,4 @@
 ﻿using Common;
-using FileHandling;
-using FtpHandling;
 using HtmlHandling;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
