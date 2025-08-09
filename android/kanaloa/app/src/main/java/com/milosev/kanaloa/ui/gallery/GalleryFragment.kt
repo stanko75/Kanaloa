@@ -50,9 +50,15 @@ class GalleryFragment : Fragment() {
 
         var fileName = sharedPreferences.getString("kmlFileName", "default")
         val folderName = sharedPreferences.getString("folderName", "default")
+        val ogTitle = sharedPreferences.getString("ogTitle", "default")
+        val ogImage = sharedPreferences.getString("ogImage", "default")
+        val baseUrl = sharedPreferences.getString("baseUrl", "default")
 
         _binding!!.editTextFileName.setText(fileName)
         _binding!!.editTextFolderName.setText(folderName)
+        _binding!!.editTextOgTitle.setText(ogTitle)
+        _binding!!.editTextOgImage.setText(ogImage)
+        _binding!!.editTextBaseUrl.setText(baseUrl)
 
         _binding!!.btnSaveSettings.setOnClickListener {
 
@@ -60,10 +66,13 @@ class GalleryFragment : Fragment() {
             if (!fileName!!.endsWith(".kml", ignoreCase = true)) {
                 fileName += ".kml"
             }
-                        
+
             sharedPreferences.edit {
                 putString("kmlFileName", fileName)
                 putString("folderName", binding.editTextFolderName.text.toString())
+                putString("ogTitle", binding.editTextOgTitle.text.toString())
+                putString("ogImage", binding.editTextOgImage.text.toString())
+                putString("baseUrl", binding.editTextBaseUrl.text.toString())
             }
             requireActivity().onBackPressedDispatcher.onBackPressed()
         }
@@ -85,6 +94,9 @@ class GalleryFragment : Fragment() {
             ftpModel.pass = ftpSharedPreferences?.getString("pass", "")
             ftpModel.folderName = fileAndFolderNameSharedPreferences?.getString("folderName", "")
             ftpModel.kmlFileName = fileAndFolderNameSharedPreferences?.getString("kmlFileName","")
+            ftpModel.ogTitle = fileAndFolderNameSharedPreferences?.getString("ogTitle", "")
+            ftpModel.ogImage = fileAndFolderNameSharedPreferences?.getString("ogImage","")
+            ftpModel.baseUrl = fileAndFolderNameSharedPreferences?.getString("baseUrl","")
 
             val activity = activity as Activity
 
