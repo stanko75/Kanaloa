@@ -65,44 +65,67 @@ public sealed class UploadToBlogTests
 
         string wwwFolder = Path.Join(_folderName, "www");
         string prepareForUploadFolder = Path.Join("prepareForUpload", wwwFolder);
-        string htmlFileName = Path.Join(prepareForUploadFolder, "index.html");
 
+        string htmlFileName = Path.Join(prepareForUploadFolder, "index.html");
         string indexHtml = File.ReadAllText(htmlFileName);
         TestOgs(indexHtml);
+
+        string joomlaPreviewName = Path.Join(prepareForUploadFolder, "joomlaPreview.html");
+        string joomlaPreviewHtml = File.ReadAllText(joomlaPreviewName);
+
+        var hrefMatch = Regex.Match(
+            joomlaPreviewHtml,
+            @"<a\s+href=""([^""]+)""[^>]*>([^<]+)</a>",
+            RegexOptions.IgnoreCase
+        );
+        AssertTest(hrefMatch, $"/prepareForUpload/{_folderName}/www/index.html", "href is wrong", "href not found!");
+        AssertTest(hrefMatch, _ogTitle, "href text is wrong", "href text not found!", 2);
+
+        var scriptSrcMatch = Regex.Match(
+            joomlaPreviewHtml,
+            @"<script\s+[^>]*src=[""']([^""']+)[""']",
+            RegexOptions.IgnoreCase
+        );
+        AssertTest(scriptSrcMatch, $"/prepareForUpload/{_folderName}/www/lib/", "src is wrong", "src not found!");
+
+        var hrefMatch2 = Regex.Match(joomlaPreviewHtml, @"<a\s+href=""([^""]+)""[^>]*>\s*<img\s+[^>]*id=""([^""]+)""[^>]*src=""([^""]+)""", RegexOptions.IgnoreCase);
+        AssertTest(hrefMatch2, $"/prepareForUpload/{_folderName}/www/index.html", "second href is wrong", "second href not found!");
+        AssertTest(hrefMatch2, $"jPreview{_folderName}", "img id is wrong", "img id not found!", 2);
+        AssertTest(hrefMatch2, $"/prepareForUpload/{_folderName}/www/../{_ogImage}", "second href src is wrong", "second href src  not found!", 3);
+
     }
 
     private void TestOgs(string indexHtml)
     {
-        /*
-        var ogs = new List<string>
+        var ogs = new Dictionary<string, string>
         {
-            "url",
-            "image",
-            "title"
+            { "url", $"http://{_baseUrl}/prepareForUpload/{_folderName}/www/index.html" },
+            { "image", $"http://{_baseUrl}/prepareForUpload/{_folderName}/{_ogImage}" },
+            { "title", _ogTitle }
         };
-        */
-
-        var ogs = new Dictionary<string, string>();
-        ogs.Add("url", $"http://{_baseUrl}/prepareForUpload/{_folderName}/www/index.html");
-        ogs.Add("image", $"http://{_baseUrl}/prepareForUpload/{_folderName}/{_ogImage}");
-        ogs.Add("title", _ogTitle);
 
         foreach (KeyValuePair<string, string> og in ogs)
         {
-            var ogMatch = Regex.Match(
+            Match ogMatch = Regex.Match(
                 indexHtml,
                 @$"<meta\s+property=[""']og:{og.Key}[""']\s+content=[""']([^""']+)[""']",
                 RegexOptions.IgnoreCase
             );
-            if (ogMatch.Success)
-            {
-                string ogValue = ogMatch.Groups[1].Value;
-                Assert.AreEqual(ogValue, og.Value, "og:title is wrong");
-            }
-            else
-            {
-                Assert.Fail($"og:{og.Key} not found!");
-            }
+
+            AssertTest(ogMatch, og.Value, $"og:{og.Key} is wrong", $"og:{og.Key} not found!");
+        }
+    }
+
+    private void AssertTest(Match match, string testValue, string notEqualMessage, string notFoundMessage, int index = 1)
+    {
+        if (match.Success)
+        {
+            string regExValue = match.Groups[index].Value;
+            Assert.AreEqual(regExValue, testValue, notEqualMessage);
+        }
+        else
+        {
+            Assert.Fail(notFoundMessage);
         }
     }
 }
