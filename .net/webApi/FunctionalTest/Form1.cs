@@ -63,6 +63,9 @@ public partial class Form1 : Form
 
             string? strBaseUrl = configuration.GetSection("baseUrl").Value;
             if (strBaseUrl is not null) tbBaseUrl.Text = strBaseUrl;
+
+            string? strExpectedUrl = configuration.GetSection("expectedUrl").Value;
+            if (strExpectedUrl is not null) tbExpectedUrl.Text = strExpectedUrl;
         }
     }
 
@@ -80,7 +83,8 @@ public partial class Form1 : Form
             ["imagesPath"] = imagesPath.Text,
             ["ogTitle"] = tbOgTitle.Text,
             ["ogImage"] = tbOgImage.Text,
-            ["baseUrl"] = tbBaseUrl.Text
+            ["baseUrl"] = tbBaseUrl.Text,
+            ["expectedUrl"] = tbExpectedUrl.Text
         };
 
         string json = jsonConfig.ToString(Formatting.Indented);
@@ -130,6 +134,7 @@ public partial class Form1 : Form
             OgTitle = tbOgTitle.Text,
             OgImage = tbOgImage.Text,
             BaseUrl = tbBaseUrl.Text,
+            ExpectedUrl = tbExpectedUrl.Text
         };
 
         await _cancellationDecoratorUploadToBlog.Execute(command);
@@ -157,5 +162,10 @@ public partial class Form1 : Form
         {
             MessageBox.Show(ex.Message);
         }
+    }
+
+    private void btnDefaultExpectedUrl_Click(object sender, EventArgs e)
+    {
+        tbExpectedUrl.Text = "http://milosev.com/gallery/allWithPics/travelBuddies/";
     }
 }

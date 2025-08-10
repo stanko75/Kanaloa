@@ -12,4 +12,5 @@ public class UploadToBlogCommand
     public string OgTitle { get; set; }
     public string OgImage { get; set; }
     public string BaseUrl { get; set; }
+    public string ExpectedUrl { get; set; }
 }

@@ -18,6 +18,7 @@ public class UploadToBlogHandler(ILogger logger) : ICommandHandler<UploadToBlogC
         string ogTitle = command.OgTitle;
         string ogImage = command.OgImage;
         string baseUrl = command.BaseUrl;
+        string expectedUrl = command.ExpectedUrl;
 
         if (CancellationTokenSource is not null)
         {
@@ -79,7 +80,8 @@ public class UploadToBlogHandler(ILogger logger) : ICommandHandler<UploadToBlogC
                 foreach (string url in fileUrls)
                 {
                     cancellationToken.ThrowIfCancellationRequested();
-                    string milosevUrl = $"http://milosev.com/gallery/allWithPics/travelBuddies/{folderName}/";
+                    //string milosevUrl = $"http://milosev.com/gallery/allWithPics/travelBuddies/{folderName}/";
+                    string milosevUrl = $"{expectedUrl.TrimEnd('/')}/{folderName}/";
                     Uri baseUri = new Uri(milosevUrl);
                     Uri uri = new Uri(baseUri, url);
 

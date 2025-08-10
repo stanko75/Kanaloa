@@ -32,6 +32,9 @@
             panel1 = new Panel();
             log = new TextBox();
             panel2 = new Panel();
+            btnDefaultExpectedUrl = new Button();
+            label12 = new Label();
+            tbExpectedUrl = new TextBox();
             label11 = new Label();
             tbBaseUrl = new TextBox();
             label10 = new Label();
@@ -67,7 +70,7 @@
             PostGpsPositionsFromFilesWithFileName.Dock = DockStyle.Bottom;
             PostGpsPositionsFromFilesWithFileName.Location = new Point(0, 470);
             PostGpsPositionsFromFilesWithFileName.Name = "PostGpsPositionsFromFilesWithFileName";
-            PostGpsPositionsFromFilesWithFileName.Size = new Size(800, 23);
+            PostGpsPositionsFromFilesWithFileName.Size = new Size(926, 23);
             PostGpsPositionsFromFilesWithFileName.TabIndex = 0;
             PostGpsPositionsFromFilesWithFileName.Text = "PostGpsPositionsFromFilesWithFileName";
             PostGpsPositionsFromFilesWithFileName.UseVisualStyleBackColor = true;
@@ -77,9 +80,9 @@
             // 
             panel1.Controls.Add(log);
             panel1.Dock = DockStyle.Fill;
-            panel1.Location = new Point(0, 328);
+            panel1.Location = new Point(0, 360);
             panel1.Name = "panel1";
-            panel1.Size = new Size(800, 142);
+            panel1.Size = new Size(926, 110);
             panel1.TabIndex = 1;
             // 
             // log
@@ -89,11 +92,14 @@
             log.Multiline = true;
             log.Name = "log";
             log.ScrollBars = ScrollBars.Both;
-            log.Size = new Size(800, 142);
+            log.Size = new Size(926, 110);
             log.TabIndex = 0;
             // 
             // panel2
             // 
+            panel2.Controls.Add(btnDefaultExpectedUrl);
+            panel2.Controls.Add(label12);
+            panel2.Controls.Add(tbExpectedUrl);
             panel2.Controls.Add(label11);
             panel2.Controls.Add(tbBaseUrl);
             panel2.Controls.Add(label10);
@@ -119,8 +125,34 @@
             panel2.Dock = DockStyle.Top;
             panel2.Location = new Point(0, 0);
             panel2.Name = "panel2";
-            panel2.Size = new Size(800, 328);
+            panel2.Size = new Size(926, 360);
             panel2.TabIndex = 2;
+            // 
+            // btnDefaultExpectedUrl
+            // 
+            btnDefaultExpectedUrl.Location = new Point(732, 323);
+            btnDefaultExpectedUrl.Name = "btnDefaultExpectedUrl";
+            btnDefaultExpectedUrl.Size = new Size(75, 23);
+            btnDefaultExpectedUrl.TabIndex = 8;
+            btnDefaultExpectedUrl.Text = "Use default";
+            btnDefaultExpectedUrl.UseVisualStyleBackColor = true;
+            btnDefaultExpectedUrl.Click += btnDefaultExpectedUrl_Click;
+            // 
+            // label12
+            // 
+            label12.AutoSize = true;
+            label12.Location = new Point(12, 327);
+            label12.Name = "label12";
+            label12.Size = new Size(153, 15);
+            label12.TabIndex = 23;
+            label12.Text = "Url where files are expected:";
+            // 
+            // tbExpectedUrl
+            // 
+            tbExpectedUrl.Location = new Point(171, 324);
+            tbExpectedUrl.Name = "tbExpectedUrl";
+            tbExpectedUrl.Size = new Size(555, 23);
+            tbExpectedUrl.TabIndex = 22;
             // 
             // label11
             // 
@@ -303,7 +335,7 @@
             UploadImage.Dock = DockStyle.Bottom;
             UploadImage.Location = new Point(0, 493);
             UploadImage.Name = "UploadImage";
-            UploadImage.Size = new Size(800, 23);
+            UploadImage.Size = new Size(926, 23);
             UploadImage.TabIndex = 3;
             UploadImage.Text = "UploadImage";
             UploadImage.UseVisualStyleBackColor = true;
@@ -314,7 +346,7 @@
             UploadToBlog.Dock = DockStyle.Bottom;
             UploadToBlog.Location = new Point(0, 516);
             UploadToBlog.Name = "UploadToBlog";
-            UploadToBlog.Size = new Size(800, 23);
+            UploadToBlog.Size = new Size(926, 23);
             UploadToBlog.TabIndex = 4;
             UploadToBlog.Text = "UploadToBlog";
             UploadToBlog.UseVisualStyleBackColor = true;
@@ -325,7 +357,7 @@
             btnCancel.Dock = DockStyle.Bottom;
             btnCancel.Location = new Point(0, 539);
             btnCancel.Name = "btnCancel";
-            btnCancel.Size = new Size(800, 23);
+            btnCancel.Size = new Size(926, 23);
             btnCancel.TabIndex = 5;
             btnCancel.Text = "Cancel";
             btnCancel.UseVisualStyleBackColor = true;
@@ -347,7 +379,7 @@
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(800, 577);
+            ClientSize = new Size(926, 577);
             Controls.Add(panel1);
             Controls.Add(panel2);
             Controls.Add(PostGpsPositionsFromFilesWithFileName);
@@ -398,5 +430,8 @@
         private TextBox tbOgImage;
         private Label label11;
         private TextBox tbBaseUrl;
+        private Label label12;
+        private TextBox tbExpectedUrl;
+        private Button btnDefaultExpectedUrl;
     }
 }
