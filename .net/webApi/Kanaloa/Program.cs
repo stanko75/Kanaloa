@@ -42,6 +42,13 @@ app.UseStaticFiles(new StaticFileOptions
     DefaultContentType = "text/plain"
 });
 
+string currentDir = Directory.GetCurrentDirectory();
+app.UseDirectoryBrowser(new DirectoryBrowserOptions
+{
+    FileProvider = new PhysicalFileProvider(currentDir),
+    RequestPath = ""
+});
+
 app.UseHttpsRedirection();
 app.UseAuthorization();
 app.MapControllers();

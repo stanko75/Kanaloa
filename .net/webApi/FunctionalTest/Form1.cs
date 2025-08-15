@@ -138,7 +138,8 @@ public partial class Form1 : Form
             OgTitle = tbOgTitle.Text,
             OgImage = tbOgImage.Text,
             BaseUrl = tbBaseUrl.Text,
-            ExpectedUrl = tbExpectedUrl.Text
+            ExpectedUrl = tbExpectedUrl.Text,
+            PrepareForUpload = tbPrepareForUploadUrl.Text
         };
 
         await _cancellationDecoratorUploadToBlog.Execute(command);

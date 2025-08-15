@@ -19,6 +19,7 @@ public class UploadToBlogHandler(ILogger logger) : ICommandHandler<UploadToBlogC
         string ogImage = command.OgImage;
         string baseUrl = command.BaseUrl;
         string expectedUrl = command.ExpectedUrl;
+        string prepareForUpload = command.PrepareForUpload;
 
         if (CancellationTokenSource is not null)
         {
@@ -77,6 +78,9 @@ public class UploadToBlogHandler(ILogger logger) : ICommandHandler<UploadToBlogC
 
             try
             {
+                logger.Log("***");
+                logger.Log("check if files are uploaded");
+                logger.Log("***");
                 foreach (string url in fileUrls)
                 {
                     cancellationToken.ThrowIfCancellationRequested();
@@ -90,6 +94,37 @@ public class UploadToBlogHandler(ILogger logger) : ICommandHandler<UploadToBlogC
                         ? @$"File: {uri.AbsoluteUri} exists"
                         : @$"Request failed with status code: {response.StatusCode}, file: {uri.AbsoluteUri}");
                 }
+
+                logger.Log("***");
+                logger.Log("check if files are in prepareForUpload ");
+                logger.Log("***");
+                foreach (string url in fileUrls)
+                {
+                    //string prepareForUploadUrl = $"{prepareForUpload}{url}";
+                    string prepareForUploadUrl = $"{prepareForUpload.TrimEnd('/')}/{folderName}/";
+                    Uri prepareForUploadUri = new Uri(prepareForUploadUrl);
+                    Uri prepareForUploadFileUri = new Uri(prepareForUploadUri, url);
+
+                    HttpResponseMessage prepareForUploadResponse = await httpClientPost.GetAsync(prepareForUploadFileUri.AbsoluteUri, cancellationToken);
+                    logger.Log(prepareForUploadResponse.IsSuccessStatusCode
+                        ? @$"File: {prepareForUploadFileUri.AbsoluteUri} exists"
+                        : @$"Request failed with status code: {prepareForUploadResponse.StatusCode}, file: {prepareForUploadFileUri.AbsoluteUri}");
+                }
+
+                logger.Log("***");
+                logger.Log("check content of files in prepareForUpload ");
+                logger.Log("***");
+                foreach (string url in fileUrls)
+                {
+                    //string prepareForUploadUrl = $"{prepareForUpload}{url}";
+                    string prepareForUploadUrl = $"{prepareForUpload.TrimEnd('/')}/{folderName}/";
+                    Uri prepareForUploadUri = new Uri(prepareForUploadUrl);
+                    Uri prepareForUploadFileUri = new Uri(prepareForUploadUri, url);
+
+                    HttpResponseMessage prepareForUploadResponse = await httpClientPost.GetAsync(prepareForUploadFileUri.AbsoluteUri, cancellationToken);
+                    string prepareForUploadContent = await prepareForUploadResponse.Content.ReadAsStringAsync(cancellationToken);
+                }
+
             }
             catch (Exception ex)
             {
