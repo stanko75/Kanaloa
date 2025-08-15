@@ -32,6 +32,9 @@
             panel1 = new Panel();
             log = new TextBox();
             panel2 = new Panel();
+            button1 = new Button();
+            label13 = new Label();
+            tbPrepareForUploadUrl = new TextBox();
             btnDefaultExpectedUrl = new Button();
             label12 = new Label();
             tbExpectedUrl = new TextBox();
@@ -80,9 +83,9 @@
             // 
             panel1.Controls.Add(log);
             panel1.Dock = DockStyle.Fill;
-            panel1.Location = new Point(0, 360);
+            panel1.Location = new Point(0, 391);
             panel1.Name = "panel1";
-            panel1.Size = new Size(926, 110);
+            panel1.Size = new Size(926, 79);
             panel1.TabIndex = 1;
             // 
             // log
@@ -92,11 +95,14 @@
             log.Multiline = true;
             log.Name = "log";
             log.ScrollBars = ScrollBars.Both;
-            log.Size = new Size(926, 110);
+            log.Size = new Size(926, 79);
             log.TabIndex = 0;
             // 
             // panel2
             // 
+            panel2.Controls.Add(button1);
+            panel2.Controls.Add(label13);
+            panel2.Controls.Add(tbPrepareForUploadUrl);
             panel2.Controls.Add(btnDefaultExpectedUrl);
             panel2.Controls.Add(label12);
             panel2.Controls.Add(tbExpectedUrl);
@@ -125,8 +131,34 @@
             panel2.Dock = DockStyle.Top;
             panel2.Location = new Point(0, 0);
             panel2.Name = "panel2";
-            panel2.Size = new Size(926, 360);
+            panel2.Size = new Size(926, 391);
             panel2.TabIndex = 2;
+            // 
+            // button1
+            // 
+            button1.Location = new Point(732, 352);
+            button1.Name = "button1";
+            button1.Size = new Size(75, 23);
+            button1.TabIndex = 24;
+            button1.Text = "Use default";
+            button1.UseVisualStyleBackColor = true;
+            button1.Click += button1_Click;
+            // 
+            // label13
+            // 
+            label13.AutoSize = true;
+            label13.Location = new Point(12, 356);
+            label13.Name = "label13";
+            label13.Size = new Size(125, 15);
+            label13.TabIndex = 26;
+            label13.Text = "Prepare for upload url:";
+            // 
+            // tbPrepareForUploadUrl
+            // 
+            tbPrepareForUploadUrl.Location = new Point(171, 353);
+            tbPrepareForUploadUrl.Name = "tbPrepareForUploadUrl";
+            tbPrepareForUploadUrl.Size = new Size(555, 23);
+            tbPrepareForUploadUrl.TabIndex = 25;
             // 
             // btnDefaultExpectedUrl
             // 
@@ -433,5 +465,8 @@
         private Label label12;
         private TextBox tbExpectedUrl;
         private Button btnDefaultExpectedUrl;
+        private Button button1;
+        private Label label13;
+        private TextBox tbPrepareForUploadUrl;
     }
 }

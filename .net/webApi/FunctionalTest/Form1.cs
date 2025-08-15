@@ -66,6 +66,9 @@ public partial class Form1 : Form
 
             string? strExpectedUrl = configuration.GetSection("expectedUrl").Value;
             if (strExpectedUrl is not null) tbExpectedUrl.Text = strExpectedUrl;
+
+            string? strPrepareForUploadUrl = configuration.GetSection("PrepareForUploadUrl").Value;
+            if (strPrepareForUploadUrl is not null) tbPrepareForUploadUrl.Text = strPrepareForUploadUrl;
         }
     }
 
@@ -84,7 +87,8 @@ public partial class Form1 : Form
             ["ogTitle"] = tbOgTitle.Text,
             ["ogImage"] = tbOgImage.Text,
             ["baseUrl"] = tbBaseUrl.Text,
-            ["expectedUrl"] = tbExpectedUrl.Text
+            ["expectedUrl"] = tbExpectedUrl.Text,
+            ["PrepareForUploadUrl"] = tbPrepareForUploadUrl.Text
         };
 
         string json = jsonConfig.ToString(Formatting.Indented);
@@ -167,5 +171,10 @@ public partial class Form1 : Form
     private void btnDefaultExpectedUrl_Click(object sender, EventArgs e)
     {
         tbExpectedUrl.Text = "http://milosev.com/gallery/allWithPics/travelBuddies/";
+    }
+
+    private void button1_Click(object sender, EventArgs e)
+    {
+
     }
 }
