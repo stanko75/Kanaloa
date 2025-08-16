@@ -67,7 +67,7 @@ public static class Common
         }
     }
 
-    public static void TestIndexHtmlOgs(string indexHtml, string baseUrl, string folderName, string ogImage, string ogTitle, Action<Match, string, string, string> testMethod)
+    public static void TestIndexHtmlOgs(string indexHtml, string baseUrl, string folderName, string ogImage, string ogTitle, Action<Match, string, string, string, string> testMethod)
     {
         var ogs = new Dictionary<string, string>
         {
@@ -84,7 +84,7 @@ public static class Common
                 RegexOptions.IgnoreCase
             );
 
-            testMethod(ogMatch, og.Value, $"og:{og.Key} is wrong", $"og:{og.Key} not found!");
+            testMethod(ogMatch, og.Value, $"og:{og.Key} is wrong", $"og:{og.Key} not found!", $"og:{og.Key} was found!");
         }
     }
 }
