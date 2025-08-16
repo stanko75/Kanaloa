@@ -68,7 +68,11 @@ public sealed class UploadToBlogTests
 
         string htmlFileName = Path.Join(prepareForUploadFolder, "index.html");
         string indexHtml = File.ReadAllText(htmlFileName);
-        TestOgs(indexHtml);
+        Common.TestIndexHtmlOgs(indexHtml, _baseUrl, _folderName, _ogImage, _ogTitle,
+            (match, expected, wrongMsg, notFoundMsg) =>
+            {
+                AssertTest(match, expected, wrongMsg, notFoundMsg);
+            });
 
         string joomlaPreviewName = Path.Join(prepareForUploadFolder, "joomlaPreview.html");
         string joomlaPreviewHtml = File.ReadAllText(joomlaPreviewName);
@@ -93,27 +97,6 @@ public sealed class UploadToBlogTests
         AssertTest(hrefMatch2, $"jPreview{_folderName}", "img id is wrong", "img id not found!", 2);
         AssertTest(hrefMatch2, $"/prepareForUpload/{_folderName}/www/../{_ogImage}", "second href src is wrong", "second href src  not found!", 3);
 
-    }
-
-    private void TestOgs(string indexHtml)
-    {
-        var ogs = new Dictionary<string, string>
-        {
-            { "url", $"http://{_baseUrl}/prepareForUpload/{_folderName}/www/index.html" },
-            { "image", $"http://{_baseUrl}/prepareForUpload/{_folderName}/{_ogImage}" },
-            { "title", _ogTitle }
-        };
-
-        foreach (KeyValuePair<string, string> og in ogs)
-        {
-            Match ogMatch = Regex.Match(
-                indexHtml,
-                @$"<meta\s+property=[""']og:{og.Key}[""']\s+content=[""']([^""']+)[""']",
-                RegexOptions.IgnoreCase
-            );
-
-            AssertTest(ogMatch, og.Value, $"og:{og.Key} is wrong", $"og:{og.Key} not found!");
-        }
     }
 
     private void AssertTest(Match match, string testValue, string notEqualMessage, string notFoundMessage, int index = 1)

@@ -1,6 +1,8 @@
 ﻿using Newtonsoft.Json.Linq;
 using System.Net.Http.Headers;
 using FunctionalTest.Log;
+using HtmlHandling.Test;
+
 namespace FunctionalTest;
 
 public class UploadToBlogHandler(ILogger logger) : ICommandHandler<UploadToBlogCommand>
@@ -123,6 +125,20 @@ public class UploadToBlogHandler(ILogger logger) : ICommandHandler<UploadToBlogC
 
                     HttpResponseMessage prepareForUploadResponse = await httpClientPost.GetAsync(prepareForUploadFileUri.AbsoluteUri, cancellationToken);
                     string prepareForUploadContent = await prepareForUploadResponse.Content.ReadAsStringAsync(cancellationToken);
+
+                    if (url.Contains("www/index.html"))
+                    {
+                        Common.TestIndexHtmlOgs(prepareForUploadContent, baseUrl, folderName, ogImage, ogTitle,
+                            (match, expected, wrongMsg, notFoundMsg) =>
+                            {
+                                if (!match.Success)
+                                    logger.Log(notFoundMsg);
+                                else if (match.Groups[1].Value != expected)
+                                    logger.Log(wrongMsg);
+                                else
+                                    logger.Log("OK");
+                            });
+                    }
                 }
 
             }
