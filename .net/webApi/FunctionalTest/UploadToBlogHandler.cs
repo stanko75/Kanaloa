@@ -44,7 +44,9 @@ public class UploadToBlogHandler(ILogger logger) : ICommandHandler<UploadToBlogC
             StringContent content = new StringContent(jsonContent);
             content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
 
-            string requestUri = Path.Combine(addressText, @"api/UploadToBlog/UploadToBlog");
+            Uri addressTextUri = new Uri(addressText.EndsWith("/") ? addressText : addressText + "/");
+            Uri requestUri = new Uri(addressTextUri, "api/UploadToBlog/UploadToBlog");
+
             logger.Log($"Sending: {requestUri}");
 
             try
@@ -91,6 +93,8 @@ public class UploadToBlogHandler(ILogger logger) : ICommandHandler<UploadToBlogC
                     string milosevUrl = $"{expectedUrl.TrimEnd('/')}/{folderName}/";
                     Uri baseUri = new Uri(milosevUrl);
                     Uri uri = new Uri(baseUri, url);
+
+                    logger.Log($"Sending: {uri}");
 
                     HttpResponseMessage response = await httpClientPost.GetAsync(uri.AbsoluteUri, cancellationToken);
                     logger.Log(response.IsSuccessStatusCode

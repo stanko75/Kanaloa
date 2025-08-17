@@ -176,6 +176,6 @@ public partial class Form1 : Form
 
     private void button1_Click(object sender, EventArgs e)
     {
-
+        tbPrepareForUploadUrl.Text = "https://kanaloa.azurewebsites.net/prepareForUpload";
     }
 }
