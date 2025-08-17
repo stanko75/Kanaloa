@@ -48,4 +48,10 @@ public static class TestContent
         testMethod(hrefMatch2, $"jPreview{folderName}", "img id is wrong", "img id not found!", "img id OK", 2);
         testMethod(hrefMatch2, $"/prepareForUpload/{folderName}/www/../{ogImage}", "second href src is wrong", "second href src not found!", "second href src OK", 3);
     }
+
+    public static void TestPics2mapsJs(string pics2mapsJsContent, string folderName, Action<Match, string, string, string, string, int> testMethod)
+    {
+        Match match = Regex.Match(pics2mapsJsContent, @"\$\.getJSON\(\s*[""']([^""']+)[""']");
+        testMethod(match, $"{folderName}.json", "notEqualMessage", "notFoundMessage", $"{folderName}.json found - OK", 1);
+    }
 }

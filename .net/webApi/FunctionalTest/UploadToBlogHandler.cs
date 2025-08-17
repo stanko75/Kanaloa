@@ -74,7 +74,7 @@ public class UploadToBlogHandler(ILogger logger) : ICommandHandler<UploadToBlogC
                 "www/css/index.css",
                 "www/lib/jquery-3.6.4.js",
                 "www/script/map.js",
-                "www/script/namespaces.js",
+                "www/script/pics2maps.js",
                 "www/script/namespaces.js",
                 "www/config.json",
                 "www/index.html",
@@ -118,9 +118,7 @@ public class UploadToBlogHandler(ILogger logger) : ICommandHandler<UploadToBlogC
                         : @$"Request failed with status code: {prepareForUploadResponse.StatusCode}, file: {prepareForUploadFileUri.AbsoluteUri}");
                 }
 
-                logger.Log("***");
-                logger.Log("check content of files in prepareForUpload ");
-                logger.Log("***");
+                //check content of files in prepareForUpload
                 foreach (string url in fileUrls)
                 {
                     //string prepareForUploadUrl = $"{prepareForUpload}{url}";
@@ -131,11 +129,11 @@ public class UploadToBlogHandler(ILogger logger) : ICommandHandler<UploadToBlogC
                     HttpResponseMessage prepareForUploadResponse = await httpClientPost.GetAsync(prepareForUploadFileUri.AbsoluteUri, cancellationToken);
                     string prepareForUploadContent = await prepareForUploadResponse.Content.ReadAsStringAsync(cancellationToken);
 
-                    logger.Log("***");
-                    logger.Log($"check content of {url} ");
-                    logger.Log("***");
                     if (url == "www/index.html")
                     {
+                        logger.Log("***");
+                        logger.Log($"check content of {url} ");
+                        logger.Log("***");
                         TestContent.TestIndexHtmlOgs(prepareForUploadContent, baseUrl, folderName, ogImage, ogTitle,
                             (match, expected, wrongMsg, notFoundMsg, foundMsg) =>
                             {
@@ -150,6 +148,10 @@ public class UploadToBlogHandler(ILogger logger) : ICommandHandler<UploadToBlogC
 
                     if (url == "www/joomlaPreview.html")
                     {
+                        logger.Log("***");
+                        logger.Log($"check content of {url} ");
+                        logger.Log("***");
+
                         TestContent.TestJoomlaPreviewHtml(prepareForUploadContent, folderName, ogImage, ogTitle,
                             (match, expected, wrongMsg, notFoundMsg, foundMsg, index) =>
                             {
@@ -161,6 +163,24 @@ public class UploadToBlogHandler(ILogger logger) : ICommandHandler<UploadToBlogC
                                 else
                                     logger.Log(notFoundMsg);
                             });
+                    }
+
+                    if (url == "www/script/pics2maps.js")
+                    {
+                        logger.Log("***");
+                        logger.Log($"check content of {url} ");
+                        logger.Log("***");
+
+                        TestContent.TestPics2mapsJs(prepareForUploadContent, folderName, (match, expected, wrongMsg, notFoundMsg, foundMsg, index) =>
+                        {
+                            if (match.Success)
+                            {
+                                string regExValue = match.Groups[index].Value;
+                                logger.Log(regExValue == expected ? foundMsg : wrongMsg);
+                            }
+                            else
+                                logger.Log(notFoundMsg);
+                        });
                     }
                 }
 

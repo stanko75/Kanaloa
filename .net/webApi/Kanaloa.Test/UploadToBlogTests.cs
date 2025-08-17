@@ -2,6 +2,7 @@
 using Kanaloa.Controllers;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json.Linq;
+using System;
 using System.Text.RegularExpressions;
 
 namespace Kanaloa.Test;
@@ -81,6 +82,16 @@ public sealed class UploadToBlogTests
             {
                 AssertTest(match, testValue, notEqualMessage, notFoundMessage, index);
             });
+
+        string scriptFolder = Path.Join(prepareForUploadFolder, "script");
+        string pics2mapsJs = Path.Join(scriptFolder, "pics2maps.js");
+        string pics2mapsJsContent = File.ReadAllText(pics2mapsJs);
+        TestContent.TestPics2mapsJs(pics2mapsJsContent, _folderName,
+            (match, testValue, notEqualMessage, notFoundMessage, _, index) =>
+            {
+                AssertTest(match, testValue, notEqualMessage, notFoundMessage, index);
+            });
+
 
     }
 
