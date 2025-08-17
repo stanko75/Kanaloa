@@ -128,7 +128,7 @@ public class UploadToBlogHandler(ILogger logger) : ICommandHandler<UploadToBlogC
 
                     if (url.Contains("www/index.html"))
                     {
-                        Common.TestIndexHtmlOgs(prepareForUploadContent, baseUrl, folderName, ogImage, ogTitle,
+                        TestContent.TestIndexHtmlOgs(prepareForUploadContent, baseUrl, folderName, ogImage, ogTitle,
                             (match, expected, wrongMsg, notFoundMsg, foundMsg) =>
                             {
                                 if (!match.Success)

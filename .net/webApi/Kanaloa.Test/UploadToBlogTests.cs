@@ -68,7 +68,7 @@ public sealed class UploadToBlogTests
 
         string htmlFileName = Path.Join(prepareForUploadFolder, "index.html");
         string indexHtml = File.ReadAllText(htmlFileName);
-        Common.TestIndexHtmlOgs(indexHtml, _baseUrl, _folderName, _ogImage, _ogTitle,
+        TestContent.TestIndexHtmlOgs(indexHtml, _baseUrl, _folderName, _ogImage, _ogTitle,
             (match, expected, wrongMsg, notFoundMsg, foundMsg) =>
             {
                 AssertTest(match, expected, wrongMsg, notFoundMsg);
