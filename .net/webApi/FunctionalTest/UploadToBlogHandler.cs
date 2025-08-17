@@ -45,7 +45,7 @@ public class UploadToBlogHandler(ILogger logger) : ICommandHandler<UploadToBlogC
             content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
 
             string requestUri = Path.Combine(addressText, @"api/UploadToBlog/UploadToBlog");
-            logger.Log("Sending");
+            logger.Log($"Sending: {requestUri}");
 
             try
             {
@@ -75,7 +75,8 @@ public class UploadToBlogHandler(ILogger logger) : ICommandHandler<UploadToBlogC
                 "www/script/namespaces.js",
                 "www/script/namespaces.js",
                 "www/config.json",
-                "www/index.html"
+                "www/index.html",
+                "www/joomlaPreview.html"
             ];
 
             try
@@ -126,7 +127,10 @@ public class UploadToBlogHandler(ILogger logger) : ICommandHandler<UploadToBlogC
                     HttpResponseMessage prepareForUploadResponse = await httpClientPost.GetAsync(prepareForUploadFileUri.AbsoluteUri, cancellationToken);
                     string prepareForUploadContent = await prepareForUploadResponse.Content.ReadAsStringAsync(cancellationToken);
 
-                    if (url.Contains("www/index.html"))
+                    logger.Log("***");
+                    logger.Log($"check content of {url} ");
+                    logger.Log("***");
+                    if (url == "www/index.html")
                     {
                         TestContent.TestIndexHtmlOgs(prepareForUploadContent, baseUrl, folderName, ogImage, ogTitle,
                             (match, expected, wrongMsg, notFoundMsg, foundMsg) =>
@@ -137,6 +141,21 @@ public class UploadToBlogHandler(ILogger logger) : ICommandHandler<UploadToBlogC
                                     logger.Log(wrongMsg);
                                 else
                                     logger.Log(foundMsg);
+                            });
+                    }
+
+                    if (url == "www/joomlaPreview.html")
+                    {
+                        TestContent.TestJoomlaPreviewHtml(prepareForUploadContent, folderName, ogImage, ogTitle,
+                            (match, expected, wrongMsg, notFoundMsg, foundMsg, index) =>
+                            {
+                                if (match.Success)
+                                {
+                                    string regExValue = match.Groups[index].Value;
+                                    logger.Log(regExValue == expected ? foundMsg : wrongMsg);
+                                }
+                                else
+                                    logger.Log(notFoundMsg);
                             });
                     }
                 }

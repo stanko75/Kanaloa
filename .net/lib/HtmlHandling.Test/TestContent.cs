@@ -2,7 +2,7 @@
 
 namespace HtmlHandling.Test;
 
-public class TestContent
+public static class TestContent
 {
     public static void TestIndexHtmlOgs(string indexHtml, string baseUrl, string folderName, string ogImage, string ogTitle, Action<Match, string, string, string, string> testMethod)
     {
@@ -23,5 +23,29 @@ public class TestContent
 
             testMethod(ogMatch, og.Value, $"og:{og.Key} is wrong", $"og:{og.Key} not found!", $"og:{og.Key} was found!");
         }
+    }
+
+    public static void TestJoomlaPreviewHtml(string joomlaPreviewHtml, string folderName, string ogImage,
+        string ogTitle, Action<Match, string, string, string, string, int> testMethod)
+    {
+        var hrefMatch = Regex.Match(
+            joomlaPreviewHtml,
+            @"<a\s+href=""([^""]+)""[^>]*>([^<]+)</a>",
+            RegexOptions.IgnoreCase
+        );
+        testMethod(hrefMatch, $"/prepareForUpload/{folderName}/www/index.html", "href is wrong", "href not found!", "href OK", 1);
+        testMethod(hrefMatch, ogTitle, "href text is wrong", "href text not found!", "href text is OK", 2);
+
+        var scriptSrcMatch = Regex.Match(
+            joomlaPreviewHtml,
+            @"<script\s+[^>]*src=[""']([^""']+)[""']",
+            RegexOptions.IgnoreCase
+        );
+        testMethod(scriptSrcMatch, $"/prepareForUpload/{folderName}/www/lib/", "src is wrong", "src not found!", "src OK", 1);
+
+        var hrefMatch2 = Regex.Match(joomlaPreviewHtml, @"<a\s+href=""([^""]+)""[^>]*>\s*<img\s+[^>]*id=""([^""]+)""[^>]*src=""([^""]+)""", RegexOptions.IgnoreCase);
+        testMethod(hrefMatch2, $"/prepareForUpload/{folderName}/www/index.html", "second href is wrong", "second href not found!", "second href OK", 1);
+        testMethod(hrefMatch2, $"jPreview{folderName}", "img id is wrong", "img id not found!", "img id OK", 2);
+        testMethod(hrefMatch2, $"/prepareForUpload/{folderName}/www/../{ogImage}", "second href src is wrong", "second href src not found!", "second href src OK", 3);
     }
 }

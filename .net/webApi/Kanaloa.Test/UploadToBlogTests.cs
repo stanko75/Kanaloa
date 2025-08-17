@@ -76,26 +76,11 @@ public sealed class UploadToBlogTests
 
         string joomlaPreviewName = Path.Join(prepareForUploadFolder, "joomlaPreview.html");
         string joomlaPreviewHtml = File.ReadAllText(joomlaPreviewName);
-
-        var hrefMatch = Regex.Match(
-            joomlaPreviewHtml,
-            @"<a\s+href=""([^""]+)""[^>]*>([^<]+)</a>",
-            RegexOptions.IgnoreCase
-        );
-        AssertTest(hrefMatch, $"/prepareForUpload/{_folderName}/www/index.html", "href is wrong", "href not found!");
-        AssertTest(hrefMatch, _ogTitle, "href text is wrong", "href text not found!", 2);
-
-        var scriptSrcMatch = Regex.Match(
-            joomlaPreviewHtml,
-            @"<script\s+[^>]*src=[""']([^""']+)[""']",
-            RegexOptions.IgnoreCase
-        );
-        AssertTest(scriptSrcMatch, $"/prepareForUpload/{_folderName}/www/lib/", "src is wrong", "src not found!");
-
-        var hrefMatch2 = Regex.Match(joomlaPreviewHtml, @"<a\s+href=""([^""]+)""[^>]*>\s*<img\s+[^>]*id=""([^""]+)""[^>]*src=""([^""]+)""", RegexOptions.IgnoreCase);
-        AssertTest(hrefMatch2, $"/prepareForUpload/{_folderName}/www/index.html", "second href is wrong", "second href not found!");
-        AssertTest(hrefMatch2, $"jPreview{_folderName}", "img id is wrong", "img id not found!", 2);
-        AssertTest(hrefMatch2, $"/prepareForUpload/{_folderName}/www/../{_ogImage}", "second href src is wrong", "second href src  not found!", 3);
+        TestContent.TestJoomlaPreviewHtml(joomlaPreviewHtml, _folderName, _ogImage, _ogTitle,
+            (match, testValue, notEqualMessage, notFoundMessage, _, index) =>
+            {
+                AssertTest(match, testValue, notEqualMessage, notFoundMessage, index);
+            });
 
     }
 
