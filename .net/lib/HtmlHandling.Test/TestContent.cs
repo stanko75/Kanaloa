@@ -21,12 +21,12 @@ public static class TestContent
                 RegexOptions.IgnoreCase
             );
 
-            testMethod(ogMatch, og.Value, $"og:{og.Key} is wrong", $"og:{og.Key} not found!", $"og:{og.Key} was found!");
+            testMethod(ogMatch, og.Value, $"og:{og.Key} is wrong", $"og:{og.Key} not found!", $"og:{og.Key} was found! and is '{og.Value}'");
         }
     }
 
-    public static void TestJoomlaPreviewHtml(string joomlaPreviewHtml, string folderName, string ogImage,
-        string ogTitle, Action<Match, string, string, string, string, int> testMethod)
+    public static void TestJoomlaPreviewHtml(string joomlaPreviewHtml, string folderName, string imgSrc,
+        string aHrefText, Action<Match, string, string, string, string, int> testMethod)
     {
         var hrefMatch = Regex.Match(
             joomlaPreviewHtml,
@@ -34,19 +34,33 @@ public static class TestContent
             RegexOptions.IgnoreCase
         );
         testMethod(hrefMatch, $"/prepareForUpload/{folderName}/www/index.html", "href is wrong", "href not found!", "href OK", 1);
-        testMethod(hrefMatch, ogTitle, "href text is wrong", "href text not found!", "href text is OK", 2);
+        testMethod(hrefMatch, aHrefText, "href text is wrong", "href text not found!", "href text is OK", 2);
 
         var scriptSrcMatch = Regex.Match(
             joomlaPreviewHtml,
             @"<script\s+[^>]*src=[""']([^""']+)[""']",
             RegexOptions.IgnoreCase
         );
-        testMethod(scriptSrcMatch, $"/prepareForUpload/{folderName}/www/lib/", "src is wrong", "src not found!", "src OK", 1);
+        testMethod(scriptSrcMatch, $"/prepareForUpload/{folderName}/www/lib/", "jQuery.getJSON is wrong", "jQuery.getJSON not found!", "jQuery.getJSON OK", 1);
+
+        var jsonMatch = Regex.Match(
+            joomlaPreviewHtml,
+            @"getJSON\s*\(\s*[""']([^""']+)[""']",
+            RegexOptions.IgnoreCase
+        );
+        testMethod(jsonMatch, $"/prepareForUpload/{folderName}/www/{folderName}Thumbs.json", "src is wrong", "src not found!", "src OK", 1);
+
+        var jqIdMatch = Regex.Match(
+            joomlaPreviewHtml,
+            @"jQuery\(\s*[""']([^""']+)[""']\s*\)",
+            RegexOptions.IgnoreCase
+        );
+        testMethod(jqIdMatch, $"#jPreview{folderName}", "jQuery-Selector is wrong", "jQuery-Selector not found!", "jQuery-Selector OK", 1);
 
         var hrefMatch2 = Regex.Match(joomlaPreviewHtml, @"<a\s+href=""([^""]+)""[^>]*>\s*<img\s+[^>]*id=""([^""]+)""[^>]*src=""([^""]+)""", RegexOptions.IgnoreCase);
         testMethod(hrefMatch2, $"/prepareForUpload/{folderName}/www/index.html", "second href is wrong", "second href not found!", "second href OK", 1);
         testMethod(hrefMatch2, $"jPreview{folderName}", "img id is wrong", "img id not found!", "img id OK", 2);
-        testMethod(hrefMatch2, $"/prepareForUpload/{folderName}/www/../{ogImage}", "second href src is wrong", "second href src not found!", "second href src OK", 3);
+        testMethod(hrefMatch2, $"/prepareForUpload/{folderName}/www/../{imgSrc}", "second href src is wrong", "second href src not found!", "second href src OK", 3);
     }
 
     public static void TestPics2mapsJs(string pics2mapsJsContent, string folderName, Action<Match, string, string, string, string, int> testMethod)
