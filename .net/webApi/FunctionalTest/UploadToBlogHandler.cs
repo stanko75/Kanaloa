@@ -75,6 +75,7 @@ public class UploadToBlogHandler(ILogger logger) : ICommandHandler<UploadToBlogC
                 "www/lib/jquery-3.6.4.js",
                 "www/script/map.js",
                 "www/script/pics2maps.js",
+                "www/script/thumbnails.js",
                 "www/script/namespaces.js",
                 "www/config.json",
                 "www/index.html",
@@ -182,8 +183,25 @@ public class UploadToBlogHandler(ILogger logger) : ICommandHandler<UploadToBlogC
                                 logger.Log(notFoundMsg);
                         });
                     }
-                }
 
+                    if (url == "www/script/thumbnails.js")
+                    {
+                        logger.Log("***");
+                        logger.Log($"check content of {url} ");
+                        logger.Log("***");
+
+                        TestContent.TestThumbnails(prepareForUploadContent, folderName, (match, expected, wrongMsg, notFoundMsg, foundMsg) =>
+                        {
+                            if (match.Success)
+                            {
+                                string regExValue = match.Groups[1].Value;
+                                logger.Log(regExValue == expected ? foundMsg : wrongMsg);
+                            }
+                            else
+                                logger.Log(notFoundMsg);
+                        });
+                    }
+                }
             }
             catch (Exception ex)
             {

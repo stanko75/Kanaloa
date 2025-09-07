@@ -82,4 +82,14 @@ public static class TestContent
         Match match = Regex.Match(pics2mapsJsContent, @"\$\.getJSON\(\s*[""']([^""']+)[""']");
         testMethod(match, $"{folderName}.json", "notEqualMessage", "notFoundMessage", $"{folderName}.json found - OK", 1);
     }
+
+    public static void TestThumbnails(string thumbnails, string folderName, Action<Match, string, string, string, string> testMethod)
+    {
+        var thumbnailsMatch = Regex.Match(
+            thumbnails,
+            @"(?:\$|jQuery)\.getJSON\s*\(\s*[""']([^""']+\.json)[""']",
+            RegexOptions.IgnoreCase
+        );
+        testMethod(thumbnailsMatch, $"{folderName}Thumbs.json", "thumbs json is wrong", "thumbs json not found!", $"thumbs json is as expected {folderName}Thumbs.json OK");
+    }
 }
