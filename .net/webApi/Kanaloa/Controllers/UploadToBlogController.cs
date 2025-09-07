@@ -1,11 +1,12 @@
 ﻿using Common;
+using FtpHandling;
 using HtmlHandling;
+using Kanaloa.Controllers.uploadToBlog;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System.Data;
 using System.Reflection;
-using Kanaloa.Controllers.uploadToBlog;
 
 namespace Kanaloa.Controllers;
 
@@ -79,6 +80,11 @@ public class UploadToBlogController : ControllerBase
 
             ReplaceKeysInFiles replaceKeysInFiles = new ReplaceKeysInFiles();
             replaceKeysInFiles.Execute(replaceKeysInFilesCommand);
+
+            IFtpUpload ftpUpload = new FtpUpload(host, user, pass);
+            IMirrorDirAndFileStructureOnFtp mirrorDirAndFileStructureOnFtp = new MirrorDirAndFileStructureOnFtp(ftpUpload);
+            mirrorDirAndFileStructureOnFtp.Execute(replaceKeysInFilesCommand.SaveToPath,
+                $"{remoteRootFolder}/{folder}");
 
             return Ok(@$"Uploaded: {remoteRootFolder}/{folder}/{kmlFileName}");
         }
