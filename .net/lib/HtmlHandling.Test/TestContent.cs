@@ -50,12 +50,26 @@ public static class TestContent
         );
         testMethod(jsonMatch, $"/prepareForUpload/{folderName}/www/{folderName}Thumbs.json", "src is wrong", "src not found!", "src OK", 1);
 
+        var basePathMatch = Regex.Match(
+            joomlaPreviewHtml,
+            @"attr\(\s*[""']src[""']\s*,\s*[""']([^""']+/)",
+            RegexOptions.IgnoreCase
+        );
+        testMethod(basePathMatch, $"/prepareForUpload/{folderName}/www/", "Base-Path is wrong", "Base-Path not found!", "Base-Path OK", 1);
+
         var jqIdMatch = Regex.Match(
             joomlaPreviewHtml,
             @"jQuery\(\s*[""']([^""']+)[""']\s*\)",
             RegexOptions.IgnoreCase
         );
         testMethod(jqIdMatch, $"#jPreview{folderName}", "jQuery-Selector is wrong", "jQuery-Selector not found!", "jQuery-Selector OK", 1);
+
+        var varNameMatch = Regex.Match(
+            joomlaPreviewHtml,
+            @"var\s+([A-Za-z_][A-Za-z0-9_]*)\s*=",
+            RegexOptions.IgnoreCase
+        );
+        testMethod(varNameMatch, $"{folderName}PicNo", "Variable is wrong", "Variable not found!", "Variable OK", 1);
 
         var hrefMatch2 = Regex.Match(joomlaPreviewHtml, @"<a\s+href=""([^""]+)""[^>]*>\s*<img\s+[^>]*id=""([^""]+)""[^>]*src=""([^""]+)""", RegexOptions.IgnoreCase);
         testMethod(hrefMatch2, $"/prepareForUpload/{folderName}/www/index.html", "second href is wrong", "second href not found!", "second href OK", 1);
