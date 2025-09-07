@@ -81,6 +81,8 @@ public class UploadToBlogController : ControllerBase
             ReplaceKeysInFiles replaceKeysInFiles = new ReplaceKeysInFiles();
             replaceKeysInFiles.Execute(replaceKeysInFilesCommand);
 
+
+            //www.milosev.com/milosev.com/gallery/allWithPics/travelBuddies/kelnTest/index.html
             IFtpUpload ftpUpload = new FtpUpload(host, user, pass);
             IMirrorDirAndFileStructureOnFtp mirrorDirAndFileStructureOnFtp = new MirrorDirAndFileStructureOnFtp(ftpUpload);
             mirrorDirAndFileStructureOnFtp.Execute(replaceKeysInFilesCommand.SaveToPath,
