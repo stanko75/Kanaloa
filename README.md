@@ -17,3 +17,9 @@ To run the .NET application, you will need to create the appsettings.json file f
   }
 }
 ```
+
+To run Android app, you will need to create \Kanaloa\android\kanaloa\app\src\main\res\raw\config.properties which look like this:
+
+```
+web.host=https://www.kanaloa.com //this info will be used for app to know where (to which API) to send gps info, pics,...
+```
