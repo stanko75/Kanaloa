@@ -30,3 +30,4 @@ as well as \Kanaloa\android\kanaloa\secrets.properties which looks like:
 sdk.dir=C\:\\Users\\username\\AppData\\Local\\Android\\Sdk
 MAPS_API_KEY="myGoogleMapsKey"
 ```
+To start Pics2gMaps build only Pics2gMaps, not Pics2gMaps.Test, and at least once open Settings.settings in designer
