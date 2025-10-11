@@ -23,3 +23,10 @@ To run Android app, you will need to create \Kanaloa\android\kanaloa\app\src\mai
 ```
 web.host=https://www.kanaloa.com //this info will be used for app to know where (to which API) to send gps info, pics,...
 ```
+
+as well as \Kanaloa\android\kanaloa\secrets.properties which looks like:
+
+```
+sdk.dir=C\:\\Users\\username\\AppData\\Local\\Android\\Sdk
+MAPS_API_KEY="myGoogleMapsKey"
+```
