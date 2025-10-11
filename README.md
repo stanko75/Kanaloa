@@ -1,7 +1,7 @@
 # Kanaloa
 Live GPS tracking and travel blog assistent
 
-To run the .NET application, you will need to create the appsettings.json file from \Kanaloa\.net\webApi\Kanaloa\ and the RootUrl, which looks like this
+To run the .NET application, you will need to create the appsettings.json file from \Kanaloa\\.net\webApi\Kanaloa\ and the RootUrl, which looks like this
 
 ```json
 {
