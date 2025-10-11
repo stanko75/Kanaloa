@@ -1,0 +1,26 @@
+[{
+  "/*galleryName*/": "GalleryNameTest1",
+  "/*webPath*/"="http://www.milosev.com/gallery/allWithPics/"
+  "/*gapikey*/": "GapiKeyTest",
+  "/*ogTitle*/": "OgTitleTest",
+  "/*ogDescription*/": "OgDescriptionTest",
+  "/*ogImage*/": "OgImageTest",
+  "/*ogUrl*/": "OgUrlTest",
+  "/*picsJson*/": "PicsJsonTest",
+  "/*zoom*/": "ZoomTest",
+  "/*joomlaThumbsPath*/": "JoomlaThumbsPath",
+  "/*joomlaImgSrcPath*/": "JoomlaImgSrcPath"
+}
+,{
+  "/*galleryName*/": "GalleryNameTest2",
+  "/*gapikey*/": "GapiKeyTest",
+  "/*ogTitle*/": "OgTitleTest",
+  "/*ogDescription*/": "OgDescriptionTest",
+  "/*ogImage*/": "OgImageTest",
+  "/*ogUrl*/": "OgUrlTest",
+  "/*picsJson*/": "PicsJsonTest",
+  "/*zoom*/": "ZoomTest",
+  "/*joomlaThumbsPath*/": "JoomlaThumbsPath",
+  "/*joomlaImgSrcPath*/": "JoomlaImgSrcPath"
+}
+]

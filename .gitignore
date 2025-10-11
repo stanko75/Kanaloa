@@ -1,0 +1,86 @@
+# Gradle files
+.gradle/
+build/
+
+# Local configuration file (sdk path, etc)
+local.properties
+
+# Log/OS Files
+*.log
+
+# Android Studio generated files and folders
+captures/
+.externalNativeBuild/
+.cxx/
+*.apk
+output.json
+
+# IntelliJ
+*.iml
+.idea/
+
+# Keystore files
+*.jks
+*.keystore
+
+# Google Services (e.g. APIs or Firebase)
+google-services.json
+
+# Android Profiling
+*.hprof
+
+*.suo
+*.user
+_ReSharper.*
+bin/
+obj/
+packages/
+.vs/
+.net/lib/PreparePicturesAndHtmlAndUploadToWebsite.Tests/jsconfigForTests.json
+.net/lib/PreparePicturesAndHtmlAndUploadToWebsite.Tests/test.kml
+android/app/src/main/res/raw/config.properties
+html/blog/index.html
+.net/webApi/CreateAndUpdateKmlWebApi/CreateAndUpdateKmlWebApi/Properties/PublishProfiles/milosevtracking - FTP.pubxml
+.net/webApi/CreateAndUpdateKmlWebApi/CreateAndUpdateKmlWebApi/Properties/PublishProfiles/milosevtracking - ReadOnly - FTP.pubxml
+.net/webApi/CreateAndUpdateKmlWebApi/CreateAndUpdateKmlWebApi/Properties/PublishProfiles/milosevtracking - Web Deploy.pubxml
+.net/webApi/CreateAndUpdateKmlWebApi/CreateAndUpdateKmlWebApi/Properties/PublishProfiles/milosevtracking - Zip Deploy.pubxml
+.net/webApi/CreateAndUpdateKmlWebApi/CreateAndUpdateKmlWebApi/test.json
+.net/webApi/CreateAndUpdateKmlWebApi/CreateAndUpdateKmlWebApi/default/default.kml
+.net/webApi/CreateAndUpdateKmlWebApi/CreateAndUpdateKmlWebApi/config.json
+.net/lib/PreparePicturesAndHtmlAndUploadToWebsite.Tests/album1/test.kml
+/.net/webApi/CreateAndUpdateKmlWebApi/CreateAndUpdateKmlWebApi/default/pics
+/.net/webApi/CreateAndUpdateKmlWebApi/CreateAndUpdateKmlWebApi/default/thumbs
+/.net/webApi/CreateAndUpdateKmlWebApi/CreateAndUpdateKmlWebApi/default
+web.config
+.net/webApi/CreateAndUpdateKmlWebApi/CreateAndUpdateKmlWebApi/test.kml
+.net/webApi/CreateAndUpdateKmlWebApi/CreateAndUpdateKmlWeb.Api.Test/config.json
+.net/webApi/CreateAndUpdateKmlWebApi/CreateAndUpdateKmlWeb.Api.Test/jsconfigForTests.json
+.net/webApi/CreateAndUpdateKmlWebApi/CreateAndUpdateKmlWebApi/default.json
+.net/webApi/CreateAndUpdateKmlWebApi/FunctionalTest/jsconfigForTests.json
+/.net/webApi/CreateAndUpdateKmlWebApi/CreateAndUpdateKmlWebApi/prepareForUpload
+/.net/webApi/CreateAndUpdateKmlWebApi/CreateAndUpdateKmlWebApi/html
+/.net/webApi/CreateAndUpdateKmlWebApi/CreateAndUpdateKmlWebApi/html
+/.net/webApi/CreateAndUpdateKmlWebApi/CreateAndUpdateKmlWebApi/funcTest2
+html/blog/www/index.html
+html/templateForBlog/index.html
+.net/webApi/CreateAndUpdateKmlWebApi/CreateAndUpdateKmlWebApi/listOfKeyValuesToReplaceInFiles.json
+.net/webApi/CreateAndUpdateKmlWebApi/FunctionalTest/jsconfigForTests - Copy.json
+.net/webApi/Kanaloa/funcTest2
+.net/webApi/Kanaloa/live.json
+.net/webApi/Kanaloa/config.json
+.net/webApi/Kanaloa/appsettings.json
+.net/webApi/FunctionalTest/jsconfigForTests - Copy.json
+.net/webApi/FunctionalTest/jsconfigForTests.json
+/.net/webApi/Kanaloa/html
+/.net/webApi/Kanaloa/Properties/PublishProfiles
+/html/live/json/liveImageMarkers.json
+/html/live/script/config.json
+/html/live/config.json
+/html/live/test.json
+android/kanaloa/secrets.properties
+/.net/winForms/Pics2gMaps/Pics2gMaps/app.config
+/.net/winForms/Pics2gMaps/Pics2gMaps/appsettings.json
+android/kanaloa/app/src/main/res/raw/config.properties
+android/kanaloa/app/src/main/res/raw/config.properties
+*.kml
+.net/webApi/Kanaloa/Properties/ServiceDependencies/kanaloa - Web Deploy/profile.arm.json
