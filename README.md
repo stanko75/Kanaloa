@@ -31,3 +31,38 @@ sdk.dir=C\:\\Users\\username\\AppData\\Local\\Android\\Sdk
 MAPS_API_KEY="myGoogleMapsKey"
 ```
 To start Pics2gMaps build only Pics2gMaps, not Pics2gMaps.Test, and at least once open Settings.settings in designer
+
+In \Kanaloa\html\templateForBlog index.html should be added, and it looks like:
+
+```html
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:fb="http://ogp.me/ns/fb#">
+
+<head>
+    <meta content="text/html; charset=UTF-8" name="Content-Type" />
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:site" content="@milosev.com" />
+    <meta name="twitter:creator" content="@stankomilosev" />
+    <meta property="og:title" content="/*ogTitle*/" />
+    <meta property="og:url" content="/*ogUrl*/" />
+    <meta property="og:image" content="/*ogImageFullPath*/" />
+    <meta property="fb:app_id" content="myFbAppId" />
+    <meta property="og:description" content="/*ogDescription*/" />
+    <meta content="width=device-width, initial-scale=1" name="viewport" />
+    <link type="text/css" rel="stylesheet" href="css/index.css" />
+    <script defer type="text/javascript" src="lib/jquery-3.6.4.js"></script>
+    <script defer type="text/javascript" src="script/namespaces.js"></script>
+    <script defer type="text/javascript" src="script/map.js"></script>
+    <script defer type="text/javascript" src="script/pics2maps.js"></script>
+    <script defer type="text/javascript" src="script/thumbnails.js"></script>
+    <script defer type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=myGoogleMapsKey&callback=window.milosev.initMap"></script>
+
+</head>
+
+<body>
+    <div id="map-canvas"></div>
+    <div id="thumbnails"></div>
+</body>
+
+</html>
+```
