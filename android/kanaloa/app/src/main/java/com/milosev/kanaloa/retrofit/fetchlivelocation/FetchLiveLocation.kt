@@ -69,7 +69,7 @@ class FetchLiveLocation(private var getLiveLocation: IGetLiveLocationApiService,
                             lat = json.getDouble("lat")
                             lng = json.getDouble("lng")
 
-                            moveGoogleMapCameraAndCreateMarkerIfNotExists(marker, googleMap, LatLng(lat, lng))
+                            marker = moveGoogleMapCameraAndCreateMarkerIfNotExists(marker, googleMap, LatLng(lat, lng))
                         }
                     } else {
                         val sendResponse = "${response.code()}: "

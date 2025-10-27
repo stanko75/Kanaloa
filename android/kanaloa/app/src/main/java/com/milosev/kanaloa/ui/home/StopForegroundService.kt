@@ -7,9 +7,7 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Build
 import androidx.annotation.RequiresApi
-import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.milosev.kanaloa.foregroundtickservice.BroadcastTickReceiver
-import com.milosev.kanaloa.foregroundtickservice.ForegroundServiceBroadcastReceiver
 import com.milosev.kanaloa.foregroundtickservice.ForegroundTickService
 import com.milosev.kanaloa.foregroundtickservice.IntentAction
 
@@ -17,8 +15,7 @@ class StopForegroundService {
     @RequiresApi(Build.VERSION_CODES.O)
     fun stopForegroundService(
         context: Context,
-        activity: Activity,
-        broadCastReceiver: ForegroundServiceBroadcastReceiver
+        activity: Activity
     ) {
         val component = ComponentName(context, BroadcastTickReceiver::class.java)
         context.packageManager.setComponentEnabledSetting(
@@ -26,8 +23,6 @@ class StopForegroundService {
             PackageManager.COMPONENT_ENABLED_STATE_DISABLED,
             PackageManager.DONT_KILL_APP
         )
-
-        LocalBroadcastManager.getInstance(context).unregisterReceiver(broadCastReceiver)
 
         val intentStopForegroundTickService = Intent(context, ForegroundTickService::class.java)
         intentStopForegroundTickService.action = IntentAction.STOP_FOREGROUND_TICK_SERVICE

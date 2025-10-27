@@ -23,12 +23,9 @@ import com.google.android.gms.maps.model.Marker
 import com.google.android.gms.maps.model.MarkerOptions
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.milosev.kanaloa.Config
-import com.milosev.kanaloa.foregroundtickservice.ForegroundServiceBroadcastReceiver
-import com.milosev.kanaloa.foregroundtickservice.ForegroundServiceBroadcastReceiverOnReceive
 import com.milosev.kanaloa.logger.LogViewModelLogger
 import com.milosev.kanaloa.ui.log.LogViewModel
 import androidx.core.view.get
-import com.milosev.kanaloa.logger.ActivityLogger
 import com.milosev.kanaloa.retrofit.CreateRetrofitBuilder
 import com.milosev.kanaloa.retrofit.fetchlivelocation.FetchLiveLocation
 import com.milosev.kanaloa.retrofit.fetchlivelocation.IGetLiveLocationApiService
@@ -93,10 +90,6 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
             )
         }
 
-        val broadCastReceiver = ForegroundServiceBroadcastReceiver(
-            ForegroundServiceBroadcastReceiverOnReceive(logViewModelLogger)
-        )
-
         bottomNavigationView.setOnItemSelectedListener { item ->
             when (item.itemId) {
                 R.id.navigation_start -> {
@@ -107,13 +100,13 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
                     updateJob = liveUpdater.start(googleMap, context, requireActivity(), logViewModelLogger, kmlUrl)
 
                     val serviceStarter = StartForegroundService()
-                    context?.let { serviceStarter.startForegroundService(it, activity, this.requireView(), broadCastReceiver) }
+                    context?.let { serviceStarter.startForegroundService(it, activity, this.requireView()) }
                     true
                 }
                 R.id.navigation_stop -> {
-                    val serviceStopper = StopForegroundService()
-                    context?.let { serviceStopper.stopForegroundService(it, activity, broadCastReceiver) }
                     liveUpdater.stop(logViewModelLogger, updateJob)
+                    val serviceStopper = StopForegroundService()
+                    context?.let { serviceStopper.stopForegroundService(it, activity) }
                     true
                 }
                 R.id.navigation_photo -> {

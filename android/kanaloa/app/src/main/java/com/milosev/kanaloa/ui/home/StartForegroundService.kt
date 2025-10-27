@@ -9,27 +9,18 @@ import android.os.Build
 import android.view.View
 import android.view.inputmethod.InputMethodManager
 import androidx.annotation.RequiresApi
-import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.milosev.kanaloa.foregroundtickservice.BroadcastTickReceiver
-import com.milosev.kanaloa.foregroundtickservice.ForegroundServiceBroadcastReceiver
 import com.milosev.kanaloa.foregroundtickservice.ForegroundTickService
 import com.milosev.kanaloa.foregroundtickservice.IntentAction
 import com.milosev.kanaloa.foregroundtickservice.IntentExtras
-import android.content.IntentFilter
 
 class StartForegroundService {
     @RequiresApi(Build.VERSION_CODES.O)
     fun startForegroundService(
         context: Context,
         activity: Activity,
-        view: View,
-        broadCastReceiver: ForegroundServiceBroadcastReceiver
+        view: View
     ) {
-        LocalBroadcastManager.getInstance(context)
-            .registerReceiver(broadCastReceiver, IntentFilter(IntentAction.NUM_OF_TICKS))
-        LocalBroadcastManager.getInstance(context)
-            .registerReceiver(broadCastReceiver, IntentFilter(IntentAction.RETROFIT_ON_RESPONSE))
-
         val intentStartForegroundTickService =
             Intent(context, ForegroundTickService::class.java)
         intentStartForegroundTickService.action = IntentAction.START_FOREGROUND_TICK_SERVICE
