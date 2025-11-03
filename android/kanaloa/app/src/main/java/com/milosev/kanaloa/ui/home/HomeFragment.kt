@@ -7,7 +7,6 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.RequiresApi
 import androidx.fragment.app.Fragment
@@ -96,7 +95,7 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
 
                     val kmlUrl = getKmlUrl()
 
-                    liveUpdater.marker = marker;
+                    liveUpdater.marker = marker
                     updateJob = liveUpdater.start(googleMap, context, requireActivity(), logViewModelLogger, kmlUrl)
 
                     val serviceStarter = StartForegroundService()
@@ -168,7 +167,7 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
         val kmlUrl = getKmlUrl()
         if (foregroundTickServiceStatus == "started") {
             bottomNavigationView.menu[0].isChecked = true
-            liveUpdater.marker = marker;
+            liveUpdater.marker = marker
             updateJob = liveUpdater.start(googleMap, context, requireActivity(), logViewModelLogger, kmlUrl)
         } else {
             loadKmlFromUrl.loadKmlFromUrl(
@@ -177,7 +176,7 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
                 context,
                 this.requireActivity()
             )
-            val url = context?.let { Config(it).webHost };
+            val url = context?.let { Config(it).webHost }
             lifecycleScope.launch {
                 context?.let { fetchLiveLocation.fetchLiveLocation (it, url, googleMap) }
             }
