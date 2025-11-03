@@ -71,8 +71,12 @@ class LiveLocationUpdater(
 
             val sharedPreferences = context?.getSharedPreferences("settings", Context.MODE_PRIVATE)
             val intervalString = sharedPreferences?.getString("requestUpdates", "30") ?: "30"
-            val updateInterval = intervalString.toLongOrNull()?.times(1000) ?: 30_000L
-            delay(30_000L)
+            var updateInterval = intervalString.toLongOrNull()?.times(1000) ?: 30_000L
+            if (updateInterval < 10_000) {
+                updateInterval = 10_000L
+            }
+            delay(updateInterval)
+
         }
     }
 
