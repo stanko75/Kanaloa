@@ -13,6 +13,7 @@ import okhttp3.ResponseBody
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+import java.net.URL
 
 class LoadKmlFromUrl(var logViewModelLogger: ILogger) : ILoadKmlFromUrl {
     override fun loadKmlFromUrl(
@@ -42,9 +43,9 @@ class LoadKmlFromUrl(var logViewModelLogger: ILogger) : ILoadKmlFromUrl {
         googleMap: GoogleMap,
         context: Context?,
         requireActivity: FragmentActivity,
-        it: String
+        baseUrl: String
     ) {
-        val kmlClient = CreateRetrofitBuilder().createRetrofitBuilder(it)
+        val kmlClient = CreateRetrofitBuilder().createRetrofitBuilder(baseUrl)
             .create(IGetKml::class.java)
 
         logViewModelLogger.Log(
