@@ -69,30 +69,14 @@ class LoadKmlFromUrl(var logViewModelLogger: ILogger) : ILoadKmlFromUrl {
                     if (isValid) {
                         try {
 
-                            logViewModelLogger.Log(
-                                LogEntry(
-                                    LoggingEventType.Information,
-                                    "KML: $strUrl loaded (${bytes?.size} Bytes)"
-                                )
+                            actualLoadKml(
+                                strUrl,
+                                googleMap,
+                                context,
+                                requireActivity,
+                                bytes
                             )
 
-                            val input = java.io.ByteArrayInputStream(bytes)
-
-                            val kmlLayer = KmlLayer(googleMap, input, context)
-
-                            requireActivity.runOnUiThread {
-                                try {
-                                    kmlLayer.addLayerToMap()
-                                } catch (uiEx: Exception) {
-                                    logViewModelLogger.Log(
-                                        LogEntry(
-                                            LoggingEventType.Error,
-                                            "addLayerToMap failed: ${uiEx.message}",
-                                            uiEx
-                                        )
-                                    )
-                                }
-                            }
                         } catch (ex: org.xmlpull.v1.XmlPullParserException) {
                             logViewModelLogger.Log(
                                 LogEntry(
@@ -169,9 +153,7 @@ class LoadKmlFromUrl(var logViewModelLogger: ILogger) : ILoadKmlFromUrl {
                 )
 
                 return Pair(false, null)
-            }
-            else
-            {
+            } else {
                 val head =
                     bytes.copyOfRange(0, minOf(bytes.size, 200)).decodeToString()
                 if (!head.contains("<kml", ignoreCase = true)) {
@@ -185,6 +167,39 @@ class LoadKmlFromUrl(var logViewModelLogger: ILogger) : ILoadKmlFromUrl {
                 }
 
                 return Pair(true, bytes)
+            }
+        }
+    }
+
+    fun actualLoadKml(
+        strUrl: String,
+        googleMap: GoogleMap,
+        context: Context?,
+        requireActivity: FragmentActivity,
+        bytes: ByteArray?
+    ) {
+        logViewModelLogger.Log(
+            LogEntry(
+                LoggingEventType.Information,
+                "KML: $strUrl loaded (${bytes?.size} Bytes)"
+            )
+        )
+
+        val input = java.io.ByteArrayInputStream(bytes)
+
+        val kmlLayer = KmlLayer(googleMap, input, context)
+
+        requireActivity.runOnUiThread {
+            try {
+                kmlLayer.addLayerToMap()
+            } catch (uiEx: Exception) {
+                logViewModelLogger.Log(
+                    LogEntry(
+                        LoggingEventType.Error,
+                        "addLayerToMap failed: ${uiEx.message}",
+                        uiEx
+                    )
+                )
             }
         }
     }
