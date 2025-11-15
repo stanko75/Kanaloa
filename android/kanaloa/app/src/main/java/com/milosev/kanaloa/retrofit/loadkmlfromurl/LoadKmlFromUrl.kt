@@ -13,7 +13,6 @@ import okhttp3.ResponseBody
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
-import java.net.URL
 
 class LoadKmlFromUrl(var logViewModelLogger: ILogger) : ILoadKmlFromUrl {
     override fun loadKmlFromUrl(
@@ -65,81 +64,54 @@ class LoadKmlFromUrl(var logViewModelLogger: ILogger) : ILoadKmlFromUrl {
                 if (response.isSuccessful) {
 
                     val body = response.body()
-                    if (body == null) {
-                        logViewModelLogger.Log(
-                            LogEntry(
-                                LoggingEventType.Error,
-                                "KML is empty (body==null)!"
-                            )
-                        )
-                        return
-                    }
+                    val (isValid, bytes) = checkIfResponseBodyIsNullOrEmpty(body)
 
-                    try {
-                        val bytes = body.bytes()
-                        if (bytes.isEmpty()) {
+                    if (isValid) {
+                        try {
+
+                            logViewModelLogger.Log(
+                                LogEntry(
+                                    LoggingEventType.Information,
+                                    "KML: $strUrl loaded (${bytes?.size} Bytes)"
+                                )
+                            )
+
+                            val input = java.io.ByteArrayInputStream(bytes)
+
+                            val kmlLayer = KmlLayer(googleMap, input, context)
+
+                            requireActivity.runOnUiThread {
+                                try {
+                                    kmlLayer.addLayerToMap()
+                                } catch (uiEx: Exception) {
+                                    logViewModelLogger.Log(
+                                        LogEntry(
+                                            LoggingEventType.Error,
+                                            "addLayerToMap failed: ${uiEx.message}",
+                                            uiEx
+                                        )
+                                    )
+                                }
+                            }
+                        } catch (ex: org.xmlpull.v1.XmlPullParserException) {
                             logViewModelLogger.Log(
                                 LogEntry(
                                     LoggingEventType.Error,
-                                    "KML is empty (0 Bytes)!"
+                                    "KML-Parsing failed (possible not completely loaded): ${ex.message}",
+                                    ex
                                 )
                             )
-                            return
-                        }
-
-                        val head =
-                            bytes.copyOfRange(0, minOf(bytes.size, 200)).decodeToString()
-                        if (!head.contains("<kml", ignoreCase = true)) {
+                        } catch (ex: Exception) {
                             logViewModelLogger.Log(
                                 LogEntry(
-                                    LoggingEventType.Warning,
-                                    "KML-Header unexpected: ${head.replace("\n", " ")}"
+                                    LoggingEventType.Error,
+                                    "Error by loading or parsing: ${ex.message}",
+                                    ex
                                 )
                             )
+                        } finally {
+                            response.body()?.close()
                         }
-
-                        logViewModelLogger.Log(
-                            LogEntry(
-                                LoggingEventType.Information,
-                                "KML: $strUrl loaded (${bytes.size} Bytes)"
-                            )
-                        )
-
-                        val input = java.io.ByteArrayInputStream(bytes)
-
-                        val kmlLayer = KmlLayer(googleMap, input, context)
-
-                        requireActivity.runOnUiThread {
-                            try {
-                                kmlLayer.addLayerToMap()
-                            } catch (uiEx: Exception) {
-                                logViewModelLogger.Log(
-                                    LogEntry(
-                                        LoggingEventType.Error,
-                                        "addLayerToMap failed: ${uiEx.message}",
-                                        uiEx
-                                    )
-                                )
-                            }
-                        }
-                    } catch (ex: org.xmlpull.v1.XmlPullParserException) {
-                        logViewModelLogger.Log(
-                            LogEntry(
-                                LoggingEventType.Error,
-                                "KML-Parsing failed (possible not completely loaded): ${ex.message}",
-                                ex
-                            )
-                        )
-                    } catch (ex: Exception) {
-                        logViewModelLogger.Log(
-                            LogEntry(
-                                LoggingEventType.Error,
-                                "Error by loading or parsing: ${ex.message}",
-                                ex
-                            )
-                        )
-                    } finally {
-                        response.body()?.close()
                     }
                 } else {
                     val sendResponse = "${response.code()}: "
@@ -175,5 +147,45 @@ class LoadKmlFromUrl(var logViewModelLogger: ILogger) : ILoadKmlFromUrl {
                 )
             }
         })
+    }
+
+    fun checkIfResponseBodyIsNullOrEmpty(body: ResponseBody?): Pair<Boolean, ByteArray?> {
+        if (body == null) {
+            logViewModelLogger.Log(
+                LogEntry(
+                    LoggingEventType.Error,
+                    "KML is empty (body==null)!"
+                )
+            )
+            return Pair(false, null)
+        } else {
+            val bytes = body.bytes()
+            if (bytes.isEmpty()) {
+                logViewModelLogger.Log(
+                    LogEntry(
+                        LoggingEventType.Error,
+                        "KML is empty (0 Bytes)!"
+                    )
+                )
+
+                return Pair(false, null)
+            }
+            else
+            {
+                val head =
+                    bytes.copyOfRange(0, minOf(bytes.size, 200)).decodeToString()
+                if (!head.contains("<kml", ignoreCase = true)) {
+                    logViewModelLogger.Log(
+                        LogEntry(
+                            LoggingEventType.Warning,
+                            "KML-Header unexpected: ${head.replace("\n", " ")}"
+                        )
+                    )
+                    return Pair(false, null)
+                }
+
+                return Pair(true, bytes)
+            }
+        }
     }
 }
