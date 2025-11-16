@@ -10,6 +10,7 @@ import com.milosev.kanaloa.logger.LogEntry
 import com.milosev.kanaloa.logger.LoggingEventType
 import com.milosev.kanaloa.retrofit.CreateRetrofitBuilder
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.withContext
 import okhttp3.ResponseBody
@@ -71,6 +72,15 @@ class LoadKmlFromUrl(var logViewModelLogger: ILogger) : ILoadKmlFromUrl {
                         )
                     )
                 }
+
+                val sharedPreferences = context?.getSharedPreferences("settings", Context.MODE_PRIVATE)
+                val intervalString = sharedPreferences?.getString("requestUpdates", "30") ?: "30"
+                var updateInterval = intervalString.toLongOrNull()?.times(1000) ?: 30_000L
+                if (updateInterval < 10_000) {
+                    updateInterval = 10_000L
+                }
+                delay(updateInterval)
+
             }
         }
     }
