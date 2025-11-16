@@ -51,6 +51,17 @@ class LoadKmlFromUrl(var logViewModelLogger: ILogger) : ILoadKmlFromUrl {
             )
         )
 
+        loadKmlFromWeb(kmlClient, strUrl, googleMap, context, requireActivity)
+
+    }
+
+    suspend fun loadKmlFromWeb(
+        kmlClient: IGetKml,
+        strUrl: String,
+        googleMap: GoogleMap,
+        context: Context?,
+        requireActivity: FragmentActivity
+    ) {
         val webApiRequest = kmlClient.getKml(strUrl)
 
         if (webApiRequest.isSuccessful) {
