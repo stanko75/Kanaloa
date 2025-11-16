@@ -25,6 +25,7 @@ import com.milosev.kanaloa.Config
 import com.milosev.kanaloa.logger.LogViewModelLogger
 import com.milosev.kanaloa.ui.log.LogViewModel
 import androidx.core.view.get
+import com.google.maps.android.data.kml.KmlLayer
 import com.milosev.kanaloa.retrofit.CreateRetrofitBuilder
 import com.milosev.kanaloa.retrofit.fetchlivelocation.FetchLiveLocation
 import com.milosev.kanaloa.retrofit.fetchlivelocation.IGetLiveLocationApiService
@@ -50,6 +51,8 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
     private lateinit var bottomNavigationView: BottomNavigationView
     private lateinit var fetchLiveLocation: FetchLiveLocation
     private var updateJob: Job? = null
+
+    private var kmlUpdateJob: Job? = null
 
     private var uploadPictures: UploadPictures? = null
     private val galleryLauncher =
@@ -95,7 +98,7 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
 
                     val kmlUrl = getKmlUrl()
 
-                    val kmlUpdateJob = lifecycleScope.launch {
+                    kmlUpdateJob = lifecycleScope.launch {
                         loadKmlFromUrl.loadKmlFromUrl(kmlUrl, googleMap, context)
                     }
 
@@ -150,6 +153,20 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
                 .title("Live Marker")
         )
         googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(defaultLocation, 15f))
+    }
+
+    override fun onResume() {
+        super.onResume()
+
+        if (kmlUpdateJob?.isActive == true) {
+            kmlUpdateJob?.cancel()
+
+            val kmlUrl = getKmlUrl()
+            kmlUpdateJob = lifecycleScope.launch {
+                loadKmlFromUrl.loadKmlFromUrl(kmlUrl, googleMap, context)
+            }
+        }
+
     }
 
     override fun onPause() {
