@@ -145,8 +145,7 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
         isMapReady = true
 
         // Initialize map settings and move the camera to a default location
-        //val defaultLocation = LatLng(37.3489817, -122.0661283)
-        val defaultLocation = LatLng(50.7648586, 7.1323133)
+        val defaultLocation = LatLng(37.3489817, -122.0661283)
         marker = googleMap.addMarker(
             MarkerOptions()
                 .position(defaultLocation)
