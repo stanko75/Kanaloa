@@ -125,6 +125,7 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
 
                 R.id.navigation_stop -> {
                     kmlUpdateJob?.cancel()
+                    kmlUpdateJob = null
                     liveUpdater.stop(logViewModelLogger, updateJob)
                     val serviceStopper = StopForegroundService()
                     context?.let { serviceStopper.stopForegroundService(it, activity) }
@@ -132,8 +133,6 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
                 }
 
                 R.id.navigation_photo -> {
-
-
                     uploadPictures?.openGallery(galleryLauncher)
                     //Toast.makeText(context, "Notification Clicked", Toast.LENGTH_LONG).show()
                     true
@@ -196,6 +195,7 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
 
             if (kmlUpdateJob?.isActive == true) {
                 kmlUpdateJob?.cancel()
+                kmlUpdateJob = null
 
                 val kmlUrl = getKmlUrl()
                 kmlUpdateJob = lifecycleScope.launch {
