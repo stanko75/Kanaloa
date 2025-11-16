@@ -187,6 +187,10 @@ class LoadKmlFromUrl(var logViewModelLogger: ILogger) : ILoadKmlFromUrl {
     ) {
         val input = java.io.ByteArrayInputStream(bytes)
 
+        val parsedLayer = withContext(Dispatchers.Default) {
+            KmlLayer(googleMap, input, context)
+        }
+
         withContext(Dispatchers.Main) {
 
             logViewModelLogger.Log(
@@ -198,7 +202,7 @@ class LoadKmlFromUrl(var logViewModelLogger: ILogger) : ILoadKmlFromUrl {
 
             try {
                 kmlLayer?.removeLayerFromMap()
-                kmlLayer = KmlLayer(googleMap, input, context)
+                kmlLayer = parsedLayer
                 kmlLayer?.addLayerToMap()
             } catch (uiEx: Exception) {
                 Log.e("KML ERROR", uiEx.message.toString())
