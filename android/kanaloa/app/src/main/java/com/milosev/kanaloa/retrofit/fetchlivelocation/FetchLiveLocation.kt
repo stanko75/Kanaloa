@@ -24,8 +24,8 @@ class FetchLiveLocation(private var getLiveLocation: IGetLiveLocationApiService,
         googleMap: GoogleMap
     ) {
 
-        var lat = 0.0
-        var lng = 0.0
+        var lat: Double
+        var lng: Double
 
         val fullUrl = url?.toUri()
             ?.buildUpon()
@@ -41,7 +41,7 @@ class FetchLiveLocation(private var getLiveLocation: IGetLiveLocationApiService,
                 )
             )
 
-            val webApiRequest = getLiveLocation.getLiveLocation(fullUrl);
+            val webApiRequest = getLiveLocation.getLiveLocation(fullUrl)
             webApiRequest.enqueue(object : Callback<ResponseBody> {
                 override fun onResponse(
                     p0: Call<ResponseBody>,

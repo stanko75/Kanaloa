@@ -9,11 +9,11 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.RequiresApi
+import androidx.core.view.get
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import com.google.android.gms.maps.CameraUpdateFactory
-import com.milosev.kanaloa.R
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.MapView
 import com.google.android.gms.maps.OnMapReadyCallback
@@ -22,10 +22,8 @@ import com.google.android.gms.maps.model.Marker
 import com.google.android.gms.maps.model.MarkerOptions
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.milosev.kanaloa.Config
+import com.milosev.kanaloa.R
 import com.milosev.kanaloa.logger.LogViewModelLogger
-import com.milosev.kanaloa.ui.log.LogViewModel
-import androidx.core.view.get
-import com.google.maps.android.data.kml.KmlLayer
 import com.milosev.kanaloa.retrofit.CreateRetrofitBuilder
 import com.milosev.kanaloa.retrofit.fetchlivelocation.FetchLiveLocation
 import com.milosev.kanaloa.retrofit.fetchlivelocation.IGetLiveLocationApiService
@@ -35,6 +33,7 @@ import com.milosev.kanaloa.retrofit.uploadimages.GsonConverter
 import com.milosev.kanaloa.retrofit.uploadimages.IUploadImagesApiService
 import com.milosev.kanaloa.retrofit.uploadimages.UploadImages
 import com.milosev.kanaloa.retrofit.uploadimages.UploadImagesCallbacks
+import com.milosev.kanaloa.ui.log.LogViewModel
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 
@@ -78,14 +77,18 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
 
         fetchLiveLocation = FetchLiveLocation(
             CreateRetrofitBuilder().createRetrofitBuilder(Config(context).webHost)
-                .create(IGetLiveLocationApiService::class.java), logViewModelLogger)
+                .create(IGetLiveLocationApiService::class.java), logViewModelLogger
+        )
         loadKmlFromUrl = LoadKmlFromUrl(logViewModelLogger)
-        liveUpdater = LiveLocationUpdater(fetchLiveLocation, loadKmlFromUrl)
+        liveUpdater = LiveLocationUpdater(fetchLiveLocation)
 
         uploadPictures = context?.let {
             UploadPictures(
                 UploadImages(
-                    CreateRetrofitBuilder().createRetrofitBuilder(Config(it).webHost, GsonConverter()).create(
+                    CreateRetrofitBuilder().createRetrofitBuilder(
+                        Config(it).webHost,
+                        GsonConverter()
+                    ).create(
                         IUploadImagesApiService::class.java
                     ), UploadImagesCallbacks(logViewModelLogger)
                 ), it
@@ -102,16 +105,32 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
                         loadKmlFromUrl.loadKmlFromUrl(kmlUrl, googleMap, context)
                     }
 
+                    liveUpdater.marker = marker
+                    updateJob = liveUpdater.start(
+                        googleMap,
+                        context,
+                        logViewModelLogger,
+                    )
+
                     val serviceStarter = StartForegroundService()
-                    context?.let { serviceStarter.startForegroundService(it, activity, this.requireView()) }
+                    context?.let {
+                        serviceStarter.startForegroundService(
+                            it,
+                            activity,
+                            this.requireView()
+                        )
+                    }
                     true
                 }
+
                 R.id.navigation_stop -> {
+                    kmlUpdateJob?.cancel()
                     liveUpdater.stop(logViewModelLogger, updateJob)
                     val serviceStopper = StopForegroundService()
                     context?.let { serviceStopper.stopForegroundService(it, activity) }
                     true
                 }
+
                 R.id.navigation_photo -> {
 
 
@@ -119,6 +138,7 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
                     //Toast.makeText(context, "Notification Clicked", Toast.LENGTH_LONG).show()
                     true
                 }
+
                 else -> false
             }
         }
@@ -152,20 +172,54 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
                 .title("Live Marker")
         )
         googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(defaultLocation, 15f))
+
+        if (shouldStartLiveUpdater) {
+            startLiveUpdaterNow(fetchLiveLocation)
+        }
+    }
+
+    private fun startLiveUpdaterNow(fetchLiveLocation: FetchLiveLocation) {
+        //ToDo SharedPreferences do not work in multi process mode
+        //do it with ContentProviders
+        val sharedPreferences =
+            requireContext().getSharedPreferences(
+                "foregroundTickServiceStatus",
+                Context.MODE_PRIVATE
+            )
+        val foregroundTickServiceStatus = sharedPreferences.getString("status", "stopped")
+
+        if (foregroundTickServiceStatus == "started") {
+            bottomNavigationView.menu[0].isChecked = true
+            liveUpdater.marker = marker
+            updateJob =
+                liveUpdater.start(googleMap, context,  logViewModelLogger)
+
+            if (kmlUpdateJob?.isActive == true) {
+                kmlUpdateJob?.cancel()
+
+                val kmlUrl = getKmlUrl()
+                kmlUpdateJob = lifecycleScope.launch {
+                    loadKmlFromUrl.loadKmlFromUrl(kmlUrl, googleMap, context)
+                }
+            }
+
+        } else {
+            val url = context?.let { Config(it).webHost }
+            lifecycleScope.launch {
+                context?.let { fetchLiveLocation.fetchLiveLocation(it, url, googleMap) }
+            }
+        }
     }
 
     override fun onResume() {
         super.onResume()
+        mapView.onResume()
 
-        if (kmlUpdateJob?.isActive == true) {
-            kmlUpdateJob?.cancel()
-
-            val kmlUrl = getKmlUrl()
-            kmlUpdateJob = lifecycleScope.launch {
-                loadKmlFromUrl.loadKmlFromUrl(kmlUrl, googleMap, context)
-            }
+        if (isMapReady) {
+            startLiveUpdaterNow(fetchLiveLocation)
+        } else {
+            shouldStartLiveUpdater = true
         }
-
     }
 
     override fun onPause() {

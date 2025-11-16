@@ -1,35 +1,30 @@
 package com.milosev.kanaloa.ui.home
 
 import android.content.Context
-import androidx.fragment.app.FragmentActivity
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.model.Marker
 import com.milosev.kanaloa.Config
 import com.milosev.kanaloa.logger.LogEntry
 import com.milosev.kanaloa.logger.LogViewModelLogger
 import com.milosev.kanaloa.logger.LoggingEventType
+import com.milosev.kanaloa.retrofit.fetchlivelocation.IFetchLiveLocation
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
-import com.milosev.kanaloa.retrofit.fetchlivelocation.IFetchLiveLocation
-import com.milosev.kanaloa.retrofit.loadkmlfromurl.ILoadKmlFromUrl
-import kotlinx.coroutines.Dispatchers
 
 
 class LiveLocationUpdater(
     private val fetchLiveLocation: IFetchLiveLocation
-    , private val loadKmlFromUrl: ILoadKmlFromUrl
 ) {
     var marker: Marker? = null
 
     fun start(
         googleMap: GoogleMap,
         context: Context?,
-        requireActivity: FragmentActivity,
-        logViewModelLogger: LogViewModelLogger,
-        kmlUrl: String
+        logViewModelLogger: LogViewModelLogger
     ): Job {
 
         logViewModelLogger.Log(
@@ -40,19 +35,17 @@ class LiveLocationUpdater(
         )
 
         val updateJob = Job()
-        val url = context?.let { Config(it).webHost };
+        val url = context?.let { Config(it).webHost }
         CoroutineScope(Dispatchers.Main).launch(updateJob) {
-                updateLocationOnUi(kmlUrl, googleMap, context, requireActivity, logViewModelLogger, url)
+                updateLocationOnUi(googleMap, context, logViewModelLogger, url)
         }
 
         return updateJob
     }
 
     private suspend fun CoroutineScope.updateLocationOnUi(
-        kmlUrl: String,
         googleMap: GoogleMap,
         context: Context?,
-        requireActivity: FragmentActivity,
         logViewModelLogger: LogViewModelLogger,
         url: String?
     ) {
