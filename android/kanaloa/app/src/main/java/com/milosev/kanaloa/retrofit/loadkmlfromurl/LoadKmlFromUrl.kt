@@ -1,7 +1,7 @@
 package com.milosev.kanaloa.retrofit.loadkmlfromurl
 
 import android.content.Context
-import androidx.fragment.app.FragmentActivity
+import android.util.Log
 import com.google.android.gms.maps.GoogleMap
 import com.google.maps.android.data.kml.KmlLayer
 import com.milosev.kanaloa.Config
@@ -9,14 +9,19 @@ import com.milosev.kanaloa.logger.ILogger
 import com.milosev.kanaloa.logger.LogEntry
 import com.milosev.kanaloa.logger.LoggingEventType
 import com.milosev.kanaloa.retrofit.CreateRetrofitBuilder
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.isActive
+import kotlinx.coroutines.withContext
 import okhttp3.ResponseBody
 
 class LoadKmlFromUrl(var logViewModelLogger: ILogger) : ILoadKmlFromUrl {
+
+    private var kmlLayer: KmlLayer? = null
+
     override suspend fun loadKmlFromUrl(
         url: String,
         googleMap: GoogleMap,
-        context: Context?,
-        requireActivity: FragmentActivity
+        context: Context?
     ) {
         try {
 
@@ -25,7 +30,6 @@ class LoadKmlFromUrl(var logViewModelLogger: ILogger) : ILoadKmlFromUrl {
                     url,
                     googleMap,
                     context,
-                    requireActivity,
                     it
                 )
             }
@@ -38,29 +42,44 @@ class LoadKmlFromUrl(var logViewModelLogger: ILogger) : ILoadKmlFromUrl {
         strUrl: String,
         googleMap: GoogleMap,
         context: Context?,
-        requireActivity: FragmentActivity,
         baseUrl: String
     ) {
         val kmlClient = CreateRetrofitBuilder().createRetrofitBuilder(baseUrl)
             .create(IGetKml::class.java)
 
-        logViewModelLogger.Log(
-            LogEntry(
-                LoggingEventType.Information,
-                "Request: $strUrl"
-            )
-        )
+        withContext(Dispatchers.IO) {
+            while (isActive) {
 
-        loadKmlFromWeb(kmlClient, strUrl, googleMap, context, requireActivity)
+                logViewModelLogger.Log(
+                    LogEntry(
+                        LoggingEventType.Information,
+                        "Request: $strUrl"
+                    )
+                )
 
+                try {
+                    loadKmlFromWeb(kmlClient, strUrl, googleMap, context)
+                } catch (ex: Exception) {
+
+                    Log.e("KML ERROR", ex.message.toString())
+
+                    logViewModelLogger.Log(
+                        LogEntry(
+                            LoggingEventType.Error,
+                            "Error by loading or parsing: ${ex.message}",
+                            ex
+                        )
+                    )
+                }
+            }
+        }
     }
 
     suspend fun loadKmlFromWeb(
         kmlClient: IGetKml,
         strUrl: String,
         googleMap: GoogleMap,
-        context: Context?,
-        requireActivity: FragmentActivity
+        context: Context?
     ) {
         val webApiRequest = kmlClient.getKml(strUrl)
 
@@ -76,7 +95,6 @@ class LoadKmlFromUrl(var logViewModelLogger: ILogger) : ILoadKmlFromUrl {
                         strUrl,
                         googleMap,
                         context,
-                        requireActivity,
                         bytes
                     )
 
@@ -96,8 +114,6 @@ class LoadKmlFromUrl(var logViewModelLogger: ILogger) : ILoadKmlFromUrl {
                             ex
                         )
                     )
-                } finally {
-                    webApiRequest.body()?.close()
                 }
             }
         } else {
@@ -163,28 +179,29 @@ class LoadKmlFromUrl(var logViewModelLogger: ILogger) : ILoadKmlFromUrl {
         }
     }
 
-    fun actualLoadKml(
+    suspend fun actualLoadKml(
         strUrl: String,
         googleMap: GoogleMap,
         context: Context?,
-        requireActivity: FragmentActivity,
         bytes: ByteArray?
     ) {
-        logViewModelLogger.Log(
-            LogEntry(
-                LoggingEventType.Information,
-                "KML: $strUrl loaded (${bytes?.size} Bytes)"
-            )
-        )
-
         val input = java.io.ByteArrayInputStream(bytes)
 
-        val kmlLayer = KmlLayer(googleMap, input, context)
+        withContext(Dispatchers.Main) {
 
-        requireActivity.runOnUiThread {
+            logViewModelLogger.Log(
+                LogEntry(
+                    LoggingEventType.Information,
+                    "KML: $strUrl loaded (${bytes?.size} Bytes)"
+                )
+            )
+
             try {
-                kmlLayer.addLayerToMap()
+                kmlLayer?.removeLayerFromMap()
+                kmlLayer = KmlLayer(googleMap, input, context)
+                kmlLayer?.addLayerToMap()
             } catch (uiEx: Exception) {
+                Log.e("KML ERROR", uiEx.message.toString())
                 logViewModelLogger.Log(
                     LogEntry(
                         LoggingEventType.Error,

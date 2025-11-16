@@ -95,8 +95,9 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
 
                     val kmlUrl = getKmlUrl()
 
-                    liveUpdater.marker = marker
-                    updateJob = liveUpdater.start(googleMap, context, requireActivity(), logViewModelLogger, kmlUrl)
+                    val kmlUpdateJob = lifecycleScope.launch {
+                        loadKmlFromUrl.loadKmlFromUrl(kmlUrl, googleMap, context)
+                    }
 
                     val serviceStarter = StartForegroundService()
                     context?.let { serviceStarter.startForegroundService(it, activity, this.requireView()) }
@@ -141,7 +142,8 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
         isMapReady = true
 
         // Initialize map settings and move the camera to a default location
-        val defaultLocation = LatLng(37.3489817, -122.0661283)
+        //val defaultLocation = LatLng(37.3489817, -122.0661283)
+        val defaultLocation = LatLng(50.7648586, 7.1323133)
         marker = googleMap.addMarker(
             MarkerOptions()
                 .position(defaultLocation)
