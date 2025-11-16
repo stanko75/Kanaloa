@@ -58,8 +58,6 @@ class LiveLocationUpdater(
     ) {
         while (isActive) {
             try {
-                loadKmlFromUrl.loadKmlFromUrl(kmlUrl, googleMap, context, requireActivity)
-
                 if (context != null) {
                     fetchLiveLocation.fetchLiveLocation(context, url, googleMap)
                 } else {
