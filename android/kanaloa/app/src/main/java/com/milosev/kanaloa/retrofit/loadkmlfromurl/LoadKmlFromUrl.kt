@@ -10,12 +10,9 @@ import com.milosev.kanaloa.logger.LogEntry
 import com.milosev.kanaloa.logger.LoggingEventType
 import com.milosev.kanaloa.retrofit.CreateRetrofitBuilder
 import okhttp3.ResponseBody
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
 
 class LoadKmlFromUrl(var logViewModelLogger: ILogger) : ILoadKmlFromUrl {
-    override fun loadKmlFromUrl(
+    override suspend fun loadKmlFromUrl(
         url: String,
         googleMap: GoogleMap,
         context: Context?,
@@ -37,7 +34,7 @@ class LoadKmlFromUrl(var logViewModelLogger: ILogger) : ILoadKmlFromUrl {
         }
     }
 
-    fun loadKml(
+    suspend fun loadKml(
         strUrl: String,
         googleMap: GoogleMap,
         context: Context?,
@@ -54,83 +51,67 @@ class LoadKmlFromUrl(var logViewModelLogger: ILogger) : ILoadKmlFromUrl {
             )
         )
 
-        val webApiRequest = kmlClient.getKml(strUrl);
+        val webApiRequest = kmlClient.getKml(strUrl)
 
-        webApiRequest.enqueue(object : Callback<ResponseBody> {
-            override fun onResponse(
-                p0: Call<ResponseBody>,
-                response: Response<ResponseBody>
-            ) {
-                if (response.isSuccessful) {
+        if (webApiRequest.isSuccessful) {
 
-                    val body = response.body()
-                    val (isValid, bytes) = checkIfResponseBodyIsNullOrEmpty(body)
+            val body = webApiRequest.body()
+            val (isValid, bytes) = checkIfResponseBodyIsNullOrEmpty(body)
 
-                    if (isValid) {
-                        try {
+            if (isValid) {
+                try {
 
-                            actualLoadKml(
-                                strUrl,
-                                googleMap,
-                                context,
-                                requireActivity,
-                                bytes
-                            )
+                    actualLoadKml(
+                        strUrl,
+                        googleMap,
+                        context,
+                        requireActivity,
+                        bytes
+                    )
 
-                        } catch (ex: org.xmlpull.v1.XmlPullParserException) {
-                            logViewModelLogger.Log(
-                                LogEntry(
-                                    LoggingEventType.Error,
-                                    "KML-Parsing failed (possible not completely loaded): ${ex.message}",
-                                    ex
-                                )
-                            )
-                        } catch (ex: Exception) {
-                            logViewModelLogger.Log(
-                                LogEntry(
-                                    LoggingEventType.Error,
-                                    "Error by loading or parsing: ${ex.message}",
-                                    ex
-                                )
-                            )
-                        } finally {
-                            response.body()?.close()
-                        }
-                    }
-                } else {
-                    val sendResponse = "${response.code()}: "
-                    if (response.errorBody()?.charStream() != null
-                        && response.errorBody()?.charStream()?.readText() != null
-                        && response.errorBody()!!.charStream().readText().isNotBlank()
-                    ) {
-                        logViewModelLogger.Log(
-                            LogEntry(
-                                LoggingEventType.Error,
-                                "${sendResponse}${
-                                    response.errorBody()!!.charStream().readText()
-                                }"
-                            )
+                } catch (ex: org.xmlpull.v1.XmlPullParserException) {
+                    logViewModelLogger.Log(
+                        LogEntry(
+                            LoggingEventType.Error,
+                            "KML-Parsing failed (possible not completely loaded): ${ex.message}",
+                            ex
                         )
-                    } else {
-                        logViewModelLogger.Log(
-                            LogEntry(
-                                LoggingEventType.Error,
-                                "${sendResponse}${response.message()}"
-                            )
+                    )
+                } catch (ex: Exception) {
+                    logViewModelLogger.Log(
+                        LogEntry(
+                            LoggingEventType.Error,
+                            "Error by loading or parsing: ${ex.message}",
+                            ex
                         )
-                    }
+                    )
+                } finally {
+                    webApiRequest.body()?.close()
                 }
             }
-
-            override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
+        } else {
+            val sendResponse = "${webApiRequest.code()}: "
+            if (webApiRequest.errorBody()?.charStream() != null
+                && webApiRequest.errorBody()?.charStream()?.readText() != null
+                && webApiRequest.errorBody()!!.charStream().readText().isNotBlank()
+            ) {
                 logViewModelLogger.Log(
                     LogEntry(
                         LoggingEventType.Error,
-                        t.message.toString(),
+                        "${sendResponse}${
+                            webApiRequest.errorBody()!!.charStream().readText()
+                        }"
+                    )
+                )
+            } else {
+                logViewModelLogger.Log(
+                    LogEntry(
+                        LoggingEventType.Error,
+                        "${sendResponse}${webApiRequest.message()}"
                     )
                 )
             }
-        })
+        }
     }
 
     fun checkIfResponseBodyIsNullOrEmpty(body: ResponseBody?): Pair<Boolean, ByteArray?> {

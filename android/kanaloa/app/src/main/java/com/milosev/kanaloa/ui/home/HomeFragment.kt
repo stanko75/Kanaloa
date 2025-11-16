@@ -148,50 +148,6 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
                 .title("Live Marker")
         )
         googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(defaultLocation, 15f))
-
-        if (shouldStartLiveUpdater) {
-            startLiveUpdaterNow(fetchLiveLocation)
-        }
-    }
-
-    private fun startLiveUpdaterNow(fetchLiveLocation: FetchLiveLocation) {
-        //ToDo SharedPreferences do not work in multi process mode
-        //do it with ContentProviders
-        val sharedPreferences =
-            requireContext().getSharedPreferences(
-                "foregroundTickServiceStatus",
-                Context.MODE_PRIVATE
-            )
-        val foregroundTickServiceStatus = sharedPreferences.getString("status", "stopped")
-
-        val kmlUrl = getKmlUrl()
-        if (foregroundTickServiceStatus == "started") {
-            bottomNavigationView.menu[0].isChecked = true
-            liveUpdater.marker = marker
-            updateJob = liveUpdater.start(googleMap, context, requireActivity(), logViewModelLogger, kmlUrl)
-        } else {
-            loadKmlFromUrl.loadKmlFromUrl(
-                kmlUrl,
-                googleMap,
-                context,
-                this.requireActivity()
-            )
-            val url = context?.let { Config(it).webHost }
-            lifecycleScope.launch {
-                context?.let { fetchLiveLocation.fetchLiveLocation (it, url, googleMap) }
-            }
-        }
-    }
-
-    override fun onResume() {
-        super.onResume()
-        mapView.onResume()
-
-        if (isMapReady) {
-            startLiveUpdaterNow(fetchLiveLocation)
-        } else {
-            shouldStartLiveUpdater = true
-        }
     }
 
     override fun onPause() {

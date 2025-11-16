@@ -5,7 +5,7 @@ import androidx.fragment.app.FragmentActivity
 import com.google.android.gms.maps.GoogleMap
 
 interface ILoadKmlFromUrl {
-    fun loadKmlFromUrl(
+    suspend fun loadKmlFromUrl(
         url: String,
         googleMap: GoogleMap,
         context: Context?,
