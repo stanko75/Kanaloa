@@ -42,7 +42,6 @@ import kotlinx.coroutines.launch
 class HomeFragment : Fragment(), OnMapReadyCallback {
 
     private var isMapReady: Boolean = false
-    private var shouldStartLiveUpdater: Boolean = false
     private lateinit var mapView: MapView
     private lateinit var googleMap: GoogleMap
     private lateinit var logViewModel: LogViewModel
