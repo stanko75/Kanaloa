@@ -9,6 +9,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.RequiresApi
+import androidx.core.content.edit
 import androidx.core.view.get
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
@@ -23,6 +24,7 @@ import com.google.android.gms.maps.model.MarkerOptions
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.milosev.kanaloa.Config
 import com.milosev.kanaloa.R
+import com.milosev.kanaloa.SharedPreferencesGlobal
 import com.milosev.kanaloa.logger.LogViewModelLogger
 import com.milosev.kanaloa.retrofit.CreateRetrofitBuilder
 import com.milosev.kanaloa.retrofit.fetchlivelocation.FetchLiveLocation
@@ -99,6 +101,7 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
             when (item.itemId) {
                 R.id.navigation_start -> {
 
+                    setStarted(true)
                     val kmlUrl = getKmlUrl()
 
                     kmlUpdateJob = lifecycleScope.launch {
@@ -124,6 +127,7 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
                 }
 
                 R.id.navigation_stop -> {
+                    setStarted(false)
                     kmlUpdateJob?.cancel()
                     kmlUpdateJob = null
                     liveUpdater.stop(logViewModelLogger, updateJob)
@@ -151,12 +155,27 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
 
     private fun getKmlUrl(): String {
         val sharedPreferences =
-            requireContext().getSharedPreferences("settings", Context.MODE_PRIVATE)
+            requireContext().getSharedPreferences(SharedPreferencesGlobal.Settings, Context.MODE_PRIVATE)
         val fileName = sharedPreferences.getString("kmlFileName", "default.kml")
         val folderName = sharedPreferences.getString("folderName", "default")
         val webHost = context?.let { Config(it).webHost }
         val kmlUrl = "$webHost/$folderName/$fileName"
         return kmlUrl
+    }
+
+    private fun setStarted(isStarted: Boolean) {
+        val sharedPreferences =
+            requireContext().getSharedPreferences(SharedPreferencesGlobal.Live, Context.MODE_PRIVATE)
+        sharedPreferences.edit {
+            putBoolean("started", isStarted)
+        }
+    }
+
+    private fun checkIfLiveAlreadyStarted(): Boolean {
+        val sharedPreferences =
+            requireContext().getSharedPreferences(SharedPreferencesGlobal.Live, Context.MODE_PRIVATE)
+        val isStarted = sharedPreferences.getBoolean("started", false)
+        return isStarted
     }
 
     override fun onMapReady(map: GoogleMap) {
@@ -172,54 +191,12 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
         )
         googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(defaultLocation, 15f))
 
-        if (shouldStartLiveUpdater) {
-            startLiveUpdaterNow(fetchLiveLocation)
-        }
-    }
-
-    private fun startLiveUpdaterNow(fetchLiveLocation: FetchLiveLocation) {
-        //ToDo SharedPreferences do not work in multi process mode
-        //do it with ContentProviders
-        val sharedPreferences =
-            requireContext().getSharedPreferences(
-                "foregroundTickServiceStatus",
-                Context.MODE_PRIVATE
-            )
-        val foregroundTickServiceStatus = sharedPreferences.getString("status", "stopped")
-
-        if (foregroundTickServiceStatus == "started") {
-            bottomNavigationView.menu[0].isChecked = true
-            liveUpdater.marker = marker
-            updateJob =
-                liveUpdater.start(googleMap, context,  logViewModelLogger)
-
-            if (kmlUpdateJob?.isActive == true) {
-                kmlUpdateJob?.cancel()
-                kmlUpdateJob = null
-
-                val kmlUrl = getKmlUrl()
-                kmlUpdateJob = lifecycleScope.launch {
-                    loadKmlFromUrl.loadKmlFromUrl(kmlUrl, googleMap, context)
-                }
-            }
-
-        } else {
-            val url = context?.let { Config(it).webHost }
-            lifecycleScope.launch {
-                context?.let { fetchLiveLocation.fetchLiveLocation(it, url, googleMap) }
-            }
-        }
+        startLiveUpdaterIfNeeded()
     }
 
     override fun onResume() {
         super.onResume()
         mapView.onResume()
-
-        if (isMapReady) {
-            startLiveUpdaterNow(fetchLiveLocation)
-        } else {
-            shouldStartLiveUpdater = true
-        }
     }
 
     override fun onPause() {
@@ -235,5 +212,30 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
     override fun onLowMemory() {
         super.onLowMemory()
         mapView.onLowMemory()
+    }
+
+    private fun startLiveUpdaterIfNeeded() {
+        if (checkIfLiveAlreadyStarted()) {
+            bottomNavigationView.menu[0].isChecked = true
+            liveUpdater.marker = marker
+            if (kmlUpdateJob?.isActive == true) {
+                kmlUpdateJob?.cancel()
+                kmlUpdateJob = null
+
+                val kmlUrl = getKmlUrl()
+                kmlUpdateJob = lifecycleScope.launch {
+                    loadKmlFromUrl.loadKmlFromUrl(kmlUrl, googleMap, context)
+                }
+            }
+
+            if(updateJob?.isActive == true) {
+                updateJob?.cancel()
+                updateJob = null
+
+                liveUpdater.marker = marker
+                updateJob =
+                    liveUpdater.start(googleMap, context, logViewModelLogger)
+            }
+        }
     }
 }

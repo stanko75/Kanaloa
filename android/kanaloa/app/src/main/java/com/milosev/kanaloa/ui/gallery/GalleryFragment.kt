@@ -47,7 +47,7 @@ class GalleryFragment : Fragment() {
         }
          */
 
-        val sharedPreferences = requireContext().getSharedPreferences("settings", Context.MODE_PRIVATE)
+        val sharedPreferences = requireContext().getSharedPreferences(SharedPreferencesGlobal.Settings, Context.MODE_PRIVATE)
 
         var fileName = sharedPreferences.getString("kmlFileName", "default")
         val folderName = sharedPreferences.getString("folderName", "default")

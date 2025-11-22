@@ -18,5 +18,6 @@ class Config(val context: Context?) {
 object SharedPreferencesGlobal {
     const val Settings = "settings"
     const val FtpSettings = "ftpSettings"
+    const val Live = "live"
 
 }

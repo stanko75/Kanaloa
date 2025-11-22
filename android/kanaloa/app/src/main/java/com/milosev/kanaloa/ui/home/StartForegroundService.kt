@@ -9,6 +9,7 @@ import android.os.Build
 import android.view.View
 import android.view.inputmethod.InputMethodManager
 import androidx.annotation.RequiresApi
+import com.milosev.kanaloa.SharedPreferencesGlobal
 import com.milosev.kanaloa.foregroundtickservice.BroadcastTickReceiver
 import com.milosev.kanaloa.foregroundtickservice.ForegroundTickService
 import com.milosev.kanaloa.foregroundtickservice.IntentAction
@@ -25,7 +26,7 @@ class StartForegroundService {
             Intent(context, ForegroundTickService::class.java)
         intentStartForegroundTickService.action = IntentAction.START_FOREGROUND_TICK_SERVICE
 
-        val sharedPreferences = context.getSharedPreferences("settings", Context.MODE_PRIVATE)
+        val sharedPreferences = context.getSharedPreferences(SharedPreferencesGlobal.Settings, Context.MODE_PRIVATE)
         val intervalString = sharedPreferences?.getString("requestUpdates", "30") ?: "30"
         val updateInterval = intervalString.toLongOrNull() ?: 30L
         intentStartForegroundTickService.putExtra(

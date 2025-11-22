@@ -5,6 +5,7 @@ import android.util.Log
 import com.google.android.gms.maps.GoogleMap
 import com.google.maps.android.data.kml.KmlLayer
 import com.milosev.kanaloa.Config
+import com.milosev.kanaloa.SharedPreferencesGlobal
 import com.milosev.kanaloa.logger.ILogger
 import com.milosev.kanaloa.logger.LogEntry
 import com.milosev.kanaloa.logger.LoggingEventType
@@ -73,7 +74,7 @@ class LoadKmlFromUrl(var logViewModelLogger: ILogger) : ILoadKmlFromUrl {
                     )
                 }
 
-                val sharedPreferences = context?.getSharedPreferences("settings", Context.MODE_PRIVATE)
+                val sharedPreferences = context?.getSharedPreferences(SharedPreferencesGlobal.Settings, Context.MODE_PRIVATE)
                 val intervalString = sharedPreferences?.getString("requestUpdates", "30") ?: "30"
                 var updateInterval = intervalString.toLongOrNull()?.times(1000) ?: 30_000L
                 if (updateInterval < 10_000) {

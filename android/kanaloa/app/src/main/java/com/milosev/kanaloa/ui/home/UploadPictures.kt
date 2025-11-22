@@ -4,6 +4,7 @@ import android.content.Context
 import android.net.Uri
 import android.provider.OpenableColumns
 import androidx.activity.result.ActivityResultLauncher
+import com.milosev.kanaloa.SharedPreferencesGlobal
 import com.milosev.kanaloa.retrofit.uploadimages.IUploadImages
 
 class UploadPictures(
@@ -17,7 +18,7 @@ class UploadPictures(
 
     fun uploadImages(images: List<Uri>) {
         val fileAndFolderNameSharedPreferences =
-            context.getSharedPreferences("settings", Context.MODE_PRIVATE)
+            context.getSharedPreferences(SharedPreferencesGlobal.Settings, Context.MODE_PRIVATE)
 
         val folderName: String = fileAndFolderNameSharedPreferences.getString("folderName", "").toString()
         val kmlFileName: String = fileAndFolderNameSharedPreferences.getString("kmlFileName", "").toString()
