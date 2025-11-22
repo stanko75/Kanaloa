@@ -152,31 +152,6 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
         return rootView
     }
 
-    private fun getKmlUrl(): String {
-        val sharedPreferences =
-            requireContext().getSharedPreferences(SharedPreferencesGlobal.Settings, Context.MODE_PRIVATE)
-        val fileName = sharedPreferences.getString("kmlFileName", "default.kml")
-        val folderName = sharedPreferences.getString("folderName", "default")
-        val webHost = context?.let { Config(it).webHost }
-        val kmlUrl = "$webHost/$folderName/$fileName"
-        return kmlUrl
-    }
-
-    private fun setStarted(isStarted: Boolean) {
-        val sharedPreferences =
-            requireContext().getSharedPreferences(SharedPreferencesGlobal.Live, Context.MODE_PRIVATE)
-        sharedPreferences.edit {
-            putBoolean("started", isStarted)
-        }
-    }
-
-    private fun checkIfLiveAlreadyStarted(): Boolean {
-        val sharedPreferences =
-            requireContext().getSharedPreferences(SharedPreferencesGlobal.Live, Context.MODE_PRIVATE)
-        val isStarted = sharedPreferences.getBoolean("started", false)
-        return isStarted
-    }
-
     override fun onMapReady(map: GoogleMap) {
         googleMap = map
         isMapReady = true
@@ -211,6 +186,31 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
     override fun onLowMemory() {
         super.onLowMemory()
         mapView.onLowMemory()
+    }
+
+    private fun getKmlUrl(): String {
+        val sharedPreferences =
+            requireContext().getSharedPreferences(SharedPreferencesGlobal.Settings, Context.MODE_PRIVATE)
+        val fileName = sharedPreferences.getString("kmlFileName", "default.kml")
+        val folderName = sharedPreferences.getString("folderName", "default")
+        val webHost = context?.let { Config(it).webHost }
+        val kmlUrl = "$webHost/$folderName/$fileName"
+        return kmlUrl
+    }
+
+    private fun setStarted(isStarted: Boolean) {
+        val sharedPreferences =
+            requireContext().getSharedPreferences(SharedPreferencesGlobal.Live, Context.MODE_PRIVATE)
+        sharedPreferences.edit {
+            putBoolean("started", isStarted)
+        }
+    }
+
+    private fun checkIfLiveAlreadyStarted(): Boolean {
+        val sharedPreferences =
+            requireContext().getSharedPreferences(SharedPreferencesGlobal.Live, Context.MODE_PRIVATE)
+        val isStarted = sharedPreferences.getBoolean("started", false)
+        return isStarted
     }
 
     private fun startLiveUpdaterIfNeeded() {
