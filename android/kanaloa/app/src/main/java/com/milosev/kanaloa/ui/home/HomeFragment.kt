@@ -101,18 +101,7 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
                 R.id.navigation_start -> {
 
                     setStarted(true)
-                    val kmlUrl = getKmlUrl()
-
-                    kmlUpdateJob = lifecycleScope.launch {
-                        loadKmlFromUrl.loadKmlFromUrl(kmlUrl, googleMap, context)
-                    }
-
-                    liveUpdater.marker = marker
-                    updateJob = liveUpdater.start(
-                        googleMap,
-                        context,
-                        logViewModelLogger,
-                    )
+                    startLiveUpdaterIfNeeded()
 
                     val serviceStarter = StartForegroundService()
                     context?.let {
@@ -190,7 +179,10 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
 
     private fun getKmlUrl(): String {
         val sharedPreferences =
-            requireContext().getSharedPreferences(SharedPreferencesGlobal.Settings, Context.MODE_PRIVATE)
+            requireContext().getSharedPreferences(
+                SharedPreferencesGlobal.Settings,
+                Context.MODE_PRIVATE
+            )
         val fileName = sharedPreferences.getString("kmlFileName", "default.kml")
         val folderName = sharedPreferences.getString("folderName", "default")
         val webHost = context?.let { Config(it).webHost }
@@ -200,7 +192,10 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
 
     private fun setStarted(isStarted: Boolean) {
         val sharedPreferences =
-            requireContext().getSharedPreferences(SharedPreferencesGlobal.Live, Context.MODE_PRIVATE)
+            requireContext().getSharedPreferences(
+                SharedPreferencesGlobal.Live,
+                Context.MODE_PRIVATE
+            )
         sharedPreferences.edit {
             putBoolean("started", isStarted)
         }
@@ -208,7 +203,10 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
 
     private fun checkIfLiveAlreadyStarted(): Boolean {
         val sharedPreferences =
-            requireContext().getSharedPreferences(SharedPreferencesGlobal.Live, Context.MODE_PRIVATE)
+            requireContext().getSharedPreferences(
+                SharedPreferencesGlobal.Live,
+                Context.MODE_PRIVATE
+            )
         val isStarted = sharedPreferences.getBoolean("started", false)
         return isStarted
     }
@@ -216,25 +214,25 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
     private fun startLiveUpdaterIfNeeded() {
         if (checkIfLiveAlreadyStarted()) {
             bottomNavigationView.menu[0].isChecked = true
-            liveUpdater.marker = marker
+
             if (kmlUpdateJob?.isActive == true) {
                 kmlUpdateJob?.cancel()
                 kmlUpdateJob = null
-
-                val kmlUrl = getKmlUrl()
-                kmlUpdateJob = lifecycleScope.launch {
-                    loadKmlFromUrl.loadKmlFromUrl(kmlUrl, googleMap, context)
-                }
             }
 
-            if(updateJob?.isActive == true) {
+            val kmlUrl = getKmlUrl()
+            kmlUpdateJob = lifecycleScope.launch {
+                loadKmlFromUrl.loadKmlFromUrl(kmlUrl, googleMap, context)
+            }
+
+            if (updateJob?.isActive == true) {
                 updateJob?.cancel()
                 updateJob = null
-
-                liveUpdater.marker = marker
-                updateJob =
-                    liveUpdater.start(googleMap, context, logViewModelLogger)
             }
+
+            liveUpdater.marker = marker
+            updateJob =
+                liveUpdater.start(googleMap, context, logViewModelLogger)
         }
     }
 }
