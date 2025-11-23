@@ -38,7 +38,7 @@ class LiveLocationUpdater(
         val updateJob = Job()
         val url = context?.let { Config(it).webHost }
         CoroutineScope(Dispatchers.Main).launch(updateJob) {
-                updateLocationOnUi(googleMap, context, logViewModelLogger, url)
+            updateLocationOnUi(googleMap, context, logViewModelLogger, url)
         }
 
         return updateJob
@@ -82,7 +82,10 @@ class LiveLocationUpdater(
                 logViewModelLogger.Log(LogEntry(LoggingEventType.Error, e.message, e))
             }
 
-            val sharedPreferences = context?.getSharedPreferences(SharedPreferencesGlobal.Settings, Context.MODE_PRIVATE)
+            val sharedPreferences = context?.getSharedPreferences(
+                SharedPreferencesGlobal.Settings,
+                Context.MODE_PRIVATE
+            )
             val intervalString = sharedPreferences?.getString("requestUpdates", "30") ?: "30"
             var updateInterval = intervalString.toLongOrNull()?.times(1000) ?: 30_000L
             if (updateInterval < 10_000) {

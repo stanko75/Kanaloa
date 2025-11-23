@@ -17,15 +17,16 @@ import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
-class FetchLiveLocation(private var getLiveLocation: IGetLiveLocationApiService, var logViewModelLogger: ILogger, var marker: Marker? = null): IFetchLiveLocation {
+class FetchLiveLocation(
+    private var getLiveLocation: IGetLiveLocationApiService,
+    var logViewModelLogger: ILogger,
+    var marker: Marker? = null
+) : IFetchLiveLocation {
     override fun fetchLiveLocation(
         context: Context,
         url: String?,
         googleMap: GoogleMap
     ) {
-
-        var lat: Double
-        var lng: Double
 
         val fullUrl = url?.toUri()
             ?.buildUpon()
@@ -34,77 +35,7 @@ class FetchLiveLocation(private var getLiveLocation: IGetLiveLocationApiService,
             .toString()
 
         context.let { Config(it).webHost }.let {
-            logViewModelLogger.Log(
-                LogEntry(
-                    LoggingEventType.Information,
-                    "Request: $fullUrl"
-                )
-            )
-
-            val webApiRequest = getLiveLocation.getLiveLocation(fullUrl)
-            webApiRequest.enqueue(object : Callback<ResponseBody> {
-                override fun onResponse(
-                    p0: Call<ResponseBody>,
-                    response: Response<ResponseBody>
-                ) {
-                    if (response.isSuccessful) {
-                        val liveLocationContent = response.body()?.string()
-
-                        if (liveLocationContent.isNullOrEmpty()) {
-                            logViewModelLogger.Log(
-                                LogEntry(
-                                    LoggingEventType.Error,
-                                    "Live location JSON is empty!"
-                                )
-                            )
-                        } else {
-                            logViewModelLogger.Log(
-                                LogEntry(
-                                    LoggingEventType.Information,
-                                    "Live location $liveLocationContent from $fullUrl loaded"
-                                )
-                            )
-
-                            val json = JSONObject(liveLocationContent)
-                            lat = json.getDouble("lat")
-                            lng = json.getDouble("lng")
-
-                            marker = moveGoogleMapCameraAndCreateMarkerIfNotExists(marker, googleMap, LatLng(lat, lng))
-                        }
-                    } else {
-                        val sendResponse = "${response.code()}: "
-                        if (response.errorBody()?.charStream() != null
-                            && response.errorBody()?.charStream()?.readText() != null
-                            && response.errorBody()!!.charStream().readText().isNotBlank()
-                        ) {
-                            logViewModelLogger.Log(
-                                LogEntry(
-                                    LoggingEventType.Error,
-                                    "${sendResponse}${
-                                        response.errorBody()!!.charStream().readText()
-                                    }"
-                                )
-                            )
-                        } else {
-                            logViewModelLogger.Log(
-                                LogEntry(
-                                    LoggingEventType.Error,
-                                    "${sendResponse}${response.message()}"
-                                )
-                            )
-                        }
-                    }
-                }
-
-                override fun onFailure(p0: Call<ResponseBody>, t: Throwable) {
-                    logViewModelLogger.Log(
-                        LogEntry(
-                            LoggingEventType.Error,
-                            t.message.toString(),
-                        )
-                    )
-                }
-            })
+            fetchLiveLocation2(fullUrl, googleMap)
         }
     }
 
@@ -124,5 +55,87 @@ class FetchLiveLocation(private var getLiveLocation: IGetLiveLocationApiService,
         googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 15f))
 
         return updatedMarker!!
+    }
+
+    private fun fetchLiveLocation2(fullUrl: String, googleMap: GoogleMap) {
+        
+        var lat: Double
+        var lng: Double
+
+        logViewModelLogger.Log(
+            LogEntry(
+                LoggingEventType.Information,
+                "Request: $fullUrl"
+            )
+        )
+
+        val webApiRequest = getLiveLocation.getLiveLocation(fullUrl)
+        webApiRequest.enqueue(object : Callback<ResponseBody> {
+            override fun onResponse(
+                p0: Call<ResponseBody>,
+                response: Response<ResponseBody>
+            ) {
+                if (response.isSuccessful) {
+                    val liveLocationContent = response.body()?.string()
+
+                    if (liveLocationContent.isNullOrEmpty()) {
+                        logViewModelLogger.Log(
+                            LogEntry(
+                                LoggingEventType.Error,
+                                "Live location JSON is empty!"
+                            )
+                        )
+                    } else {
+                        logViewModelLogger.Log(
+                            LogEntry(
+                                LoggingEventType.Information,
+                                "Live location $liveLocationContent from $fullUrl loaded"
+                            )
+                        )
+
+                        val json = JSONObject(liveLocationContent)
+                        lat = json.getDouble("lat")
+                        lng = json.getDouble("lng")
+
+                        marker = moveGoogleMapCameraAndCreateMarkerIfNotExists(
+                            marker,
+                            googleMap,
+                            LatLng(lat, lng)
+                        )
+                    }
+                } else {
+                    val sendResponse = "${response.code()}: "
+                    if (response.errorBody()?.charStream() != null
+                        && response.errorBody()?.charStream()?.readText() != null
+                        && response.errorBody()!!.charStream().readText().isNotBlank()
+                    ) {
+                        logViewModelLogger.Log(
+                            LogEntry(
+                                LoggingEventType.Error,
+                                "${sendResponse}${
+                                    response.errorBody()!!.charStream().readText()
+                                }"
+                            )
+                        )
+                    } else {
+                        logViewModelLogger.Log(
+                            LogEntry(
+                                LoggingEventType.Error,
+                                "${sendResponse}${response.message()}"
+                            )
+                        )
+                    }
+                }
+            }
+
+            override fun onFailure(p0: Call<ResponseBody>, t: Throwable) {
+                logViewModelLogger.Log(
+                    LogEntry(
+                        LoggingEventType.Error,
+                        t.message.toString(),
+                    )
+                )
+            }
+        })
     }
 }
