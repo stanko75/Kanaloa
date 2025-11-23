@@ -19,8 +19,7 @@ import kotlinx.coroutines.launch
 
 
 class LiveLocationUpdater(
-    private val fetchLiveLocation: IFetchLiveLocation
-    , private val loadKmlFromUrl: ILoadKmlFromUrl
+    private val fetchLiveLocation: IFetchLiveLocation, private val loadKmlFromUrl: ILoadKmlFromUrl
 ) {
     var marker: Marker? = null
 

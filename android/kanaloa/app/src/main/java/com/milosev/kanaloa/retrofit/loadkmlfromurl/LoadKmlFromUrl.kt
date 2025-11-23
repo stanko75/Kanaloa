@@ -17,9 +17,11 @@ class LoadKmlFromUrl(private var getKml: IGetKml, var logViewModelLogger: ILogge
 
     private var kmlLayer: KmlLayer? = null
 
-    override suspend fun loadKml(url: String?,
-                        googleMap: GoogleMap,
-                        context: Context?) {
+    override suspend fun loadKml(
+        url: String?,
+        googleMap: GoogleMap,
+        context: Context?
+    ) {
         val strUrl = url.toString()
         logViewModelLogger.Log(
             LogEntry(
