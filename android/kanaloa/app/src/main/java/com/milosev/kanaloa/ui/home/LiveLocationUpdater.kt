@@ -74,7 +74,7 @@ class LiveLocationUpdater(
         while (isActive) {
             try {
                 if (context != null) {
-                    fetchLiveLocation.fetchLiveLocation(context, url, googleMap)
+                    fetchLiveLocation.fetchLiveLocation(url, googleMap)
                 } else {
                     logViewModelLogger.Log(LogEntry(LoggingEventType.Error, "Context is null"))
                 }

@@ -3,7 +3,6 @@ package com.milosev.kanaloa.retrofit.fetchlivelocation
 import android.content.Context
 import com.google.android.gms.maps.model.LatLng
 import com.milosev.kanaloa.logger.ILogger
-import com.milosev.kanaloa.Config
 import com.milosev.kanaloa.logger.LogEntry
 import com.milosev.kanaloa.logger.LoggingEventType
 import androidx.core.net.toUri
@@ -23,7 +22,6 @@ class FetchLiveLocation(
     var marker: Marker? = null
 ) : IFetchLiveLocation {
     override fun fetchLiveLocation(
-        context: Context,
         url: String?,
         googleMap: GoogleMap
     ) {
@@ -34,9 +32,7 @@ class FetchLiveLocation(
             ?.build()
             .toString()
 
-        context.let { Config(it).webHost }.let {
-            fetchLiveLocation2(fullUrl, googleMap)
-        }
+        fetchLiveLocation2(fullUrl, googleMap)
     }
 
     private fun moveGoogleMapCameraAndCreateMarkerIfNotExists(
@@ -58,7 +54,7 @@ class FetchLiveLocation(
     }
 
     private fun fetchLiveLocation2(fullUrl: String, googleMap: GoogleMap) {
-        
+
         var lat: Double
         var lng: Double
 

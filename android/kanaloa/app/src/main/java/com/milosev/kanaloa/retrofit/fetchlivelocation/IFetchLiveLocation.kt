@@ -5,5 +5,5 @@ import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.model.LatLng
 
 interface IFetchLiveLocation {
-    fun fetchLiveLocation(context: Context, url: String?, googleMap: GoogleMap)
+    fun fetchLiveLocation(url: String?, googleMap: GoogleMap)
 }
