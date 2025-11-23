@@ -176,7 +176,7 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
         mapView.onLowMemory()
     }
 
-    private fun getKmlUrl(): String {
+    private fun getKmlUrl(webHost: String?): String {
         val sharedPreferences =
             requireContext().getSharedPreferences(
                 SharedPreferencesGlobal.Settings,
@@ -184,7 +184,6 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
             )
         val fileName = sharedPreferences.getString("kmlFileName", "default.kml")
         val folderName = sharedPreferences.getString("folderName", "default")
-        val webHost = context?.let { Config(it).webHost }
         val kmlUrl = "$webHost/$folderName/$fileName"
         return kmlUrl
     }
@@ -211,7 +210,8 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
     }
 
     private fun startLiveUpdaterIfNeeded() {
-        val url = context?.let { Config(it).webHost }
+        val webHost = context?.let { Config(it).webHost }
+        val kmlUrl = getKmlUrl(webHost)
         if (checkIfLiveAlreadyStarted()) {
             bottomNavigationView.menu[0].isChecked = true
 
@@ -220,15 +220,14 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
                 updateJob = null
             }
 
-            val kmlUrl = getKmlUrl()
             liveUpdater.marker = marker
             updateJob =
-                liveUpdater.start(googleMap, context, logViewModelLogger, kmlUrl, url)
+                liveUpdater.start(googleMap, context, logViewModelLogger, kmlUrl, webHost)
         }
         else {
             lifecycleScope.launch {
-                fetchLiveLocation.fetchLiveLocation(url, googleMap)
-                loadKmlFromUrl.loadKml(url, googleMap, context)
+                fetchLiveLocation.fetchLiveLocation(webHost, googleMap)
+                loadKmlFromUrl.loadKml(kmlUrl, googleMap, context)
             }
         }
     }
