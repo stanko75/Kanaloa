@@ -28,7 +28,7 @@ class LoadKmlFromUrl(var logViewModelLogger: ILogger) : ILoadKmlFromUrl {
         try {
 
             context?.let { Config(it).webHost }?.let {
-                loadKml(
+                loadKmlInLoop(
                     url,
                     googleMap,
                     context,
@@ -40,7 +40,7 @@ class LoadKmlFromUrl(var logViewModelLogger: ILogger) : ILoadKmlFromUrl {
         }
     }
 
-    suspend fun loadKml(
+    suspend fun loadKmlInLoop(
         strUrl: String,
         googleMap: GoogleMap,
         context: Context?,
