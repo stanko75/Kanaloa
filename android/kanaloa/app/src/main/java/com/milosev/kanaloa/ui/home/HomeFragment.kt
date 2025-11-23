@@ -124,7 +124,6 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
 
                 R.id.navigation_photo -> {
                     uploadPictures?.openGallery(galleryLauncher)
-                    //Toast.makeText(context, "Notification Clicked", Toast.LENGTH_LONG).show()
                     true
                 }
 
