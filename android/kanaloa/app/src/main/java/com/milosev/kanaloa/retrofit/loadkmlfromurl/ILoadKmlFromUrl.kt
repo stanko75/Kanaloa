@@ -4,7 +4,7 @@ import android.content.Context
 import com.google.android.gms.maps.GoogleMap
 
 interface ILoadKmlFromUrl {
-    suspend fun loadKmlFromUrl(
+    suspend fun loadKml(
         url: String?,
         googleMap: GoogleMap,
         context: Context?

@@ -79,7 +79,7 @@ class LiveLocationUpdater(
             try {
                 if (context != null) {
                     fetchLiveLocation.fetchLiveLocation(url, googleMap)
-                    loadKmlFromUrl.loadKmlFromUrl(kmlUrl, googleMap, context)
+                    loadKmlFromUrl.loadKml(kmlUrl, googleMap, context)
                 } else {
                     logViewModelLogger.Log(LogEntry(LoggingEventType.Error, "Context is null"))
                 }

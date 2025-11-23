@@ -4,13 +4,10 @@ import android.content.Context
 import android.util.Log
 import com.google.android.gms.maps.GoogleMap
 import com.google.maps.android.data.kml.KmlLayer
-import com.milosev.kanaloa.SharedPreferencesGlobal
 import com.milosev.kanaloa.logger.ILogger
 import com.milosev.kanaloa.logger.LogEntry
 import com.milosev.kanaloa.logger.LoggingEventType
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.isActive
 import kotlinx.coroutines.withContext
 import okhttp3.ResponseBody
 import java.util.Locale
@@ -20,16 +17,10 @@ class LoadKmlFromUrl(private var getKml: IGetKml, var logViewModelLogger: ILogge
 
     private var kmlLayer: KmlLayer? = null
 
-    override suspend fun loadKmlFromUrl(
-        url: String?,
-        googleMap: GoogleMap,
-        context: Context?
-    ) {
+    override suspend fun loadKml(url: String?,
+                        googleMap: GoogleMap,
+                        context: Context?) {
         val strUrl = url.toString()
-        loadKml(strUrl, googleMap, context, getKml)
-    }
-
-    suspend fun loadKml(strUrl: String, googleMap: GoogleMap, context: Context?, getKml: IGetKml) {
         logViewModelLogger.Log(
             LogEntry(
                 LoggingEventType.Information,
