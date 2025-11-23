@@ -9,6 +9,7 @@ import com.milosev.kanaloa.logger.LogEntry
 import com.milosev.kanaloa.logger.LogViewModelLogger
 import com.milosev.kanaloa.logger.LoggingEventType
 import com.milosev.kanaloa.retrofit.fetchlivelocation.IFetchLiveLocation
+import com.milosev.kanaloa.retrofit.loadkmlfromurl.ILoadKmlFromUrl
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -19,13 +20,15 @@ import kotlinx.coroutines.launch
 
 class LiveLocationUpdater(
     private val fetchLiveLocation: IFetchLiveLocation
+    , private val loadKmlFromUrl: ILoadKmlFromUrl
 ) {
     var marker: Marker? = null
 
     fun start(
         googleMap: GoogleMap,
         context: Context?,
-        logViewModelLogger: LogViewModelLogger
+        logViewModelLogger: LogViewModelLogger,
+        kmlUrl: String
     ): Job {
 
         logViewModelLogger.Log(
@@ -38,7 +41,7 @@ class LiveLocationUpdater(
         val updateJob = Job()
         val url = context?.let { Config(it).webHost }
         CoroutineScope(Dispatchers.Main).launch(updateJob) {
-            updateLocationOnUi(googleMap, context, logViewModelLogger, url)
+            updateLocationOnUi(googleMap, context, logViewModelLogger, url, kmlUrl)
         }
 
         return updateJob
@@ -69,12 +72,14 @@ class LiveLocationUpdater(
         googleMap: GoogleMap,
         context: Context?,
         logViewModelLogger: LogViewModelLogger,
-        url: String?
+        url: String?,
+        kmlUrl: String
     ) {
         while (isActive) {
             try {
                 if (context != null) {
                     fetchLiveLocation.fetchLiveLocation(url, googleMap)
+                    loadKmlFromUrl.loadKmlFromUrl(kmlUrl, googleMap, context)
                 } else {
                     logViewModelLogger.Log(LogEntry(LoggingEventType.Error, "Context is null"))
                 }
@@ -88,9 +93,12 @@ class LiveLocationUpdater(
             )
             val intervalString = sharedPreferences?.getString("requestUpdates", "30") ?: "30"
             var updateInterval = intervalString.toLongOrNull()?.times(1000) ?: 30_000L
+
+            /*
             if (updateInterval < 10_000) {
                 updateInterval = 10_000L
             }
+             */
             delay(updateInterval)
 
         }

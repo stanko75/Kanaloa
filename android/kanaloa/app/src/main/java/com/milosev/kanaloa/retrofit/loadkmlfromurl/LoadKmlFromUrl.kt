@@ -13,6 +13,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.withContext
 import okhttp3.ResponseBody
+import java.util.Locale
 
 class LoadKmlFromUrl(private var getKml: IGetKml, var logViewModelLogger: ILogger) :
     ILoadKmlFromUrl {
@@ -20,20 +21,12 @@ class LoadKmlFromUrl(private var getKml: IGetKml, var logViewModelLogger: ILogge
     private var kmlLayer: KmlLayer? = null
 
     override suspend fun loadKmlFromUrl(
-        url: String,
+        url: String?,
         googleMap: GoogleMap,
         context: Context?
     ) {
-        try {
-            loadKmlInLoop(
-                url,
-                googleMap,
-                context,
-                getKml
-            )
-        } catch (e: Exception) {
-            logViewModelLogger.Log(LogEntry(LoggingEventType.Error, e.message, e))
-        }
+        val strUrl = url.toString()
+        loadKml(strUrl, googleMap, context, getKml)
     }
 
     suspend fun loadKml(strUrl: String, googleMap: GoogleMap, context: Context?, getKml: IGetKml) {
@@ -57,32 +50,6 @@ class LoadKmlFromUrl(private var getKml: IGetKml, var logViewModelLogger: ILogge
                     ex
                 )
             )
-        }
-    }
-
-    suspend fun loadKmlInLoop(
-        strUrl: String,
-        googleMap: GoogleMap,
-        context: Context?,
-        getKml: IGetKml
-    ) {
-        withContext(Dispatchers.IO) {
-            while (isActive) {
-
-                loadKml(strUrl, googleMap, context, getKml)
-
-                val sharedPreferences = context?.getSharedPreferences(
-                    SharedPreferencesGlobal.Settings,
-                    Context.MODE_PRIVATE
-                )
-                val intervalString = sharedPreferences?.getString("requestUpdates", "30") ?: "30"
-                var updateInterval = intervalString.toLongOrNull()?.times(1000) ?: 30_000L
-                if (updateInterval < 10_000) {
-                    updateInterval = 10_000L
-                }
-                delay(updateInterval)
-
-            }
         }
     }
 
@@ -204,10 +171,15 @@ class LoadKmlFromUrl(private var getKml: IGetKml, var logViewModelLogger: ILogge
 
         withContext(Dispatchers.Main) {
 
+            val formattedSize = String.format(
+                Locale.ROOT,
+                "%.2f KB",
+                (bytes?.size?.toDouble() ?: 0.0) / 1024.0
+            )
             logViewModelLogger.Log(
                 LogEntry(
                     LoggingEventType.Information,
-                    "KML: $strUrl loaded (${bytes?.size} Bytes)"
+                    "KML: $strUrl loaded (${formattedSize})"
                 )
             )
 

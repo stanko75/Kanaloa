@@ -13,7 +13,6 @@ import androidx.core.content.edit
 import androidx.core.view.get
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.lifecycleScope
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.MapView
@@ -38,7 +37,6 @@ import com.milosev.kanaloa.retrofit.uploadimages.UploadImages
 import com.milosev.kanaloa.retrofit.uploadimages.UploadImagesCallbacks
 import com.milosev.kanaloa.ui.log.LogViewModel
 import kotlinx.coroutines.Job
-import kotlinx.coroutines.launch
 
 class HomeFragment : Fragment(), OnMapReadyCallback {
 
@@ -52,8 +50,6 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
     private lateinit var bottomNavigationView: BottomNavigationView
     private lateinit var fetchLiveLocation: FetchLiveLocation
     private var updateJob: Job? = null
-
-    private var kmlUpdateJob: Job? = null
 
     private var uploadPictures: UploadPictures? = null
     private val galleryLauncher =
@@ -85,7 +81,7 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
             CreateRetrofitBuilder().createRetrofitBuilder(Config(context).webHost)
                 .create(IGetKml::class.java), logViewModelLogger
         )
-        liveUpdater = LiveLocationUpdater(fetchLiveLocation)
+        liveUpdater = LiveLocationUpdater(fetchLiveLocation, loadKmlFromUrl)
 
         uploadPictures = context?.let {
             UploadPictures(
@@ -120,8 +116,6 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
 
                 R.id.navigation_stop -> {
                     setStarted(false)
-                    kmlUpdateJob?.cancel()
-                    kmlUpdateJob = null
                     liveUpdater.stop(logViewModelLogger, updateJob)
                     val serviceStopper = StopForegroundService()
                     context?.let { serviceStopper.stopForegroundService(it, activity) }
@@ -219,24 +213,15 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
         if (checkIfLiveAlreadyStarted()) {
             bottomNavigationView.menu[0].isChecked = true
 
-            if (kmlUpdateJob?.isActive == true) {
-                kmlUpdateJob?.cancel()
-                kmlUpdateJob = null
-            }
-
-            val kmlUrl = getKmlUrl()
-            kmlUpdateJob = lifecycleScope.launch {
-                loadKmlFromUrl.loadKmlFromUrl(kmlUrl, googleMap, context)
-            }
-
             if (updateJob?.isActive == true) {
                 updateJob?.cancel()
                 updateJob = null
             }
 
+            val kmlUrl = getKmlUrl()
             liveUpdater.marker = marker
             updateJob =
-                liveUpdater.start(googleMap, context, logViewModelLogger)
+                liveUpdater.start(googleMap, context, logViewModelLogger, kmlUrl)
         }
     }
 }
