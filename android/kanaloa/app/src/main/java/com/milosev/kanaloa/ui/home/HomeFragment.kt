@@ -29,6 +29,7 @@ import com.milosev.kanaloa.logger.LogViewModelLogger
 import com.milosev.kanaloa.retrofit.CreateRetrofitBuilder
 import com.milosev.kanaloa.retrofit.fetchlivelocation.FetchLiveLocation
 import com.milosev.kanaloa.retrofit.fetchlivelocation.IGetLiveLocationApiService
+import com.milosev.kanaloa.retrofit.loadkmlfromurl.IGetKml
 import com.milosev.kanaloa.retrofit.loadkmlfromurl.ILoadKmlFromUrl
 import com.milosev.kanaloa.retrofit.loadkmlfromurl.LoadKmlFromUrl
 import com.milosev.kanaloa.retrofit.uploadimages.GsonConverter
@@ -80,7 +81,10 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
             CreateRetrofitBuilder().createRetrofitBuilder(Config(context).webHost)
                 .create(IGetLiveLocationApiService::class.java), logViewModelLogger
         )
-        loadKmlFromUrl = LoadKmlFromUrl(logViewModelLogger)
+        loadKmlFromUrl = LoadKmlFromUrl(
+            CreateRetrofitBuilder().createRetrofitBuilder(Config(context).webHost)
+                .create(IGetKml::class.java), logViewModelLogger
+        )
         liveUpdater = LiveLocationUpdater(fetchLiveLocation)
 
         uploadPictures = context?.let {
