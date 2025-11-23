@@ -27,7 +27,8 @@ class LiveLocationUpdater(
         googleMap: GoogleMap,
         context: Context?,
         logViewModelLogger: LogViewModelLogger,
-        kmlUrl: String
+        kmlUrl: String,
+        url: String?
     ): Job {
 
         logViewModelLogger.Log(
@@ -38,7 +39,6 @@ class LiveLocationUpdater(
         )
 
         val updateJob = Job()
-        val url = context?.let { Config(it).webHost }
         CoroutineScope(Dispatchers.Main).launch(updateJob) {
             updateLocationOnUi(googleMap, context, logViewModelLogger, url, kmlUrl)
         }

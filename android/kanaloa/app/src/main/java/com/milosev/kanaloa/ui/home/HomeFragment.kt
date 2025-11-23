@@ -13,6 +13,7 @@ import androidx.core.content.edit
 import androidx.core.view.get
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.MapView
@@ -37,6 +38,7 @@ import com.milosev.kanaloa.retrofit.uploadimages.UploadImages
 import com.milosev.kanaloa.retrofit.uploadimages.UploadImagesCallbacks
 import com.milosev.kanaloa.ui.log.LogViewModel
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.launch
 
 class HomeFragment : Fragment(), OnMapReadyCallback {
 
@@ -209,6 +211,7 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
     }
 
     private fun startLiveUpdaterIfNeeded() {
+        val url = context?.let { Config(it).webHost }
         if (checkIfLiveAlreadyStarted()) {
             bottomNavigationView.menu[0].isChecked = true
 
@@ -220,7 +223,13 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
             val kmlUrl = getKmlUrl()
             liveUpdater.marker = marker
             updateJob =
-                liveUpdater.start(googleMap, context, logViewModelLogger, kmlUrl)
+                liveUpdater.start(googleMap, context, logViewModelLogger, kmlUrl, url)
+        }
+        else {
+            lifecycleScope.launch {
+                fetchLiveLocation.fetchLiveLocation(url, googleMap)
+                loadKmlFromUrl.loadKml(url, googleMap, context)
+            }
         }
     }
 }
