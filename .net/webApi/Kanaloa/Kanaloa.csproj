@@ -17,22 +17,22 @@
 
   <ItemGroup>
     <Reference Include="Common">
-      <HintPath>..\..\lib\HtmlHandling\bin\Debug\net9.0\Common.dll</HintPath>
+      <HintPath>..\..\lib\HtmlHandling\bin\Debug\net10.0\Common.dll</HintPath>
     </Reference>
     <Reference Include="FileHandling">
-      <HintPath>..\..\lib\FileHandling\bin\Debug\net9.0\FileHandling.dll</HintPath>
+      <HintPath>..\..\lib\FileHandling\bin\Debug\net10.0\FileHandling.dll</HintPath>
     </Reference>
     <Reference Include="FtpHandling">
-      <HintPath>..\..\lib\FtpHandling\bin\Debug\net9.0\FtpHandling.dll</HintPath>
+      <HintPath>..\..\lib\FtpHandling\bin\Debug\net10.0\FtpHandling.dll</HintPath>
     </Reference>
     <Reference Include="HtmlHandling">
-      <HintPath>..\..\lib\HtmlHandling\bin\Debug\net9.0\HtmlHandling.dll</HintPath>
+      <HintPath>..\..\lib\HtmlHandling\bin\Debug\net10.0\HtmlHandling.dll</HintPath>
     </Reference>
     <Reference Include="ImageHandling">
-      <HintPath>..\..\lib\ImageHandling\bin\Debug\net9.0\ImageHandling.dll</HintPath>
+      <HintPath>..\..\lib\ImageHandling\bin\Debug\net10.0\ImageHandling.dll</HintPath>
     </Reference>
     <Reference Include="KmlHandling">
-      <HintPath>..\..\lib\KmlHandling\bin\Debug\net9.0\KmlHandling.dll</HintPath>
+      <HintPath>..\..\lib\KmlHandling\bin\Debug\net10.0\KmlHandling.dll</HintPath>
     </Reference>
   </ItemGroup>
 

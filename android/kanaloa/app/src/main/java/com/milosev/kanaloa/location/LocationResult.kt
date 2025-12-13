@@ -19,7 +19,8 @@ class LocationResult(val context: Context
             locationResultHandling.execute(
                 context,
                 location?.latitude.toString(),
-                location?.longitude.toString()
+                location?.longitude.toString(),
+                location?.altitude.toString()
             )
 
             numOfTicks += 1

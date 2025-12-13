@@ -10,7 +10,7 @@ public class AddFileWithLastKnownGpsPositionTests
     {
         AddFileWithLastKnownGpsPositionCommand command = new()
         {
-            GpsCommand = new GpsCommand("50.4040365", "7.2553499")
+            GpsCommand = new GpsCommand("50.4040365", "7.2553499", "100")
         };
 
         if (File.Exists(command.CurrentLocationFileName))
@@ -23,5 +23,6 @@ public class AddFileWithLastKnownGpsPositionTests
         JObject configJson = JObject.Parse(await File.ReadAllTextAsync(command.CurrentLocationFileName));
         Assert.AreEqual(configJson["lat"], 50.4040365);
         Assert.AreEqual(configJson["lng"], 7.2553499);
+        Assert.AreEqual(configJson["alt"], 100);
     }
 }

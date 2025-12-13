@@ -11,6 +11,7 @@ public class AddFileWithLastKnownGpsPosition : ICommandHandlerAsync<AddFileWithL
         {
             lat = command.GpsCommand?.Latitude
             , lng = command.GpsCommand?.Longitude
+            , alt = command.GpsCommand?.Altitude
         };
         string jsonCoordinates = JsonSerializer.Serialize(objCoordinates);
         await File.WriteAllTextAsync(command.CurrentLocationFileName, jsonCoordinates);

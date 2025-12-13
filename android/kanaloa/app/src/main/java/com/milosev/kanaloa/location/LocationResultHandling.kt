@@ -15,7 +15,7 @@ class LocationResultHandling(
     , private val updateCoordinatesOnWeb: IUpdateCoordinatesOnWeb
     , private val fileFolderLocationModel: FileFolderLocationModel
 ): ILocationResultHandling {
-    override fun execute(context: Context, lat: String, lng: String) {
+    override fun execute(context: Context, lat: String, lng: String, alt: String) {
         val sdf = SimpleDateFormat("ddMyyyyhhmmss", Locale.GERMANY)
         val currentDate = sdf.format(Date())
         val path = File(context.getExternalFilesDir(null), "locations")
@@ -23,6 +23,7 @@ class LocationResultHandling(
 
         fileFolderLocationModel.Latitude = lat
         fileFolderLocationModel.Longitude = lng
+        fileFolderLocationModel.Altitude = alt
 
         val json = createGsonLocationModel.serializeToJSON(fileFolderLocationModel)
         writeFileOnInternalStorage.execute(path, fileName, json)
