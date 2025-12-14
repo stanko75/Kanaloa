@@ -15,12 +15,8 @@ import com.google.android.gms.location.LocationServices
 class LocationClass
     (context: Context, private val locationResult: ILocationResult, private var locationRequest: LocationRequest): ILocationClass {
 
-    private var fusedLocationClient: FusedLocationProviderClient
+    private lateinit var fusedLocationClient: FusedLocationProviderClient
     private lateinit var locationCallback: LocationCallback
-
-    init {
-        fusedLocationClient = LocationServices.getFusedLocationProviderClient(context)
-    }
 
     override fun requestLocationUpdates(context: Context) {
         if (ActivityCompat.checkSelfPermission(
