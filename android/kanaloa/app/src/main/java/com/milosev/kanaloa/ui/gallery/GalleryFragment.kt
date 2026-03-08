@@ -2,7 +2,9 @@ package com.milosev.kanaloa.ui.gallery
 
 import android.app.Activity
 import android.content.Context
+import android.net.Uri
 import android.os.Bundle
+import android.provider.OpenableColumns
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -36,9 +38,23 @@ class GalleryFragment : Fragment() {
         this.registerForActivityResult(ActivityResultContracts.GetContent()) { image ->
             image?.let {
                 _binding!!.ivOgImage.setImageURI(it)
-                println(it.path)
+                _binding!!.editTextOgImage.setText("thumbnails/${getFileName(it)}")
             }
         }
+
+    private fun getFileName(uri: Uri): String? {
+        var name: String? = null
+
+        val cursor = requireContext().contentResolver.query(uri, null, null, null, null)
+        cursor?.use {
+            val nameIndex = it.getColumnIndex(OpenableColumns.DISPLAY_NAME)
+            if (it.moveToFirst() && nameIndex != -1) {
+                name = it.getString(nameIndex)
+            }
+        }
+
+        return name
+    }
 
     private fun openGallery() {
         galleryLauncher.launch("image/*")
