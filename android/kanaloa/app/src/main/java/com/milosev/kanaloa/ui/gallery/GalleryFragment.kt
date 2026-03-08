@@ -42,24 +42,6 @@ class GalleryFragment : Fragment() {
             }
         }
 
-    private fun getFileName(uri: Uri): String? {
-        var name: String? = null
-
-        val cursor = requireContext().contentResolver.query(uri, null, null, null, null)
-        cursor?.use {
-            val nameIndex = it.getColumnIndex(OpenableColumns.DISPLAY_NAME)
-            if (it.moveToFirst() && nameIndex != -1) {
-                name = it.getString(nameIndex)
-            }
-        }
-
-        return name
-    }
-
-    private fun openGallery() {
-        galleryLauncher.launch("image/*")
-    }
-
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -150,5 +132,23 @@ class GalleryFragment : Fragment() {
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
+    }
+
+    private fun getFileName(uri: Uri): String? {
+        var name: String? = null
+
+        val cursor = requireContext().contentResolver.query(uri, null, null, null, null)
+        cursor?.use {
+            val nameIndex = it.getColumnIndex(OpenableColumns.DISPLAY_NAME)
+            if (it.moveToFirst() && nameIndex != -1) {
+                name = it.getString(nameIndex)
+            }
+        }
+
+        return name
+    }
+
+    private fun openGallery() {
+        galleryLauncher.launch("image/*")
     }
 }
