@@ -3,9 +3,11 @@ package com.milosev.kanaloa.ui.gallery
 import android.app.Activity
 import android.content.Context
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.edit
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
@@ -29,6 +31,18 @@ class GalleryFragment : Fragment() {
     // This property is only valid between onCreateView and
     // onDestroyView.
     private val binding get() = _binding!!
+
+    private val galleryLauncher =
+        this.registerForActivityResult(ActivityResultContracts.GetContent()) { image ->
+            image?.let {
+                _binding!!.ivOgImage.setImageURI(it)
+                println(it.path)
+            }
+        }
+
+    private fun openGallery() {
+        galleryLauncher.launch("image/*")
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -76,6 +90,10 @@ class GalleryFragment : Fragment() {
                 putString("baseUrl", binding.editTextBaseUrl.text.toString())
             }
             requireActivity().onBackPressedDispatcher.onBackPressed()
+        }
+
+        _binding!!.ivOgImage.setOnClickListener {
+            openGallery();
         }
 
         _binding!!.btnUpload.setOnClickListener {
