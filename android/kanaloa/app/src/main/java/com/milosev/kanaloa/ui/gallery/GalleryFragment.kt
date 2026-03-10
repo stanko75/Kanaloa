@@ -38,7 +38,7 @@ class GalleryFragment : Fragment() {
         this.registerForActivityResult(ActivityResultContracts.GetContent()) { image ->
             image?.let {
                 _binding!!.ivOgImage.setImageURI(it)
-                _binding!!.editTextOgImage.setText("thumbnails/${getFileName(it)}")
+                _binding!!.editTextOgImage.setText("thumbs/${getFileName(it)}")
             }
         }
 
