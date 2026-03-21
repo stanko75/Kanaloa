@@ -23,6 +23,7 @@ public class AutomaticallyFillMissingValues(IPathConverter pathConverter) : ICom
         }
 
         string relativeWebPath = ConvertWindowsPathToWebPath(command.RootGalleryFolder);
+        relativeWebPath = "gallery/" + relativeWebPath;
 
         command.WebPath = ConvertToUrl("gallery/" + command.RootGalleryFolder, command.BaseUrl ?? string.Empty);
         command.WebPath = string.IsNullOrWhiteSpace(command.WebPath) ? ConvertToUrl(command.RootGalleryFolder, command.BaseUrl ?? string.Empty) : command.WebPath;

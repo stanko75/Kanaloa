@@ -50,6 +50,20 @@ public static class TestContent
         );
         testMethod(scriptSrcMatch, $"{relativePath}/www/lib/", "jQuery.getJSON is wrong", "jQuery.getJSON not found!", "jQuery.getJSON OK", 1);
 
+        scriptSrcMatch = Regex.Match(
+            joomlaPreviewHtml,
+            @"<script\b[^>]*\bsrc=[""'](?<src>[^""']*?/[^/""']+\.js)[""'][^>]*>",
+            RegexOptions.IgnoreCase
+        );
+        if (!scriptSrcMatch.Success)
+        {
+            testMethod(scriptSrcMatch, scriptSrcMatch.Groups["src"].Value, "jQuery file is wrong", "jQuery file not found!", $"jQuery file: {scriptSrcMatch.Groups["src"].Value} OK", 1);
+        }
+        else
+        {
+            testMethod(scriptSrcMatch, scriptSrcMatch.Groups["src"].Value, "jQuery file is wrong", "jQuery file not found!", $"jQuery file: {scriptSrcMatch.Groups["src"].Value} OK", 1);
+        }
+
         var jsonMatch = Regex.Match(
             joomlaPreviewHtml,
             @"getJSON\s*\(\s*[""']([^""']+)[""']",

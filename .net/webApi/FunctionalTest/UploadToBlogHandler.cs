@@ -170,7 +170,7 @@ public class UploadToBlogHandler(ILogger logger) : ICommandHandler<UploadToBlogC
                                     logger.Log(regExValue == expected ? foundMsg : wrongMsg);
                                 }
                                 else
-                                    logger.Log(notFoundMsg);
+                                    logger.Log(new Exception(notFoundMsg));
                             });
                     }
 

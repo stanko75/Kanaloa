@@ -31,7 +31,7 @@ public class UploadToBlogController : ControllerBase
 
             var copyHtmlFilesToPrepareForUploadCommand = CopyHtmlFilesToPrepareForUpload(folder, kmlFileName, "prepareForUpload", @"html\templateForBlog");
 
-            var automaticallyFillMissingValuesCommand = AutomaticallyFillMissingValues(data, folder, remoteRootFolder, kmlFileName);
+            var automaticallyFillMissingValuesCommand = AutomaticallyFillMissingValues(data, folder, remoteRootFolder, kmlFileName, "jquery-3.6.4.js");
 
             var listOfKeyValuesToReplaceInFiles = ListOfKeyValuesToReplaceInFiles(automaticallyFillMissingValuesCommand);
 
@@ -97,13 +97,14 @@ public class UploadToBlogController : ControllerBase
     }
 
     private static AutomaticallyFillMissingValuesCommand AutomaticallyFillMissingValues(JObject data, string folder,
-        string remoteRootFolder, string kmlFileName)
+        string remoteRootFolder, string kmlFileName, string jqueryVersion)
     {
         var automaticallyFillMissingValuesCommand = data.ToObject<AutomaticallyFillMissingValuesCommand>() ??
                                                     throw new InvalidOperationException();
         automaticallyFillMissingValuesCommand.GalleryName = folder;
         automaticallyFillMissingValuesCommand.RootGalleryFolder = remoteRootFolder;
         automaticallyFillMissingValuesCommand.Kml = $@"kml\{Path.GetFileNameWithoutExtension(kmlFileName)}";
+        automaticallyFillMissingValuesCommand.JqueryVersion = jqueryVersion;
 
         AutomaticallyFillMissingValues automaticallyFillMissingValues = new AutomaticallyFillMissingValues(new PathConverter());
         automaticallyFillMissingValues.Execute(automaticallyFillMissingValuesCommand);
