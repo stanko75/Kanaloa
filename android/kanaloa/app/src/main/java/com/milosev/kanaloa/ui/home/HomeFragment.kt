@@ -1,7 +1,9 @@
 package com.milosev.kanaloa.ui.home
 
+import android.Manifest
 import android.app.Activity
 import android.content.Context
+import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -9,6 +11,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.RequiresApi
+import androidx.core.content.ContextCompat
 import androidx.core.content.edit
 import androidx.core.view.get
 import androidx.fragment.app.Fragment
@@ -58,6 +61,34 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
         this.registerForActivityResult(ActivityResultContracts.GetMultipleContents()) { images ->
             uploadPictures?.uploadImages(images)
         }
+
+    private val mediaLocationPermissionLauncher =
+        registerForActivityResult(ActivityResultContracts.RequestPermission()) { granted ->
+            if (granted) {
+                uploadPictures?.openGallery(galleryLauncher)
+            } else {
+                // optional trotzdem Galerie öffnen, nur ohne GPS-EXIF
+                uploadPictures?.openGallery(galleryLauncher)
+            }
+        }
+
+    private fun openGalleryWithPermissionCheck() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            val hasAccessMediaLocation = ContextCompat.checkSelfPermission(
+                requireContext(),
+                Manifest.permission.ACCESS_MEDIA_LOCATION
+            ) == PackageManager.PERMISSION_GRANTED
+
+            if (!hasAccessMediaLocation) {
+                mediaLocationPermissionLauncher.launch(
+                    Manifest.permission.ACCESS_MEDIA_LOCATION
+                )
+                return
+            }
+        }
+
+        uploadPictures?.openGallery(galleryLauncher)
+    }
 
     private var marker: Marker? = null
 
@@ -125,7 +156,8 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
                 }
 
                 R.id.navigation_photo -> {
-                    uploadPictures?.openGallery(galleryLauncher)
+                    openGalleryWithPermissionCheck()
+                    //uploadPictures?.openGallery(galleryLauncher)
                     true
                 }
 
