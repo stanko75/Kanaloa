@@ -27,7 +27,7 @@ public class UpdateCoordinatesController(
             string folderName = CommonStaticMethods.GetValue(data, "folderName");
             string latitude = CommonStaticMethods.GetValue(data, "Latitude");
             string longitude = CommonStaticMethods.GetValue(data, "Longitude");
-            string altitude = CommonStaticMethods.GetValue(data, "Altitude");
+            string altitude = CommonStaticMethods.GetValue(data, "Altitude") == string.Empty ? "0" : CommonStaticMethods.GetValue(data, "Altitude");
             string coordinates = string.Join(',', longitude, latitude, altitude);
 
             var gps = new GpsCommand(latitude, longitude, altitude);
