@@ -3,13 +3,14 @@ package com.milosev.kanaloa.ui.gallery
 import android.app.Activity
 import android.content.Context
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
 import android.provider.OpenableColumns
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.annotation.RequiresApi
 import androidx.core.content.edit
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
@@ -20,10 +21,15 @@ import com.milosev.kanaloa.SharedPreferencesGlobal
 import com.milosev.kanaloa.databinding.FragmentGalleryBinding
 import com.milosev.kanaloa.logger.LogViewModelLogger
 import com.milosev.kanaloa.retrofit.CreateRetrofitBuilder
+import com.milosev.kanaloa.retrofit.uploadimages.GsonConverter
+import com.milosev.kanaloa.retrofit.uploadimages.IUploadImagesApiService
+import com.milosev.kanaloa.retrofit.uploadimages.UploadImages
+import com.milosev.kanaloa.retrofit.uploadimages.UploadImagesCallbacks
 import com.milosev.kanaloa.retrofit.uploadtoblog.FtpModel
 import com.milosev.kanaloa.retrofit.uploadtoblog.IUploadToBlogApiService
 import com.milosev.kanaloa.retrofit.uploadtoblog.UploadToBlog
 import com.milosev.kanaloa.retrofit.uploadtoblog.UploadToBlogCallbacks
+import com.milosev.kanaloa.ui.home.UploadPictures
 import com.milosev.kanaloa.ui.log.LogViewModel
 
 class GalleryFragment : Fragment() {
@@ -34,11 +40,16 @@ class GalleryFragment : Fragment() {
     // onDestroyView.
     private val binding get() = _binding!!
 
+    private var uploadPictures: UploadPictures? = null
+    @RequiresApi(Build.VERSION_CODES.O)
     private val galleryLauncher =
         this.registerForActivityResult(ActivityResultContracts.GetContent()) { image ->
             image?.let {
                 _binding!!.ivOgImage.setImageURI(it)
                 _binding!!.editTextOgImage.setText("thumbs/${getFileName(it)}")
+                var images: List<Uri> = listOf()
+                images = images + image
+                uploadPictures?.uploadImages(images)
             }
         }
 
@@ -49,6 +60,21 @@ class GalleryFragment : Fragment() {
     ): View {
         _binding = FragmentGalleryBinding.inflate(inflater, container, false)
         val root: View = binding.root
+
+        val logViewModelLogger = LogViewModelLogger(ViewModelProvider(requireActivity())[LogViewModel::class.java])
+
+        uploadPictures = context?.let {
+            UploadPictures(
+                UploadImages(
+                    CreateRetrofitBuilder().createRetrofitBuilder(
+                        Config(it).webHost,
+                        GsonConverter()
+                    ).create(
+                        IUploadImagesApiService::class.java
+                    ), UploadImagesCallbacks(logViewModelLogger)
+                ), it
+            )
+        }
 
         /*
         val galleryViewModel =
@@ -118,7 +144,7 @@ class GalleryFragment : Fragment() {
             val activity = activity as Activity
 
             val uploadToBlogCallbacks =
-                UploadToBlogCallbacks(LogViewModelLogger(ViewModelProvider(requireActivity())[LogViewModel::class.java]), activity, ftpModel.folderName);
+                UploadToBlogCallbacks(logViewModelLogger, activity, ftpModel.folderName);
 
             var ok = UploadToBlog(
                 CreateRetrofitBuilder().createRetrofitBuilder(Config(context).webHost)
