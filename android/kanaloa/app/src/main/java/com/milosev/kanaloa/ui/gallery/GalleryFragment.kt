@@ -45,10 +45,14 @@ class GalleryFragment : Fragment() {
                 _binding!!.ivOgImage.setImageURI(firstImage)
                 _binding!!.editTextOgImage.setText("thumbs/${getFileName(firstImage)}")
                 
+                var fileName = _binding!!.editTextFileName.text.toString()
+                if (!fileName.endsWith(".kml", ignoreCase = true)) {
+                    fileName += ".kml"
+                }
+                val folderName = _binding!!.editTextFolderName.text.toString()
+
                 val sharedPreferences = requireContext().getSharedPreferences(SharedPreferencesGlobal.Settings, Context.MODE_PRIVATE)
-                val fileName = sharedPreferences.getString("kmlFileName", "default")
-                val folderName = sharedPreferences.getString("folderName", "default")
-                sharedPreferences.edit {
+                sharedPreferences.edit(commit = true) {
                     putString("localOgImageUri.$folderName.$fileName", firstImage.toString())
                 }
 
@@ -71,7 +75,10 @@ class GalleryFragment : Fragment() {
         val sharedPreferences = requireContext().getSharedPreferences(SharedPreferencesGlobal.Settings, Context.MODE_PRIVATE)
 
         val folderNameInitial = sharedPreferences.getString("folderName", "default")
-        val fileNameInitial = sharedPreferences.getString("kmlFileName", "default")
+        var fileNameInitial = sharedPreferences.getString("kmlFileName", "default.kml")
+        // Handle case where it might have been saved as "default" previously
+        if (fileNameInitial == "default") fileNameInitial = "default.kml"
+
         val localOgImageUri = sharedPreferences.getString("localOgImageUri.$folderNameInitial.$fileNameInitial", null)
         if (localOgImageUri != null) {
             _binding!!.ivOgImage.setImageURI(Uri.parse(localOgImageUri))
