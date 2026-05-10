@@ -35,10 +35,7 @@ import com.milosev.kanaloa.retrofit.fetchlivelocation.IGetLiveLocationApiService
 import com.milosev.kanaloa.retrofit.loadkmlfromurl.IGetKml
 import com.milosev.kanaloa.retrofit.loadkmlfromurl.ILoadKmlFromUrl
 import com.milosev.kanaloa.retrofit.loadkmlfromurl.LoadKmlFromUrl
-import com.milosev.kanaloa.retrofit.uploadimages.GsonConverter
-import com.milosev.kanaloa.retrofit.uploadimages.IUploadImagesApiService
-import com.milosev.kanaloa.retrofit.uploadimages.UploadImages
-import com.milosev.kanaloa.retrofit.uploadimages.UploadImagesCallbacks
+import com.milosev.kanaloa.ui.UploadViewModel
 import com.milosev.kanaloa.ui.log.LogViewModel
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
@@ -56,19 +53,19 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
     private lateinit var fetchLiveLocation: FetchLiveLocation
     private var updateJob: Job? = null
 
-    private var uploadPictures: UploadPictures? = null
+    private var uploadViewModel: UploadViewModel? = null
     private val galleryLauncher =
         this.registerForActivityResult(ActivityResultContracts.GetMultipleContents()) { images ->
-            uploadPictures?.uploadImages(images)
+            uploadViewModel?.uploadPictures?.uploadImages(images)
         }
 
     private val mediaLocationPermissionLauncher =
         registerForActivityResult(ActivityResultContracts.RequestPermission()) { granted ->
             if (granted) {
-                uploadPictures?.openGallery(galleryLauncher)
+                uploadViewModel?.uploadPictures?.openGallery(galleryLauncher)
             } else {
                 // optional trotzdem Galerie öffnen, nur ohne GPS-EXIF
-                uploadPictures?.openGallery(galleryLauncher)
+                uploadViewModel?.uploadPictures?.openGallery(galleryLauncher)
             }
         }
 
@@ -87,7 +84,7 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
             }
         }
 
-        uploadPictures?.openGallery(galleryLauncher)
+        uploadViewModel?.uploadPictures?.openGallery(galleryLauncher)
     }
 
     private var marker: Marker? = null
@@ -116,18 +113,8 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
         )
         liveUpdater = LiveLocationUpdater(fetchLiveLocation, loadKmlFromUrl)
 
-        uploadPictures = context?.let {
-            UploadPictures(
-                UploadImages(
-                    CreateRetrofitBuilder().createRetrofitBuilder(
-                        Config(it).webHost,
-                        GsonConverter()
-                    ).create(
-                        IUploadImagesApiService::class.java
-                    ), UploadImagesCallbacks(logViewModelLogger)
-                ), it
-            )
-        }
+        uploadViewModel = ViewModelProvider(requireActivity())[UploadViewModel::class.java]
+        uploadViewModel?.initialize(logViewModel)
 
         bottomNavigationView.setOnItemSelectedListener { item ->
             when (item.itemId) {

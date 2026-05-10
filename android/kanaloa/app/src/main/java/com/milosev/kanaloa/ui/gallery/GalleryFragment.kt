@@ -2,34 +2,25 @@ package com.milosev.kanaloa.ui.gallery
 
 import android.app.Activity
 import android.content.Context
+import android.content.Intent
 import android.net.Uri
-import android.os.Build
 import android.os.Bundle
 import android.provider.OpenableColumns
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.annotation.RequiresApi
 import androidx.core.content.edit
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
-import com.milosev.kanaloa.Config
 import com.milosev.kanaloa.SharedPreferencesGlobal
 import com.milosev.kanaloa.databinding.FragmentGalleryBinding
 import com.milosev.kanaloa.logger.LogViewModelLogger
-import com.milosev.kanaloa.retrofit.CreateRetrofitBuilder
-import com.milosev.kanaloa.retrofit.uploadimages.GsonConverter
-import com.milosev.kanaloa.retrofit.uploadimages.IUploadImagesApiService
-import com.milosev.kanaloa.retrofit.uploadimages.UploadImages
-import com.milosev.kanaloa.retrofit.uploadimages.UploadImagesCallbacks
 import com.milosev.kanaloa.retrofit.uploadtoblog.FtpModel
-import com.milosev.kanaloa.retrofit.uploadtoblog.IUploadToBlogApiService
-import com.milosev.kanaloa.retrofit.uploadtoblog.UploadToBlog
 import com.milosev.kanaloa.retrofit.uploadtoblog.UploadToBlogCallbacks
-import com.milosev.kanaloa.ui.home.UploadPictures
+import com.milosev.kanaloa.ui.UploadViewModel
 import com.milosev.kanaloa.ui.log.LogViewModel
 
 class GalleryFragment : Fragment() {
@@ -40,16 +31,28 @@ class GalleryFragment : Fragment() {
     // onDestroyView.
     private val binding get() = _binding!!
 
-    private var uploadPictures: UploadPictures? = null
-    @RequiresApi(Build.VERSION_CODES.O)
+    private var uploadViewModel: UploadViewModel? = null
+
     private val galleryLauncher =
-        this.registerForActivityResult(ActivityResultContracts.GetContent()) { image ->
-            image?.let {
-                _binding!!.ivOgImage.setImageURI(it)
-                _binding!!.editTextOgImage.setText("thumbs/${getFileName(it)}")
-                var images: List<Uri> = listOf()
-                images = images + image
-                uploadPictures?.uploadImages(images)
+        this.registerForActivityResult(ActivityResultContracts.OpenMultipleDocuments()) { images ->
+            if (images.isNotEmpty()) {
+                val firstImage = images[0]
+                
+                // Persist access to the URI so it can be reloaded after app restart
+                val takeFlags: Int = Intent.FLAG_GRANT_READ_URI_PERMISSION
+                requireContext().contentResolver.takePersistableUriPermission(firstImage, takeFlags)
+
+                _binding!!.ivOgImage.setImageURI(firstImage)
+                _binding!!.editTextOgImage.setText("thumbs/${getFileName(firstImage)}")
+                
+                val sharedPreferences = requireContext().getSharedPreferences(SharedPreferencesGlobal.Settings, Context.MODE_PRIVATE)
+                val fileName = sharedPreferences.getString("kmlFileName", "default")
+                val folderName = sharedPreferences.getString("folderName", "default")
+                sharedPreferences.edit {
+                    putString("localOgImageUri.$folderName.$fileName", firstImage.toString())
+                }
+
+                uploadViewModel?.uploadPictures?.uploadImages(images)
             }
         }
 
@@ -61,34 +64,21 @@ class GalleryFragment : Fragment() {
         _binding = FragmentGalleryBinding.inflate(inflater, container, false)
         val root: View = binding.root
 
-        val logViewModelLogger = LogViewModelLogger(ViewModelProvider(requireActivity())[LogViewModel::class.java])
-
-        uploadPictures = context?.let {
-            UploadPictures(
-                UploadImages(
-                    CreateRetrofitBuilder().createRetrofitBuilder(
-                        Config(it).webHost,
-                        GsonConverter()
-                    ).create(
-                        IUploadImagesApiService::class.java
-                    ), UploadImagesCallbacks(logViewModelLogger)
-                ), it
-            )
-        }
-
-        /*
-        val galleryViewModel =
-            ViewModelProvider(this)[GalleryViewModel::class.java]
-        val textView: TextView = binding.textGallery
-        galleryViewModel.text.observe(viewLifecycleOwner) {
-            textView.text = it
-        }
-         */
+        val logViewModel = ViewModelProvider(requireActivity())[LogViewModel::class.java]
+        uploadViewModel = ViewModelProvider(requireActivity())[UploadViewModel::class.java]
+        uploadViewModel?.initialize(logViewModel)
 
         val sharedPreferences = requireContext().getSharedPreferences(SharedPreferencesGlobal.Settings, Context.MODE_PRIVATE)
 
-        var fileName = sharedPreferences.getString("kmlFileName", "default")
-        val folderName = sharedPreferences.getString("folderName", "default")
+        val folderNameInitial = sharedPreferences.getString("folderName", "default")
+        val fileNameInitial = sharedPreferences.getString("kmlFileName", "default")
+        val localOgImageUri = sharedPreferences.getString("localOgImageUri.$folderNameInitial.$fileNameInitial", null)
+        if (localOgImageUri != null) {
+            _binding!!.ivOgImage.setImageURI(Uri.parse(localOgImageUri))
+        }
+
+        var fileName = fileNameInitial
+        val folderName = folderNameInitial
         val ogTitle = sharedPreferences.getString("ogTitle", "default")
         val ogImage = sharedPreferences.getString("ogImage", "default")
         val baseUrl = sharedPreferences.getString("baseUrl", "default")
@@ -142,14 +132,10 @@ class GalleryFragment : Fragment() {
             ftpModel.baseUrl = fileAndFolderNameSharedPreferences?.getString("baseUrl","")
 
             val activity = activity as Activity
-
             val uploadToBlogCallbacks =
-                UploadToBlogCallbacks(logViewModelLogger, activity, ftpModel.folderName);
+                UploadToBlogCallbacks(LogViewModelLogger(ViewModelProvider(requireActivity())[LogViewModel::class.java]), activity, ftpModel.folderName);
 
-            var ok = UploadToBlog(
-                CreateRetrofitBuilder().createRetrofitBuilder(Config(context).webHost)
-                    .create(IUploadToBlogApiService::class.java), uploadToBlogCallbacks
-            ).uploadToBlogHttpPost(gson.toJson(ftpModel));
+            uploadViewModel?.uploadToBlog(gson.toJson(ftpModel), uploadToBlogCallbacks)
         }
 
         return root
@@ -175,6 +161,6 @@ class GalleryFragment : Fragment() {
     }
 
     private fun openGallery() {
-        galleryLauncher.launch("image/*")
+        galleryLauncher.launch(arrayOf("image/*"))
     }
 }
