@@ -88,12 +88,16 @@ class GalleryFragment : Fragment() {
         val ogTitle = sharedPreferences.getString("ogTitle", "default")
         val ogImage = sharedPreferences.getString("ogImage", "default")
         val baseUrl = sharedPreferences.getString("baseUrl", "default")
+        val deleteLastKmlPoints = sharedPreferences.getString("deleteLastKmlPoints", "100")
+        val deleteFirstKmlPoints = sharedPreferences.getString("deleteFirstKmlPoints", "100")
 
         _binding!!.editTextFileName.setText(fileName)
         _binding!!.editTextFolderName.setText(folderNameInitial)
         _binding!!.editTextOgTitle.setText(ogTitle)
         _binding!!.editTextOgImage.setText(ogImage)
         _binding!!.editTextBaseUrl.setText(baseUrl)
+        _binding!!.editTextDeleteLastKmlPoints.setText(deleteLastKmlPoints)
+        _binding!!.editTextDeleteFirstKmlPoints.setText(deleteFirstKmlPoints)
 
         _binding!!.btnSaveSettings.setOnClickListener {
 
@@ -108,6 +112,8 @@ class GalleryFragment : Fragment() {
                 putString("ogTitle", binding.editTextOgTitle.text.toString())
                 putString("ogImage", binding.editTextOgImage.text.toString())
                 putString("baseUrl", binding.editTextBaseUrl.text.toString())
+                putString("deleteLastKmlPoints", binding.editTextDeleteLastKmlPoints.text.toString())
+                putString("deleteFirstKmlPoints", binding.editTextDeleteFirstKmlPoints.text.toString())
             }
             requireActivity().onBackPressedDispatcher.onBackPressed()
         }
@@ -136,6 +142,8 @@ class GalleryFragment : Fragment() {
             ftpModel.ogTitle = fileAndFolderNameSharedPreferences?.getString("ogTitle", "")
             ftpModel.ogImage = fileAndFolderNameSharedPreferences?.getString("ogImage","")
             ftpModel.baseUrl = fileAndFolderNameSharedPreferences?.getString("baseUrl","")
+            ftpModel.deleteLastKmlPoints = fileAndFolderNameSharedPreferences?.getString("deleteLastKmlPoints","")
+            ftpModel.deleteFirstKmlPoints = fileAndFolderNameSharedPreferences?.getString("deleteFirstKmlPoints","")
 
             val activity = activity as Activity
             val uploadToBlogCallbacks =

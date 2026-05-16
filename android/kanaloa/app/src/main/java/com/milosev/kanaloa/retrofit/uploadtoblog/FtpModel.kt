@@ -9,4 +9,6 @@ class FtpModel: FileFolderLocationModel() {
     var host: String? = null
     var user: String? = null
     var pass: String? = null
+    var deleteFirstKmlPoints: String? = null
+    var deleteLastKmlPoints: String? = null
 }
