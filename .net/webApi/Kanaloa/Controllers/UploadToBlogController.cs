@@ -26,6 +26,8 @@ public class UploadToBlogController : ControllerBase
             string host = CommonStaticMethods.GetValue(data, "host");
             string user = CommonStaticMethods.GetValue(data, "user");
             string pass = CommonStaticMethods.GetValue(data, "pass");
+            string deleteLastKmlPoints = CommonStaticMethods.GetValue(data, "deleteLastKmlPoints");
+            string deleteFirstKmlPoints = CommonStaticMethods.GetValue(data, "deleteFirstKmlPoints");
 
             string remoteRootFolder = "allWithPics/travelBuddies/";
 
