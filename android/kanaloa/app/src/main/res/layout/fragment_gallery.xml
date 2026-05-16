@@ -73,6 +73,32 @@
                 app:layout_constraintVertical_bias="0.481" />
 
             <EditText
+                android:id="@+id/editTextDeleteLastKmlPoints"
+                android:layout_width="150dp"
+                android:layout_height="48dp"
+                android:layout_marginTop="16dp"
+                android:autofillHints=""
+                android:ems="10"
+                android:hint="@string/defaultDeleteLastKmlPoints"
+                android:inputType="textUri"
+                android:textColorHint="#757575"
+                app:layout_constraintEnd_toEndOf="@+id/editTextDeleteFirstKmlPoints"
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintStart_toStartOf="@+id/editTextDeleteFirstKmlPoints"
+                app:layout_constraintTop_toBottomOf="@+id/editTextDeleteFirstKmlPoints" />
+
+            <TextView
+                android:id="@+id/textViewDeleteLastKmlPoints"
+                android:layout_width="150dp"
+                android:layout_height="21dp"
+                android:text="@string/deleteLastKmlPoints"
+                app:layout_constraintBottom_toBottomOf="@+id/editTextDeleteLastKmlPoints"
+                app:layout_constraintHorizontal_bias="1.0"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="@+id/editTextDeleteLastKmlPoints"
+                app:layout_constraintVertical_bias="0.481" />
+
+            <EditText
                 android:id="@+id/editTextFileName"
                 android:layout_width="150dp"
                 android:layout_height="48dp"

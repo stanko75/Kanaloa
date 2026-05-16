@@ -35,4 +35,6 @@
     <string name="baseUrl">BaseUrl:</string>
     <string name="deleteFirstKmlPoints">Delete first KML points</string>
     <string name="defaultDeleteFirstKmlPoints">100</string>
+    <string name="deleteLastKmlPoints">Delete last KML points</string>
+    <string name="defaultDeleteLastKmlPoints">100</string>
 </resources>
