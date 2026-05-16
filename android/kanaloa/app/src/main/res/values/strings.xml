@@ -33,4 +33,6 @@
     <string name="ogTitle">OgTitle:</string>
     <string name="ogImage">OgImage:</string>
     <string name="baseUrl">BaseUrl:</string>
+    <string name="deleteFirstKmlPoints">Delete first KML points</string>
+    <string name="defaultDeleteFirstKmlPoints">100</string>
 </resources>
