@@ -85,13 +85,12 @@ class GalleryFragment : Fragment() {
         }
 
         var fileName = fileNameInitial
-        val folderName = folderNameInitial
         val ogTitle = sharedPreferences.getString("ogTitle", "default")
         val ogImage = sharedPreferences.getString("ogImage", "default")
         val baseUrl = sharedPreferences.getString("baseUrl", "default")
 
         _binding!!.editTextFileName.setText(fileName)
-        _binding!!.editTextFolderName.setText(folderName)
+        _binding!!.editTextFolderName.setText(folderNameInitial)
         _binding!!.editTextOgTitle.setText(ogTitle)
         _binding!!.editTextOgImage.setText(ogImage)
         _binding!!.editTextBaseUrl.setText(baseUrl)
