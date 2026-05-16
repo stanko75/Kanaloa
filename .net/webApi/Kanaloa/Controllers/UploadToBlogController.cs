@@ -42,6 +42,8 @@ public class UploadToBlogController : ControllerBase
 
             DeleteFirstAndLastKmlPointsCommand deleteFirstAndLastKmlPointsCommand =
                 new DeleteFirstAndLastKmlPointsCommand();
+            deleteFirstAndLastKmlPointsCommand.KmlFileName = kmlFileName;
+            deleteFirstAndLastKmlPointsCommand.Folder = folder;
             DeleteFirstAndLastKmlPoints deleteFirstAndLastKmlPoints = new DeleteFirstAndLastKmlPoints();
             deleteFirstAndLastKmlPoints.Execute(deleteFirstAndLastKmlPointsCommand);
 
