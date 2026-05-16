@@ -1,5 +1,6 @@
 ﻿using Common;
 using FtpHandling;
+using KmlHandling;
 using HtmlHandling;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
@@ -38,6 +39,11 @@ public class UploadToBlogController : ControllerBase
             var listOfKeyValuesToReplaceInFiles = ListOfKeyValuesToReplaceInFiles(automaticallyFillMissingValuesCommand);
 
             var albumRoot = ReplaceKeysInFiles(copyHtmlFilesToPrepareForUploadCommand, listOfKeyValuesToReplaceInFiles, folder);
+
+            DeleteFirstAndLastKmlPointsCommand deleteFirstAndLastKmlPointsCommand =
+                new DeleteFirstAndLastKmlPointsCommand();
+            DeleteFirstAndLastKmlPoints deleteFirstAndLastKmlPoints = new DeleteFirstAndLastKmlPoints();
+            deleteFirstAndLastKmlPoints.Execute(deleteFirstAndLastKmlPointsCommand);
 
             MirrorDirAndFileRemoteOnFtp(host, user, pass, albumRoot, remoteRootFolder, folder);
 
