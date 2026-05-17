@@ -1,9 +1,7 @@
 ﻿using FunctionalTest.Log;
 using HtmlHandling.Test;
 using Newtonsoft.Json.Linq;
-using System.IO;
 using System.Net.Http.Headers;
-using System.Security.Policy;
 
 namespace FunctionalTest;
 
@@ -24,6 +22,8 @@ public class UploadToBlogHandler(ILogger logger) : ICommandHandler<UploadToBlogC
         string baseUrl = command.BaseUrl;
         string expectedUrl = command.ExpectedUrl;
         string prepareForUpload = command.PrepareForUpload;
+        string deleteFirstKmlPoints = command.DeleteFirstKmlPoints;
+        string deleteLastKmlPoints = command.DeleteLastKmlPoints;
 
         if (CancellationTokenSource is not null)
         {
@@ -39,7 +39,9 @@ public class UploadToBlogHandler(ILogger logger) : ICommandHandler<UploadToBlogC
                 ["pass"] = ftpPass,
                 ["ogTitle"] = ogTitle,
                 ["ogImage"] = ogImage,
-                ["baseUrl"] = baseUrl
+                ["baseUrl"] = baseUrl,
+                ["deleteLastKmlPoints"] = deleteLastKmlPoints,
+                ["deleteFirstKmlPoints"] = deleteFirstKmlPoints
             };
 
             string jsonContent = jObjectKmlFileFolder.ToString();

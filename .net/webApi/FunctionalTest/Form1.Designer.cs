@@ -32,6 +32,10 @@
             panel1 = new Panel();
             log = new TextBox();
             panel2 = new Panel();
+            label14 = new Label();
+            tbDeleteLastKmlPoints = new TextBox();
+            label15 = new Label();
+            tbDeleteFirstKmlPoints = new TextBox();
             btnAzureAddress = new Button();
             btnLocalAddress = new Button();
             button1 = new Button();
@@ -73,7 +77,7 @@
             // PostGpsPositionsFromFilesWithFileName
             // 
             PostGpsPositionsFromFilesWithFileName.Dock = DockStyle.Bottom;
-            PostGpsPositionsFromFilesWithFileName.Location = new Point(0, 470);
+            PostGpsPositionsFromFilesWithFileName.Location = new Point(0, 555);
             PostGpsPositionsFromFilesWithFileName.Name = "PostGpsPositionsFromFilesWithFileName";
             PostGpsPositionsFromFilesWithFileName.Size = new Size(926, 23);
             PostGpsPositionsFromFilesWithFileName.TabIndex = 0;
@@ -85,9 +89,9 @@
             // 
             panel1.Controls.Add(log);
             panel1.Dock = DockStyle.Fill;
-            panel1.Location = new Point(0, 391);
+            panel1.Location = new Point(0, 479);
             panel1.Name = "panel1";
-            panel1.Size = new Size(926, 79);
+            panel1.Size = new Size(926, 76);
             panel1.TabIndex = 1;
             // 
             // log
@@ -97,11 +101,15 @@
             log.Multiline = true;
             log.Name = "log";
             log.ScrollBars = ScrollBars.Both;
-            log.Size = new Size(926, 79);
+            log.Size = new Size(926, 76);
             log.TabIndex = 0;
             // 
             // panel2
             // 
+            panel2.Controls.Add(label14);
+            panel2.Controls.Add(tbDeleteLastKmlPoints);
+            panel2.Controls.Add(label15);
+            panel2.Controls.Add(tbDeleteFirstKmlPoints);
             panel2.Controls.Add(btnAzureAddress);
             panel2.Controls.Add(btnLocalAddress);
             panel2.Controls.Add(button1);
@@ -135,8 +143,40 @@
             panel2.Dock = DockStyle.Top;
             panel2.Location = new Point(0, 0);
             panel2.Name = "panel2";
-            panel2.Size = new Size(926, 391);
+            panel2.Size = new Size(926, 479);
             panel2.TabIndex = 2;
+            // 
+            // label14
+            // 
+            label14.AutoSize = true;
+            label14.Location = new Point(12, 414);
+            label14.Name = "label14";
+            label14.Size = new Size(124, 15);
+            label14.TabIndex = 32;
+            label14.Text = "Delete last Kml points:";
+            // 
+            // tbDeleteLastKmlPoints
+            // 
+            tbDeleteLastKmlPoints.Location = new Point(171, 411);
+            tbDeleteLastKmlPoints.Name = "tbDeleteLastKmlPoints";
+            tbDeleteLastKmlPoints.Size = new Size(555, 23);
+            tbDeleteLastKmlPoints.TabIndex = 30;
+            // 
+            // label15
+            // 
+            label15.AutoSize = true;
+            label15.Location = new Point(12, 385);
+            label15.Name = "label15";
+            label15.Size = new Size(126, 15);
+            label15.TabIndex = 31;
+            label15.Text = "Delete first Kml points:";
+            // 
+            // tbDeleteFirstKmlPoints
+            // 
+            tbDeleteFirstKmlPoints.Location = new Point(171, 382);
+            tbDeleteFirstKmlPoints.Name = "tbDeleteFirstKmlPoints";
+            tbDeleteFirstKmlPoints.Size = new Size(555, 23);
+            tbDeleteFirstKmlPoints.TabIndex = 29;
             // 
             // btnAzureAddress
             // 
@@ -389,7 +429,7 @@
             // UploadImage
             // 
             UploadImage.Dock = DockStyle.Bottom;
-            UploadImage.Location = new Point(0, 493);
+            UploadImage.Location = new Point(0, 578);
             UploadImage.Name = "UploadImage";
             UploadImage.Size = new Size(926, 23);
             UploadImage.TabIndex = 3;
@@ -400,7 +440,7 @@
             // UploadToBlog
             // 
             UploadToBlog.Dock = DockStyle.Bottom;
-            UploadToBlog.Location = new Point(0, 516);
+            UploadToBlog.Location = new Point(0, 601);
             UploadToBlog.Name = "UploadToBlog";
             UploadToBlog.Size = new Size(926, 23);
             UploadToBlog.TabIndex = 4;
@@ -411,7 +451,7 @@
             // btnCancel
             // 
             btnCancel.Dock = DockStyle.Bottom;
-            btnCancel.Location = new Point(0, 539);
+            btnCancel.Location = new Point(0, 624);
             btnCancel.Name = "btnCancel";
             btnCancel.Size = new Size(926, 23);
             btnCancel.TabIndex = 5;
@@ -423,7 +463,7 @@
             // 
             linkLabel1.AutoSize = true;
             linkLabel1.Dock = DockStyle.Bottom;
-            linkLabel1.Location = new Point(0, 562);
+            linkLabel1.Location = new Point(0, 647);
             linkLabel1.Name = "linkLabel1";
             linkLabel1.Size = new Size(298, 15);
             linkLabel1.TabIndex = 7;
@@ -435,7 +475,7 @@
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(926, 577);
+            ClientSize = new Size(926, 662);
             Controls.Add(panel1);
             Controls.Add(panel2);
             Controls.Add(PostGpsPositionsFromFilesWithFileName);
@@ -494,5 +534,9 @@
         private TextBox tbPrepareForUploadUrl;
         private Button btnAzureAddress;
         private Button btnLocalAddress;
+        private Label label14;
+        private TextBox tbDeleteLastKmlPoints;
+        private Label label15;
+        private TextBox tbDeleteFirstKmlPoints;
     }
 }

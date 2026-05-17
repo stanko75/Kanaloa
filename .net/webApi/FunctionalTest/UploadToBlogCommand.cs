@@ -14,4 +14,6 @@ public class UploadToBlogCommand
     public string BaseUrl { get; set; }
     public string ExpectedUrl { get; set; }
     public string PrepareForUpload { get; set; }
+    public string DeleteFirstKmlPoints { get; set; }
+    public string DeleteLastKmlPoints { get; set; }
 }

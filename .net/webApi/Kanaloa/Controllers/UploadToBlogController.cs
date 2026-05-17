@@ -27,12 +27,13 @@ public class UploadToBlogController(ICommandHandler<DeleteFirstAndLastKmlPointsC
             string host = CommonStaticMethods.GetValue(data, "host");
             string user = CommonStaticMethods.GetValue(data, "user");
             string pass = CommonStaticMethods.GetValue(data, "pass");
-            string deleteLastKmlPoints = CommonStaticMethods.GetValue(data, "deleteLastKmlPoints");
-            string deleteFirstKmlPoints = CommonStaticMethods.GetValue(data, "deleteFirstKmlPoints");
+            string strDeleteLastKmlPoints = CommonStaticMethods.GetValue(data, "deleteLastKmlPoints");
+            string strDeleteFirstKmlPoints = CommonStaticMethods.GetValue(data, "deleteFirstKmlPoints");
+            string prepareForUpload = "prepareForUpload";
 
             string remoteRootFolder = "allWithPics/travelBuddies/";
 
-            var copyHtmlFilesToPrepareForUploadCommand = CopyHtmlFilesToPrepareForUpload(folder, kmlFileName, "prepareForUpload", @"html\templateForBlog");
+            var copyHtmlFilesToPrepareForUploadCommand = CopyHtmlFilesToPrepareForUpload(folder, kmlFileName, prepareForUpload, @"html\templateForBlog");
 
             var automaticallyFillMissingValuesCommand = AutomaticallyFillMissingValues(data, folder, remoteRootFolder, kmlFileName, "jquery-3.6.4.js");
 
@@ -42,8 +43,26 @@ public class UploadToBlogController(ICommandHandler<DeleteFirstAndLastKmlPointsC
 
             DeleteFirstAndLastKmlPointsCommand deleteFirstAndLastKmlPointsCommand =
                 new DeleteFirstAndLastKmlPointsCommand();
+            deleteFirstAndLastKmlPointsCommand.Folder = Path.Join(Path.Join(prepareForUpload, folder), "kml");
             deleteFirstAndLastKmlPointsCommand.KmlFileName = kmlFileName;
-            deleteFirstAndLastKmlPointsCommand.Folder = folder;
+            if (int.TryParse(strDeleteFirstKmlPoints, out int intDeleteFirstKmlPoints))
+            {
+                deleteFirstAndLastKmlPointsCommand.DeleteFirstKmlPoints = intDeleteFirstKmlPoints;
+            }
+            else
+            {
+                throw new InvalidCastException("Cannot cast deleteFirstKmlPoints to int");
+            }
+
+            if (int.TryParse(strDeleteLastKmlPoints, out int intDeleteLastKmlPoints))
+            {
+                deleteFirstAndLastKmlPointsCommand.DeleteLastKmlPoints = intDeleteLastKmlPoints;
+            }
+            else
+            {
+                throw new InvalidCastException("Cannot cast deleteLastKmlPoints to int");
+            }
+
             deleteFirstAndLastKmlPoints.Execute(deleteFirstAndLastKmlPointsCommand);
 
             MirrorDirAndFileRemoteOnFtp(host, user, pass, albumRoot, remoteRootFolder, folder);

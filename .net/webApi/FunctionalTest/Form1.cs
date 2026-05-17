@@ -69,6 +69,12 @@ public partial class Form1 : Form
 
             string? strPrepareForUploadUrl = configuration.GetSection("PrepareForUploadUrl").Value;
             if (strPrepareForUploadUrl is not null) tbPrepareForUploadUrl.Text = strPrepareForUploadUrl;
+
+            string? strDeleteFirstKmlPoints = configuration.GetSection("DeleteFirstKmlPoints").Value;
+            if (strDeleteFirstKmlPoints is not null) tbDeleteFirstKmlPoints.Text = strDeleteFirstKmlPoints;
+
+            string? strDeleteLastKmlPoints = configuration.GetSection("DeleteLastKmlPoints").Value;
+            if (strDeleteLastKmlPoints is not null) tbDeleteLastKmlPoints.Text = strDeleteLastKmlPoints;
         }
     }
 
@@ -88,7 +94,9 @@ public partial class Form1 : Form
             ["ogImage"] = tbOgImage.Text,
             ["baseUrl"] = tbBaseUrl.Text,
             ["expectedUrl"] = tbExpectedUrl.Text,
-            ["PrepareForUploadUrl"] = tbPrepareForUploadUrl.Text
+            ["PrepareForUploadUrl"] = tbPrepareForUploadUrl.Text,
+            ["DeleteFirstKmlPoints"] = tbDeleteFirstKmlPoints.Text,
+            ["DeleteLastKmlPoints"] = tbDeleteLastKmlPoints.Text
         };
 
         string json = jsonConfig.ToString(Formatting.Indented);
@@ -139,7 +147,10 @@ public partial class Form1 : Form
             OgImage = tbOgImage.Text,
             BaseUrl = tbBaseUrl.Text,
             ExpectedUrl = tbExpectedUrl.Text,
-            PrepareForUpload = tbPrepareForUploadUrl.Text
+            PrepareForUpload = tbPrepareForUploadUrl.Text,
+
+            DeleteFirstKmlPoints = tbDeleteFirstKmlPoints.Text,
+            DeleteLastKmlPoints = tbDeleteLastKmlPoints.Text
         };
 
         await _cancellationDecoratorUploadToBlog.Execute(command);
