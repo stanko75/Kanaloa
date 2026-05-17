@@ -93,7 +93,7 @@ public static class TestContent
         testMethod(varNameMatch, $"{folderName}PicNo", "Variable is wrong", "Variable not found!", "Variable OK", 1);
 
         var hrefMatch2 = Regex.Match(joomlaPreviewHtml, @"<a\s+href=""([^""]+)""[^>]*>\s*<img\s+[^>]*id=""([^""]+)""[^>]*src=""([^""]+)""", RegexOptions.IgnoreCase);
-        testMethod(hrefMatch2, $"{relativePath}/www/index.html", "second href is wrong", "second href not found!", "second href OK", 1);
+        testMethod(hrefMatch2, $"{relativePath}/www/index.html", "second href is wrong in joomlaPreviewHtml", "second href in joomlaPreviewHtml not found!", "second in joomlaPreviewHtml href OK", 1);
         testMethod(hrefMatch2, $"jPreview{folderName}", "img id is wrong", "img id not found!", "img id OK", 2);
         testMethod(hrefMatch2, $"{relativePath}/www/../{imgSrc}", "second href src is wrong", "second href src not found!", "second href src OK", 3);
     }
