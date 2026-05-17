@@ -26,6 +26,8 @@ builder.Services.AddScoped<ICommandHandler<UpdateOrCreateJsonFileWithListOfImage
 builder.Services.AddScoped<ICommandHandler<UpdateJsonIfExistsOrCreateNewIfNotCommand>, UpdateJsonIfExistsOrCreateNewIfNot>();
 builder.Services.AddScoped<ICommandHandler<UpdateOrCreateJsonFileWithListOfImagesCommand>, UpdateOrCreateJsonFileWithListOfImages>();
 
+builder.Services.AddScoped<ICommandHandler<DeleteFirstAndLastKmlPointsCommand>, DeleteFirstAndLastKmlPoints>();
+
 builder.Services.Configure<KanaloaSettings>(builder.Configuration.GetSection("KanaloaSettings"));
 
 var app = builder.Build();

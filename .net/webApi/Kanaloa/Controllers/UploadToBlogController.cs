@@ -10,7 +10,7 @@ namespace Kanaloa.Controllers;
 
 [Route("api/[controller]")]
 [ApiController]
-public class UploadToBlogController : ControllerBase
+public class UploadToBlogController(ICommandHandler<DeleteFirstAndLastKmlPointsCommand> deleteFirstAndLastKmlPoints) : ControllerBase
 {
     [HttpPost]
     [Route("UploadToBlog")]
@@ -44,7 +44,6 @@ public class UploadToBlogController : ControllerBase
                 new DeleteFirstAndLastKmlPointsCommand();
             deleteFirstAndLastKmlPointsCommand.KmlFileName = kmlFileName;
             deleteFirstAndLastKmlPointsCommand.Folder = folder;
-            DeleteFirstAndLastKmlPoints deleteFirstAndLastKmlPoints = new DeleteFirstAndLastKmlPoints();
             deleteFirstAndLastKmlPoints.Execute(deleteFirstAndLastKmlPointsCommand);
 
             MirrorDirAndFileRemoteOnFtp(host, user, pass, albumRoot, remoteRootFolder, folder);
