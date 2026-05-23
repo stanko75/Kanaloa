@@ -27,13 +27,6 @@ public class DeleteFirstAndLastKmlPoints(IKmlSerializer kmlSerializer) : IComman
                     .Take(parts.Count - skipStart - skipEnd)
             );
 
-            coordinates = string.Join(",",
-                coordinates
-                    .Split(',', StringSplitOptions.RemoveEmptyEntries)
-                    .Skip(command.DeleteFirstKmlPoints * 3)
-                    .Select(x => x.Trim())
-            );
-
             kml?.Document?.Placemarks?[0].LineString?.Coordinates = coordinates;
 
             kmlSerializer.DoSerialization(kml, fullFileName);
