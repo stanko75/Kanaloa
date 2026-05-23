@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 17
-VisualStudioVersion = 17.10.34928.147
+# Visual Studio Version 18
+VisualStudioVersion = 18.6.11819.183 stable
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "KmlHandling", "KmlHandling\KmlHandling.csproj", "{2FDDEB1D-910C-4388-8B77-1B5CB21D9A6B}"
 EndProject
@@ -20,6 +20,8 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ImageHandling.Test", "ImageHandling.Test\ImageHandling.Test.csproj", "{29FEFD09-28C0-45D5-AF9B-37C551AE5104}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HtmlHandling.Test", "HtmlHandling.Test\HtmlHandling.Test.csproj", "{4CDD051A-A155-467D-89D0-1B3440742539}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PostToJoomla", "PostToJoomla\PostToJoomla.csproj", "{D4DC3697-CED2-47D2-898D-338BF8DCECAE}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -63,6 +65,10 @@ Global
 		{4CDD051A-A155-467D-89D0-1B3440742539}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4CDD051A-A155-467D-89D0-1B3440742539}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{4CDD051A-A155-467D-89D0-1B3440742539}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D4DC3697-CED2-47D2-898D-338BF8DCECAE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D4DC3697-CED2-47D2-898D-338BF8DCECAE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D4DC3697-CED2-47D2-898D-338BF8DCECAE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D4DC3697-CED2-47D2-898D-338BF8DCECAE}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
