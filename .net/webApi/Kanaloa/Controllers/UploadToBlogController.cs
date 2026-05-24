@@ -15,7 +15,7 @@ public class UploadToBlogController(ICommandHandler<DeleteFirstAndLastKmlPointsC
 {
     [HttpPost]
     [Route("UploadToBlog")]
-    public IActionResult UploadToBlog([FromBody] JObject data)
+    public async Task<IActionResult> UploadToBlog([FromBody] JObject data)
     {
         try
         {
@@ -46,12 +46,43 @@ public class UploadToBlogController(ICommandHandler<DeleteFirstAndLastKmlPointsC
 
             MirrorDirAndFileRemoteOnFtp(host, user, pass, albumRoot, remoteRootFolder, folder);
 
-            return Ok(@$"Uploaded: {remoteRootFolder}/{folder}/{kmlFileName}");
+            var ok = await PostArticleToJoomla(copyHtmlFilesToPrepareForUploadCommand);
+            if (ok)
+            {
+                return Ok(@$"Uploaded: {remoteRootFolder}/{folder}/{kmlFileName}");
+            }
+
+            return BadRequest("Article was not saved successfully.");
+
         }
         catch (Exception e)
         {
             return BadRequest($"Exception message: {e.Message}, inner exception: {e.InnerException}");
         }
+    }
+
+    private async Task<bool> PostArticleToJoomla(CopyHtmlFilesCommand copyHtmlFilesToPrepareForUploadCommand)
+    {
+        OpenAdminPageAndPostArticleCommand openAdminPageAndPostArticleCommand = new OpenAdminPageAndPostArticleCommand();
+        openAdminPageAndPostArticleCommand.CategoryId = "9";
+        openAdminPageAndPostArticleCommand.LoginUrl = "LoginUrl";
+        openAdminPageAndPostArticleCommand.PostUrl = "PostUrl";
+
+        openAdminPageAndPostArticleCommand.UserName = "test";
+        openAdminPageAndPostArticleCommand.Pass = "test";
+        openAdminPageAndPostArticleCommand.ArticleText = await System.IO.File.ReadAllTextAsync(copyHtmlFilesToPrepareForUploadCommand.JoomlaPreviewHtml);
+
+        openAdminPageAndPostArticleCommand.Title = "test";
+
+        OpenAdminPageAndPostArticle openAdminPageAndPostArticle = new OpenAdminPageAndPostArticle();
+        await openAdminPageAndPostArticle.Execute(openAdminPageAndPostArticleCommand);
+
+        if (!openAdminPageAndPostArticleCommand.IsSaved)
+        {
+            return true;
+        }
+
+        return false;
     }
 
     private void DeleteFirstAndLastKmlPoints(string prepareForUpload, string folder, string kmlFileName,

@@ -104,7 +104,7 @@ public class CopyHtmlFiles: ICommandHandler<CopyHtmlFilesCommand>
 
             if (file.ToLower().Contains("joomlaPreview.html".ToLower()))
             {
-                joomlaPreviewHtml = file;
+                joomlaPreviewHtml = savewwwFiles;
             }
         }
 

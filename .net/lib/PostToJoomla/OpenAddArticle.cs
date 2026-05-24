@@ -6,6 +6,8 @@ public class OpenAddArticle: ICommandHandlerAsync<OpenAddArticleCommand>
 {
     public async Task Execute(OpenAddArticleCommand command)
     {
+        command.Ok = false;
+
         if (command.HttpClient != null)
         {
             HttpResponseMessage createResponse = await command.HttpClient.GetAsync(command.AddArticleUrl);
@@ -13,7 +15,9 @@ public class OpenAddArticle: ICommandHandlerAsync<OpenAddArticleCommand>
             command.TokenName = CommonStatic.ExtractTokenName(createHtml);
             command.Ok = true;
         }
-
-        throw new ArgumentNullException(nameof(command.HttpClient), "HttpClient cannot be null.");
+        else
+        {
+            throw new ArgumentNullException(nameof(command.HttpClient), "HttpClient cannot be null.");
+        }
     }
 }
