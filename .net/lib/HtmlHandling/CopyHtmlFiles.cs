@@ -7,11 +7,14 @@ public class CopyHtmlFiles: ICommandHandler<CopyHtmlFilesCommand>
 
     public void Execute(CopyHtmlFilesCommand command)
     {
+        string joomlaPreviewHtml = string.Empty;
         CopyHtmlTemplateForBlog(
             command.HtmlTemplateFolderWithRelativePath //"html\blog\www"
             , command.PrepareForUploadFolder //"prepareForUpload"
             , command.NameOfAlbum
-            , command.KmlFileName);
+            , command.KmlFileName
+            , out joomlaPreviewHtml);
+        command.JoomlaPreviewHtml = joomlaPreviewHtml;
     }
 
     /*
@@ -48,8 +51,10 @@ public class CopyHtmlFiles: ICommandHandler<CopyHtmlFilesCommand>
         string htmlTemplateFolderWithRelativePath //"html\blog\www"
         , string prepareForUploadFolder //"prepareForUpload"
         , string nameOfAlbum
-        , string kmlFileName)
+        , string kmlFileName
+        , out string joomlaPreviewHtml)
     {
+        joomlaPreviewHtml = string.Empty;
         if (!Directory.Exists(htmlTemplateFolderWithRelativePath))
         {
             throw new DirectoryNotFoundException($"The folder {Path.GetFullPath(htmlTemplateFolderWithRelativePath)} does not exist!");
@@ -96,6 +101,11 @@ public class CopyHtmlFiles: ICommandHandler<CopyHtmlFilesCommand>
             }
 
             File.Copy(file, savewwwFiles);
+
+            if (file.ToLower().Contains("joomlaPreview.html".ToLower()))
+            {
+                joomlaPreviewHtml = file;
+            }
         }
 
         string sourceFileName = Path.Join(nameOfAlbum, $"{nameOfAlbum}Thumbs.json");

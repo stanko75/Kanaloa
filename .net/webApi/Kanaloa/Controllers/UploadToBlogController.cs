@@ -5,6 +5,7 @@ using HtmlHandling;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using PostToJoomla;
 
 namespace Kanaloa.Controllers;
 
@@ -41,29 +42,7 @@ public class UploadToBlogController(ICommandHandler<DeleteFirstAndLastKmlPointsC
 
             var albumRoot = ReplaceKeysInFiles(copyHtmlFilesToPrepareForUploadCommand, listOfKeyValuesToReplaceInFiles, folder);
 
-            DeleteFirstAndLastKmlPointsCommand deleteFirstAndLastKmlPointsCommand =
-                new DeleteFirstAndLastKmlPointsCommand();
-            deleteFirstAndLastKmlPointsCommand.Folder = Path.Join(Path.Join(prepareForUpload, folder), "kml");
-            deleteFirstAndLastKmlPointsCommand.KmlFileName = kmlFileName;
-            if (int.TryParse(strDeleteFirstKmlPoints, out int intDeleteFirstKmlPoints))
-            {
-                deleteFirstAndLastKmlPointsCommand.DeleteFirstKmlPoints = intDeleteFirstKmlPoints;
-            }
-            else
-            {
-                throw new InvalidCastException("Cannot cast deleteFirstKmlPoints to int");
-            }
-
-            if (int.TryParse(strDeleteLastKmlPoints, out int intDeleteLastKmlPoints))
-            {
-                deleteFirstAndLastKmlPointsCommand.DeleteLastKmlPoints = intDeleteLastKmlPoints;
-            }
-            else
-            {
-                throw new InvalidCastException("Cannot cast deleteLastKmlPoints to int");
-            }
-
-            deleteFirstAndLastKmlPoints.Execute(deleteFirstAndLastKmlPointsCommand);
+            DeleteFirstAndLastKmlPoints(prepareForUpload, folder, kmlFileName, strDeleteFirstKmlPoints, strDeleteLastKmlPoints);
 
             MirrorDirAndFileRemoteOnFtp(host, user, pass, albumRoot, remoteRootFolder, folder);
 
@@ -73,6 +52,34 @@ public class UploadToBlogController(ICommandHandler<DeleteFirstAndLastKmlPointsC
         {
             return BadRequest($"Exception message: {e.Message}, inner exception: {e.InnerException}");
         }
+    }
+
+    private void DeleteFirstAndLastKmlPoints(string prepareForUpload, string folder, string kmlFileName,
+        string strDeleteFirstKmlPoints, string strDeleteLastKmlPoints)
+    {
+        DeleteFirstAndLastKmlPointsCommand deleteFirstAndLastKmlPointsCommand =
+            new DeleteFirstAndLastKmlPointsCommand();
+        deleteFirstAndLastKmlPointsCommand.Folder = Path.Join(Path.Join(prepareForUpload, folder), "kml");
+        deleteFirstAndLastKmlPointsCommand.KmlFileName = kmlFileName;
+        if (int.TryParse(strDeleteFirstKmlPoints, out int intDeleteFirstKmlPoints))
+        {
+            deleteFirstAndLastKmlPointsCommand.DeleteFirstKmlPoints = intDeleteFirstKmlPoints;
+        }
+        else
+        {
+            throw new InvalidCastException("Cannot cast deleteFirstKmlPoints to int");
+        }
+
+        if (int.TryParse(strDeleteLastKmlPoints, out int intDeleteLastKmlPoints))
+        {
+            deleteFirstAndLastKmlPointsCommand.DeleteLastKmlPoints = intDeleteLastKmlPoints;
+        }
+        else
+        {
+            throw new InvalidCastException("Cannot cast deleteLastKmlPoints to int");
+        }
+
+        deleteFirstAndLastKmlPoints.Execute(deleteFirstAndLastKmlPointsCommand);
     }
 
     private static void MirrorDirAndFileRemoteOnFtp(string host, string user, string pass, string albumRoot,

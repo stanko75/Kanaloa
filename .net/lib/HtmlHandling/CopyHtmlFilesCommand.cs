@@ -6,4 +6,5 @@ public class CopyHtmlFilesCommand
     public string PrepareForUploadFolder { get; set; }
     public string NameOfAlbum { get; set; }
     public string KmlFileName { get; set; }
+    public string JoomlaPreviewHtml { get; set; }
 }

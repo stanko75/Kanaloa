@@ -34,6 +34,9 @@
     <Reference Include="KmlHandling">
       <HintPath>..\..\lib\KmlHandling\bin\Debug\net10.0\KmlHandling.dll</HintPath>
     </Reference>
+    <Reference Include="PostToJoomla">
+      <HintPath>..\..\lib\PostToJoomla\bin\Debug\net10.0\PostToJoomla.dll</HintPath>
+    </Reference>
   </ItemGroup>
 
 </Project>

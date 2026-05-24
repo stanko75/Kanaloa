@@ -19,7 +19,8 @@ public class CopyHtmlFilesTests
         copyHtmlFiles.CopyHtmlTemplateForBlog(@"html\blog"
             , "prepareForUpload"
             , folder
-            , fileName);
+            , fileName
+            , out _);
         string pathToKmlShouldBe = Path.Join("prepareForUpload", Path.GetDirectoryName(fileName));
         Assert.IsTrue(Directory.Exists(pathToKmlShouldBe), $"File: {Path.GetFullPath(pathToKmlShouldBe)} not exists.");
     }
