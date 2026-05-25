@@ -52,19 +52,28 @@ public class UploadToBlogController(ICommandHandler<DeleteFirstAndLastKmlPointsC
 
             MirrorDirAndFileRemoteOnFtp(host, user, pass, albumRoot, remoteRootFolder, folder);
 
-            var ok = await PostArticleToJoomla(copyHtmlFilesToPrepareForUploadCommand
-                , joomlaCategoryId
-                , joomlaLoginUrl
-                , joomlaPostUrl
-                , joomlaUserName
-                , joomlaPass
-                , automaticallyFillMissingValuesCommand.OgTitle);
-            if (ok)
+            if (!string.IsNullOrWhiteSpace(joomlaCategoryId)
+                && !string.IsNullOrWhiteSpace(joomlaLoginUrl)
+                && !string.IsNullOrWhiteSpace(joomlaPostUrl)
+                && !string.IsNullOrWhiteSpace(joomlaUserName)
+                && !string.IsNullOrWhiteSpace(joomlaPass))
             {
-                return Ok(@$"Uploaded: {remoteRootFolder}/{folder}/{kmlFileName}");
+                var ok = await PostArticleToJoomla(copyHtmlFilesToPrepareForUploadCommand
+                    , joomlaCategoryId
+                    , joomlaLoginUrl
+                    , joomlaPostUrl
+                    , joomlaUserName
+                    , joomlaPass
+                    , automaticallyFillMissingValuesCommand.OgTitle);
+                if (ok)
+                {
+                    return Ok(@$"Uploaded: {remoteRootFolder}/{folder}/{kmlFileName}");
+                }
+
+                return BadRequest("Article was not saved successfully.");
             }
 
-            return BadRequest("Article was not saved successfully.");
+            return Ok(@$"Uploaded: {remoteRootFolder}/{folder}/{kmlFileName}");
 
         }
         catch (Exception e)
