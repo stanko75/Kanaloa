@@ -32,11 +32,11 @@ public class UploadToBlogController(ICommandHandler<DeleteFirstAndLastKmlPointsC
             string strDeleteFirstKmlPoints = CommonStaticMethods.GetValue(data, "deleteFirstKmlPoints");
             string prepareForUpload = "prepareForUpload";
 
-            string joomlaCategoryId = CommonStaticMethods.GetValue(data, "categoryId");
-            string joomlaLoginUrl = CommonStaticMethods.GetValue(data, "categoryId");
-            string joomlaPostUrl = CommonStaticMethods.GetValue(data, "categoryId");
-            string joomlaUserName = CommonStaticMethods.GetValue(data, "categoryId");
-            string joomlaPass = CommonStaticMethods.GetValue(data, "categoryId");
+            string joomlaCategoryId = CommonStaticMethods.GetValue(data, "joomlaCategoryId");
+            string joomlaLoginUrl = CommonStaticMethods.GetValue(data, "joomlaLoginUrl");
+            string joomlaPostUrl = CommonStaticMethods.GetValue(data, "joomlaPostUrl");
+            string joomlaUserName = CommonStaticMethods.GetValue(data, "joomlaUserName");
+            string joomlaPass = CommonStaticMethods.GetValue(data, "joomlaPass");
 
             string remoteRootFolder = "allWithPics/travelBuddies/";
 

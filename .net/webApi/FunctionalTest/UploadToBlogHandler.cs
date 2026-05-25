@@ -41,7 +41,12 @@ public class UploadToBlogHandler(ILogger logger) : ICommandHandler<UploadToBlogC
                 ["ogImage"] = ogImage,
                 ["baseUrl"] = baseUrl,
                 ["deleteLastKmlPoints"] = deleteLastKmlPoints,
-                ["deleteFirstKmlPoints"] = deleteFirstKmlPoints
+                ["deleteFirstKmlPoints"] = deleteFirstKmlPoints,
+                ["joomlaCategoryId"] = command.JoomlaCategoryId,
+                ["joomlaLoginUrl"] = command.JoomlaLoginUrl,
+                ["joomlaPostUrl"] = command.JoomlaPostUrl,
+                ["joomlaUserName"] = command.JoomlaUserName,
+                ["joomlaPass"] = command.JoomlaPass
             };
 
             string jsonContent = jObjectKmlFileFolder.ToString();

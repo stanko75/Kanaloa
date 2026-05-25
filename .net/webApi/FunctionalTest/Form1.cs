@@ -170,7 +170,13 @@ public partial class Form1 : Form
             PrepareForUpload = tbPrepareForUploadUrl.Text,
 
             DeleteFirstKmlPoints = tbDeleteFirstKmlPoints.Text,
-            DeleteLastKmlPoints = tbDeleteLastKmlPoints.Text
+            DeleteLastKmlPoints = tbDeleteLastKmlPoints.Text,
+
+            JoomlaCategoryId = tbJoomlaCategoryId.Text,
+            JoomlaLoginUrl = tbJoomlaLoginUrl.Text,
+            JoomlaPostUrl = tbJoomlaPostUrl.Text,
+            JoomlaUserName = tbJoomlaUserName.Text,
+            JoomlaPass = tbJoomlaPass.Text
         };
 
         await _cancellationDecoratorUploadToBlog.Execute(command);

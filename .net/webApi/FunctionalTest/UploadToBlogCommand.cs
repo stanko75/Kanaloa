@@ -16,4 +16,9 @@ public class UploadToBlogCommand
     public string PrepareForUpload { get; set; }
     public string DeleteFirstKmlPoints { get; set; }
     public string DeleteLastKmlPoints { get; set; }
+    public string JoomlaCategoryId { get; set; }
+    public string JoomlaLoginUrl { get; set; }
+    public string JoomlaPostUrl { get; set; }
+    public string JoomlaUserName { get; set; }
+    public string JoomlaPass { get; set; }
 }
