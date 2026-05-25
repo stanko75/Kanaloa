@@ -37,7 +37,7 @@ public class UploadToBlogController(ICommandHandler<DeleteFirstAndLastKmlPointsC
             string joomlaPostUrl = CommonStaticMethods.GetValue(data, "joomlaPostUrl");
             string joomlaUserName = CommonStaticMethods.GetValue(data, "joomlaUserName");
             string joomlaPass = CommonStaticMethods.GetValue(data, "joomlaPass");
-
+            
             string remoteRootFolder = "allWithPics/travelBuddies/";
 
             var copyHtmlFilesToPrepareForUploadCommand = CopyHtmlFilesToPrepareForUpload(folder, kmlFileName, prepareForUpload, @"html\templateForBlog");
@@ -57,7 +57,8 @@ public class UploadToBlogController(ICommandHandler<DeleteFirstAndLastKmlPointsC
                 , joomlaLoginUrl
                 , joomlaPostUrl
                 , joomlaUserName
-                , joomlaPass);
+                , joomlaPass
+                , automaticallyFillMissingValuesCommand.OgTitle);
             if (ok)
             {
                 return Ok(@$"Uploaded: {remoteRootFolder}/{folder}/{kmlFileName}");
@@ -77,7 +78,8 @@ public class UploadToBlogController(ICommandHandler<DeleteFirstAndLastKmlPointsC
         , string joomlaLoginUrl
         , string joomlaPostUrl
         , string joomlaUserName
-        , string joomlaPass)
+        , string joomlaPass
+        , string articleTitle)
     {
         OpenAdminPageAndPostArticleCommand openAdminPageAndPostArticleCommand = new OpenAdminPageAndPostArticleCommand
             {
@@ -87,7 +89,7 @@ public class UploadToBlogController(ICommandHandler<DeleteFirstAndLastKmlPointsC
                 UserName = joomlaUserName,
                 Pass = joomlaPass,
                 ArticleText = await System.IO.File.ReadAllTextAsync(copyHtmlFilesToPrepareForUploadCommand.JoomlaPreviewHtml),
-                Title = "test"
+                Title = articleTitle
             };
 
         OpenAdminPageAndPostArticle openAdminPageAndPostArticle = new OpenAdminPageAndPostArticle();
