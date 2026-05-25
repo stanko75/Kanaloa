@@ -77,12 +77,7 @@ public class UploadToBlogController(ICommandHandler<DeleteFirstAndLastKmlPointsC
         OpenAdminPageAndPostArticle openAdminPageAndPostArticle = new OpenAdminPageAndPostArticle();
         await openAdminPageAndPostArticle.Execute(openAdminPageAndPostArticleCommand);
 
-        if (!openAdminPageAndPostArticleCommand.IsSaved)
-        {
-            return true;
-        }
-
-        return false;
+        return openAdminPageAndPostArticleCommand.IsSaved;
     }
 
     private void DeleteFirstAndLastKmlPoints(string prepareForUpload, string folder, string kmlFileName,
