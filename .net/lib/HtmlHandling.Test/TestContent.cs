@@ -33,7 +33,7 @@ public static class TestContent
         var uri = new Uri(expectedUrl);
         var path = uri.AbsolutePath.TrimStart('/');
         path = path["gallery/".Length..];
-        string relativePath = $"/{path}{folderName}";
+        string relativePath = $"/gallery/{path}{folderName}";
 
         var hrefMatch = Regex.Match(
             joomlaPreviewHtml,
@@ -45,7 +45,7 @@ public static class TestContent
 
         var scriptSrcMatch = Regex.Match(
             joomlaPreviewHtml,
-            @"<script\s+[^>]*src=[""']([^""']+)[""']",
+            @"<script\s+[^>]*src=[""']([^""']*/lib/)",
             RegexOptions.IgnoreCase
         );
         testMethod(scriptSrcMatch, $"{relativePath}/www/lib/", "jQuery.getJSON is wrong", "jQuery.getJSON not found!", "jQuery.getJSON OK", 1);

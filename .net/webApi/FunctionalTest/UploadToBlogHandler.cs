@@ -169,7 +169,14 @@ public class UploadToBlogHandler(ILogger logger) : ICommandHandler<UploadToBlogC
                                 if (match.Success)
                                 {
                                     string regExValue = match.Groups[index].Value;
-                                    logger.Log(regExValue == expected ? foundMsg : wrongMsg);
+                                    if (regExValue == expected)
+                                    {
+                                        logger.Log(foundMsg);
+                                    }
+                                    else
+                                    {
+                                        logger.Log(new Exception(wrongMsg));
+                                    }
                                 }
                                 else
                                     logger.Log(new Exception(notFoundMsg));
