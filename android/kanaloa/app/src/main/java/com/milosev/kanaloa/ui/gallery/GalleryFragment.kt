@@ -18,7 +18,7 @@ import com.google.gson.GsonBuilder
 import com.milosev.kanaloa.SharedPreferencesGlobal
 import com.milosev.kanaloa.databinding.FragmentGalleryBinding
 import com.milosev.kanaloa.logger.LogViewModelLogger
-import com.milosev.kanaloa.retrofit.uploadtoblog.FtpModel
+import com.milosev.kanaloa.retrofit.uploadtoblog.BlogUploadModel
 import com.milosev.kanaloa.retrofit.uploadtoblog.UploadToBlogCallbacks
 import com.milosev.kanaloa.ui.UploadViewModel
 import com.milosev.kanaloa.ui.log.LogViewModel
@@ -126,7 +126,7 @@ class GalleryFragment : Fragment() {
 
             val builder = GsonBuilder()
             val gson: Gson = builder.create()
-            val ftpModel = FtpModel()
+            val blogUploadModel = BlogUploadModel()
 
             val ftpSharedPreferences =
                 activity?.getSharedPreferences(SharedPreferencesGlobal.FtpSettings, Context.MODE_PRIVATE)
@@ -134,22 +134,31 @@ class GalleryFragment : Fragment() {
             val fileAndFolderNameSharedPreferences =
                 context?.getSharedPreferences(SharedPreferencesGlobal.Settings, Context.MODE_PRIVATE)
 
-            ftpModel.host = ftpSharedPreferences?.getString("host", "ftp.host.com")
-            ftpModel.user = ftpSharedPreferences?.getString("user", "")
-            ftpModel.pass = ftpSharedPreferences?.getString("pass", "")
-            ftpModel.folderName = fileAndFolderNameSharedPreferences?.getString("folderName", "")
-            ftpModel.kmlFileName = fileAndFolderNameSharedPreferences?.getString("kmlFileName","")
-            ftpModel.ogTitle = fileAndFolderNameSharedPreferences?.getString("ogTitle", "")
-            ftpModel.ogImage = fileAndFolderNameSharedPreferences?.getString("ogImage","")
-            ftpModel.baseUrl = fileAndFolderNameSharedPreferences?.getString("baseUrl","")
-            ftpModel.deleteLastKmlPoints = fileAndFolderNameSharedPreferences?.getString("deleteLastKmlPoints","")
-            ftpModel.deleteFirstKmlPoints = fileAndFolderNameSharedPreferences?.getString("deleteFirstKmlPoints","")
+            val joomlaSharedPreferences =
+                context?.getSharedPreferences(SharedPreferencesGlobal.JoomlaSettings, Context.MODE_PRIVATE)
+
+            blogUploadModel.host = ftpSharedPreferences?.getString("host", "ftp.host.com")
+            blogUploadModel.user = ftpSharedPreferences?.getString("user", "")
+            blogUploadModel.pass = ftpSharedPreferences?.getString("pass", "")
+            blogUploadModel.folderName = fileAndFolderNameSharedPreferences?.getString("folderName", "")
+            blogUploadModel.kmlFileName = fileAndFolderNameSharedPreferences?.getString("kmlFileName","")
+            blogUploadModel.ogTitle = fileAndFolderNameSharedPreferences?.getString("ogTitle", "")
+            blogUploadModel.ogImage = fileAndFolderNameSharedPreferences?.getString("ogImage","")
+            blogUploadModel.baseUrl = fileAndFolderNameSharedPreferences?.getString("baseUrl","")
+            blogUploadModel.deleteLastKmlPoints = fileAndFolderNameSharedPreferences?.getString("deleteLastKmlPoints","")
+            blogUploadModel.deleteFirstKmlPoints = fileAndFolderNameSharedPreferences?.getString("deleteFirstKmlPoints","")
+
+            blogUploadModel.joomlaCategoryId = joomlaSharedPreferences?.getString("categoryId", "")
+            blogUploadModel.joomlaLoginUrl = joomlaSharedPreferences?.getString("loginUrl", "")
+            blogUploadModel.joomlaPostUrl = joomlaSharedPreferences?.getString("postUrl", "")
+            blogUploadModel.joomlaUserName = joomlaSharedPreferences?.getString("userName", "")
+            blogUploadModel.joomlaPass = joomlaSharedPreferences?.getString("pass", "")
 
             val activity = activity as Activity
             val uploadToBlogCallbacks =
-                UploadToBlogCallbacks(LogViewModelLogger(ViewModelProvider(requireActivity())[LogViewModel::class.java]), activity, ftpModel.folderName);
+                UploadToBlogCallbacks(LogViewModelLogger(ViewModelProvider(requireActivity())[LogViewModel::class.java]), activity, blogUploadModel.folderName);
 
-            uploadViewModel?.uploadToBlog(gson.toJson(ftpModel), uploadToBlogCallbacks)
+            uploadViewModel?.uploadToBlog(gson.toJson(blogUploadModel), uploadToBlogCallbacks)
         }
 
         return root
