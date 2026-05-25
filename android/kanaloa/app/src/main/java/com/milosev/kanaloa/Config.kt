@@ -19,5 +19,6 @@ object SharedPreferencesGlobal {
     const val Settings = "settings"
     const val FtpSettings = "ftpSettings"
     const val Live = "live"
+    const val JoomlaSettings = "joomlaSettings"
 
 }

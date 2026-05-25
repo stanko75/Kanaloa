@@ -26,6 +26,10 @@
             android:name=".ui.settings.SettingsActivity"
             android:exported="false" />
         <activity
+            android:name=".ui.settings.JoomlaSettingsActivity"
+            android:exported="false"
+            android:label="@string/action_joomla_settings" />
+        <activity
             android:name=".MainActivity"
             android:exported="true"
             android:label="@string/app_name"

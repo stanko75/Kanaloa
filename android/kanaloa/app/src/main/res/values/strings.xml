@@ -38,4 +38,11 @@
     <string name="defaultDeleteFirstKmlPoints">100</string>
     <string name="deleteLastKmlPoints">Delete last KML points</string>
     <string name="defaultDeleteLastKmlPoints">100</string>
+
+    <string name="joomla_category_id">Joomla! category id:</string>
+    <string name="joomla_login_url">Joomla! login url:</string>
+    <string name="joomla_post_url">Joomla! post url:</string>
+    <string name="joomla_user_name">Joomla! user name:</string>
+    <string name="joomla_pass">Joomla! pass:</string>
+    <string name="cancel">Cancel</string>
 </resources>

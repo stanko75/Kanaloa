@@ -16,6 +16,7 @@ import androidx.appcompat.app.AppCompatActivity
 import com.milosev.kanaloa.databinding.ActivityMainBinding
 import com.milosev.kanaloa.location.LocationPermissionHelper
 import com.milosev.kanaloa.ui.settings.SettingsActivity
+import com.milosev.kanaloa.ui.settings.JoomlaSettingsActivity
 
 class MainActivity : AppCompatActivity() {
 
@@ -65,7 +66,7 @@ class MainActivity : AppCompatActivity() {
             }
 
             R.id.action_joomla_settings -> {
-                val intent = Intent(this, SettingsActivity::class.java)
+                val intent = Intent(this, JoomlaSettingsActivity::class.java)
                 startActivity(intent)
                 true
             }
