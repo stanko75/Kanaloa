@@ -75,6 +75,21 @@ public partial class Form1 : Form
 
             string? strDeleteLastKmlPoints = configuration.GetSection("DeleteLastKmlPoints").Value;
             if (strDeleteLastKmlPoints is not null) tbDeleteLastKmlPoints.Text = strDeleteLastKmlPoints;
+
+            string? strJoomlaCategoryId = configuration.GetSection("JoomlaCategoryId").Value;
+            if (strJoomlaCategoryId is not null) tbJoomlaCategoryId.Text = strJoomlaCategoryId;
+
+            string? strJoomlaLoginUrl = configuration.GetSection("JoomlaLoginUrl").Value;
+            if (strJoomlaLoginUrl is not null) tbJoomlaLoginUrl.Text = strJoomlaLoginUrl;
+
+            string? strJoomlaPostUrl = configuration.GetSection("JoomlaPostUrl").Value;
+            if (strJoomlaPostUrl is not null) tbJoomlaPostUrl.Text = strJoomlaPostUrl;
+
+            string? strJoomlaUserName = configuration.GetSection("JoomlaUserName").Value;
+            if (strJoomlaUserName is not null) tbJoomlaUserName.Text = strJoomlaUserName;
+
+            string? strJoomlaPass = configuration.GetSection("JoomlaPass").Value;
+            if (strJoomlaPass is not null) tbJoomlaPass.Text = strJoomlaPass;
         }
     }
 
@@ -96,7 +111,12 @@ public partial class Form1 : Form
             ["expectedUrl"] = tbExpectedUrl.Text,
             ["PrepareForUploadUrl"] = tbPrepareForUploadUrl.Text,
             ["DeleteFirstKmlPoints"] = tbDeleteFirstKmlPoints.Text,
-            ["DeleteLastKmlPoints"] = tbDeleteLastKmlPoints.Text
+            ["DeleteLastKmlPoints"] = tbDeleteLastKmlPoints.Text,
+            ["JoomlaCategoryId"] = tbJoomlaCategoryId.Text,
+            ["JoomlaLoginUrl"] = tbJoomlaLoginUrl.Text,
+            ["JoomlaPostUrl"] = tbJoomlaPostUrl.Text,
+            ["JoomlaUserName"] = tbJoomlaUserName.Text,
+            ["JoomlaPass"] = tbJoomlaPass.Text
         };
 
         string json = jsonConfig.ToString(Formatting.Indented);

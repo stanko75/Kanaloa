@@ -32,6 +32,8 @@
             panel1 = new Panel();
             log = new TextBox();
             panel2 = new Panel();
+            label20 = new Label();
+            tbJoomlaPass = new TextBox();
             tbJoomlaCategoryId = new TextBox();
             label19 = new Label();
             tbJoomlaUserName = new TextBox();
@@ -78,8 +80,6 @@
             UploadToBlog = new Button();
             btnCancel = new Button();
             linkLabel1 = new LinkLabel();
-            label20 = new Label();
-            tbJoomlaPass = new TextBox();
             panel1.SuspendLayout();
             panel2.SuspendLayout();
             SuspendLayout();
@@ -165,6 +165,22 @@
             panel2.Name = "panel2";
             panel2.Size = new Size(926, 592);
             panel2.TabIndex = 2;
+            // 
+            // label20
+            // 
+            label20.AutoSize = true;
+            label20.Location = new Point(12, 559);
+            label20.Name = "label20";
+            label20.Size = new Size(77, 15);
+            label20.TabIndex = 43;
+            label20.Text = "Joomla! pass:";
+            // 
+            // tbJoomlaPass
+            // 
+            tbJoomlaPass.Location = new Point(171, 556);
+            tbJoomlaPass.Name = "tbJoomlaPass";
+            tbJoomlaPass.Size = new Size(555, 23);
+            tbJoomlaPass.TabIndex = 42;
             // 
             // tbJoomlaCategoryId
             // 
@@ -554,22 +570,6 @@
             linkLabel1.TabStop = true;
             linkLabel1.Text = "https://kanaloa.azurewebsites.net/html/live/index.html";
             linkLabel1.LinkClicked += linkLabel1_LinkClicked;
-            // 
-            // label20
-            // 
-            label20.AutoSize = true;
-            label20.Location = new Point(12, 559);
-            label20.Name = "label20";
-            label20.Size = new Size(77, 15);
-            label20.TabIndex = 43;
-            label20.Text = "Joomla! pass:";
-            // 
-            // tbJoomlaPass
-            // 
-            tbJoomlaPass.Location = new Point(171, 556);
-            tbJoomlaPass.Name = "tbJoomlaPass";
-            tbJoomlaPass.Size = new Size(555, 23);
-            tbJoomlaPass.TabIndex = 42;
             // 
             // Form1
             // 
