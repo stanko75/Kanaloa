@@ -32,6 +32,12 @@ public class UploadToBlogController(ICommandHandler<DeleteFirstAndLastKmlPointsC
             string strDeleteFirstKmlPoints = CommonStaticMethods.GetValue(data, "deleteFirstKmlPoints");
             string prepareForUpload = "prepareForUpload";
 
+            string joomlaCategoryId = CommonStaticMethods.GetValue(data, "categoryId");
+            string joomlaLoginUrl = CommonStaticMethods.GetValue(data, "categoryId");
+            string joomlaPostUrl = CommonStaticMethods.GetValue(data, "categoryId");
+            string joomlaUserName = CommonStaticMethods.GetValue(data, "categoryId");
+            string joomlaPass = CommonStaticMethods.GetValue(data, "categoryId");
+
             string remoteRootFolder = "allWithPics/travelBuddies/";
 
             var copyHtmlFilesToPrepareForUploadCommand = CopyHtmlFilesToPrepareForUpload(folder, kmlFileName, prepareForUpload, @"html\templateForBlog");
@@ -46,7 +52,12 @@ public class UploadToBlogController(ICommandHandler<DeleteFirstAndLastKmlPointsC
 
             MirrorDirAndFileRemoteOnFtp(host, user, pass, albumRoot, remoteRootFolder, folder);
 
-            var ok = await PostArticleToJoomla(copyHtmlFilesToPrepareForUploadCommand);
+            var ok = await PostArticleToJoomla(copyHtmlFilesToPrepareForUploadCommand
+                , joomlaCategoryId
+                , joomlaLoginUrl
+                , joomlaPostUrl
+                , joomlaUserName
+                , joomlaPass);
             if (ok)
             {
                 return Ok(@$"Uploaded: {remoteRootFolder}/{folder}/{kmlFileName}");
@@ -61,18 +72,23 @@ public class UploadToBlogController(ICommandHandler<DeleteFirstAndLastKmlPointsC
         }
     }
 
-    private async Task<bool> PostArticleToJoomla(CopyHtmlFilesCommand copyHtmlFilesToPrepareForUploadCommand)
+    private async Task<bool> PostArticleToJoomla(CopyHtmlFilesCommand copyHtmlFilesToPrepareForUploadCommand
+        , string joomlaCategoryId
+        , string joomlaLoginUrl
+        , string joomlaPostUrl
+        , string joomlaUserName
+        , string joomlaPass)
     {
-        OpenAdminPageAndPostArticleCommand openAdminPageAndPostArticleCommand = new OpenAdminPageAndPostArticleCommand();
-        openAdminPageAndPostArticleCommand.CategoryId = "9";
-        openAdminPageAndPostArticleCommand.LoginUrl = "LoginUrl";
-        openAdminPageAndPostArticleCommand.PostUrl = "PostUrl";
-
-        openAdminPageAndPostArticleCommand.UserName = "test";
-        openAdminPageAndPostArticleCommand.Pass = "test";
-        openAdminPageAndPostArticleCommand.ArticleText = await System.IO.File.ReadAllTextAsync(copyHtmlFilesToPrepareForUploadCommand.JoomlaPreviewHtml);
-
-        openAdminPageAndPostArticleCommand.Title = "test";
+        OpenAdminPageAndPostArticleCommand openAdminPageAndPostArticleCommand = new OpenAdminPageAndPostArticleCommand
+            {
+                CategoryId = joomlaCategoryId,
+                LoginUrl = joomlaLoginUrl,
+                PostUrl = joomlaPostUrl,
+                UserName = joomlaUserName,
+                Pass = joomlaPass,
+                ArticleText = await System.IO.File.ReadAllTextAsync(copyHtmlFilesToPrepareForUploadCommand.JoomlaPreviewHtml),
+                Title = "test"
+            };
 
         OpenAdminPageAndPostArticle openAdminPageAndPostArticle = new OpenAdminPageAndPostArticle();
         await openAdminPageAndPostArticle.Execute(openAdminPageAndPostArticleCommand);
