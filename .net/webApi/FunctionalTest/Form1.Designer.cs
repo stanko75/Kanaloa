@@ -32,6 +32,14 @@
             panel1 = new Panel();
             log = new TextBox();
             panel2 = new Panel();
+            tbJoomlaCategoryId = new TextBox();
+            label19 = new Label();
+            tbJoomlaUserName = new TextBox();
+            label18 = new Label();
+            tbJoomlaPostUrl = new TextBox();
+            label17 = new Label();
+            tbJoomlaLoginUrl = new TextBox();
+            label16 = new Label();
             label14 = new Label();
             tbDeleteLastKmlPoints = new TextBox();
             label15 = new Label();
@@ -70,6 +78,8 @@
             UploadToBlog = new Button();
             btnCancel = new Button();
             linkLabel1 = new LinkLabel();
+            label20 = new Label();
+            tbJoomlaPass = new TextBox();
             panel1.SuspendLayout();
             panel2.SuspendLayout();
             SuspendLayout();
@@ -77,7 +87,7 @@
             // PostGpsPositionsFromFilesWithFileName
             // 
             PostGpsPositionsFromFilesWithFileName.Dock = DockStyle.Bottom;
-            PostGpsPositionsFromFilesWithFileName.Location = new Point(0, 555);
+            PostGpsPositionsFromFilesWithFileName.Location = new Point(0, 703);
             PostGpsPositionsFromFilesWithFileName.Name = "PostGpsPositionsFromFilesWithFileName";
             PostGpsPositionsFromFilesWithFileName.Size = new Size(926, 23);
             PostGpsPositionsFromFilesWithFileName.TabIndex = 0;
@@ -89,9 +99,9 @@
             // 
             panel1.Controls.Add(log);
             panel1.Dock = DockStyle.Fill;
-            panel1.Location = new Point(0, 479);
+            panel1.Location = new Point(0, 592);
             panel1.Name = "panel1";
-            panel1.Size = new Size(926, 76);
+            panel1.Size = new Size(926, 111);
             panel1.TabIndex = 1;
             // 
             // log
@@ -101,11 +111,21 @@
             log.Multiline = true;
             log.Name = "log";
             log.ScrollBars = ScrollBars.Both;
-            log.Size = new Size(926, 76);
+            log.Size = new Size(926, 111);
             log.TabIndex = 0;
             // 
             // panel2
             // 
+            panel2.Controls.Add(label20);
+            panel2.Controls.Add(tbJoomlaPass);
+            panel2.Controls.Add(tbJoomlaCategoryId);
+            panel2.Controls.Add(label19);
+            panel2.Controls.Add(tbJoomlaUserName);
+            panel2.Controls.Add(label18);
+            panel2.Controls.Add(tbJoomlaPostUrl);
+            panel2.Controls.Add(label17);
+            panel2.Controls.Add(tbJoomlaLoginUrl);
+            panel2.Controls.Add(label16);
             panel2.Controls.Add(label14);
             panel2.Controls.Add(tbDeleteLastKmlPoints);
             panel2.Controls.Add(label15);
@@ -143,8 +163,72 @@
             panel2.Dock = DockStyle.Top;
             panel2.Location = new Point(0, 0);
             panel2.Name = "panel2";
-            panel2.Size = new Size(926, 479);
+            panel2.Size = new Size(926, 592);
             panel2.TabIndex = 2;
+            // 
+            // tbJoomlaCategoryId
+            // 
+            tbJoomlaCategoryId.Location = new Point(171, 440);
+            tbJoomlaCategoryId.Name = "tbJoomlaCategoryId";
+            tbJoomlaCategoryId.Size = new Size(555, 23);
+            tbJoomlaCategoryId.TabIndex = 41;
+            // 
+            // label19
+            // 
+            label19.AutoSize = true;
+            label19.Location = new Point(12, 530);
+            label19.Name = "label19";
+            label19.Size = new Size(109, 15);
+            label19.TabIndex = 40;
+            label19.Text = "Joomla! user name:";
+            // 
+            // tbJoomlaUserName
+            // 
+            tbJoomlaUserName.Location = new Point(171, 527);
+            tbJoomlaUserName.Name = "tbJoomlaUserName";
+            tbJoomlaUserName.Size = new Size(555, 23);
+            tbJoomlaUserName.TabIndex = 39;
+            // 
+            // label18
+            // 
+            label18.AutoSize = true;
+            label18.Location = new Point(12, 501);
+            label18.Name = "label18";
+            label18.Size = new Size(94, 15);
+            label18.TabIndex = 38;
+            label18.Text = "Joomla! post url:";
+            // 
+            // tbJoomlaPostUrl
+            // 
+            tbJoomlaPostUrl.Location = new Point(171, 498);
+            tbJoomlaPostUrl.Name = "tbJoomlaPostUrl";
+            tbJoomlaPostUrl.Size = new Size(555, 23);
+            tbJoomlaPostUrl.TabIndex = 37;
+            // 
+            // label17
+            // 
+            label17.AutoSize = true;
+            label17.Location = new Point(12, 472);
+            label17.Name = "label17";
+            label17.Size = new Size(98, 15);
+            label17.TabIndex = 36;
+            label17.Text = "Joomla! login url:";
+            // 
+            // tbJoomlaLoginUrl
+            // 
+            tbJoomlaLoginUrl.Location = new Point(171, 469);
+            tbJoomlaLoginUrl.Name = "tbJoomlaLoginUrl";
+            tbJoomlaLoginUrl.Size = new Size(555, 23);
+            tbJoomlaLoginUrl.TabIndex = 35;
+            // 
+            // label16
+            // 
+            label16.AutoSize = true;
+            label16.Location = new Point(12, 443);
+            label16.Name = "label16";
+            label16.Size = new Size(113, 15);
+            label16.TabIndex = 34;
+            label16.Text = "Joomla! category id:";
             // 
             // label14
             // 
@@ -429,7 +513,7 @@
             // UploadImage
             // 
             UploadImage.Dock = DockStyle.Bottom;
-            UploadImage.Location = new Point(0, 578);
+            UploadImage.Location = new Point(0, 726);
             UploadImage.Name = "UploadImage";
             UploadImage.Size = new Size(926, 23);
             UploadImage.TabIndex = 3;
@@ -440,7 +524,7 @@
             // UploadToBlog
             // 
             UploadToBlog.Dock = DockStyle.Bottom;
-            UploadToBlog.Location = new Point(0, 601);
+            UploadToBlog.Location = new Point(0, 749);
             UploadToBlog.Name = "UploadToBlog";
             UploadToBlog.Size = new Size(926, 23);
             UploadToBlog.TabIndex = 4;
@@ -451,7 +535,7 @@
             // btnCancel
             // 
             btnCancel.Dock = DockStyle.Bottom;
-            btnCancel.Location = new Point(0, 624);
+            btnCancel.Location = new Point(0, 772);
             btnCancel.Name = "btnCancel";
             btnCancel.Size = new Size(926, 23);
             btnCancel.TabIndex = 5;
@@ -463,7 +547,7 @@
             // 
             linkLabel1.AutoSize = true;
             linkLabel1.Dock = DockStyle.Bottom;
-            linkLabel1.Location = new Point(0, 647);
+            linkLabel1.Location = new Point(0, 795);
             linkLabel1.Name = "linkLabel1";
             linkLabel1.Size = new Size(298, 15);
             linkLabel1.TabIndex = 7;
@@ -471,11 +555,27 @@
             linkLabel1.Text = "https://kanaloa.azurewebsites.net/html/live/index.html";
             linkLabel1.LinkClicked += linkLabel1_LinkClicked;
             // 
+            // label20
+            // 
+            label20.AutoSize = true;
+            label20.Location = new Point(12, 559);
+            label20.Name = "label20";
+            label20.Size = new Size(77, 15);
+            label20.TabIndex = 43;
+            label20.Text = "Joomla! pass:";
+            // 
+            // tbJoomlaPass
+            // 
+            tbJoomlaPass.Location = new Point(171, 556);
+            tbJoomlaPass.Name = "tbJoomlaPass";
+            tbJoomlaPass.Size = new Size(555, 23);
+            tbJoomlaPass.TabIndex = 42;
+            // 
             // Form1
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(926, 662);
+            ClientSize = new Size(926, 810);
             Controls.Add(panel1);
             Controls.Add(panel2);
             Controls.Add(PostGpsPositionsFromFilesWithFileName);
@@ -538,5 +638,16 @@
         private TextBox tbDeleteLastKmlPoints;
         private Label label15;
         private TextBox tbDeleteFirstKmlPoints;
+        private Label label16;
+        private TextBox textBox1;
+        private Label label19;
+        private TextBox tbJoomlaUserName;
+        private Label label18;
+        private TextBox tbJoomlaPostUrl;
+        private Label label17;
+        private TextBox tbJoomlaLoginUrl;
+        private TextBox tbJoomlaCategoryId;
+        private Label label20;
+        private TextBox tbJoomlaPass;
     }
 }
