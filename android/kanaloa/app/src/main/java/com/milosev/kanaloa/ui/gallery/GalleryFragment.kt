@@ -17,7 +17,9 @@ import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import com.milosev.kanaloa.SharedPreferencesGlobal
 import com.milosev.kanaloa.databinding.FragmentGalleryBinding
+import com.milosev.kanaloa.logger.LogEntry
 import com.milosev.kanaloa.logger.LogViewModelLogger
+import com.milosev.kanaloa.logger.LoggingEventType
 import com.milosev.kanaloa.retrofit.uploadtoblog.BlogUploadModel
 import com.milosev.kanaloa.retrofit.uploadtoblog.UploadToBlogCallbacks
 import com.milosev.kanaloa.ui.UploadViewModel
@@ -154,9 +156,16 @@ class GalleryFragment : Fragment() {
             blogUploadModel.joomlaUserName = joomlaSharedPreferences?.getString("userName", "")
             blogUploadModel.joomlaPass = joomlaSharedPreferences?.getString("pass", "")
 
+            val logViewModelLogger = LogViewModelLogger(ViewModelProvider(requireActivity())[LogViewModel::class.java]);
+            logViewModelLogger.Log(
+                LogEntry(
+                    LoggingEventType.Information,
+                    "Upload to blog started"
+                )
+            )
             val activity = activity as Activity
             val uploadToBlogCallbacks =
-                UploadToBlogCallbacks(LogViewModelLogger(ViewModelProvider(requireActivity())[LogViewModel::class.java]), activity, blogUploadModel.folderName);
+                UploadToBlogCallbacks(logViewModelLogger, activity, blogUploadModel.folderName);
 
             uploadViewModel?.uploadToBlog(gson.toJson(blogUploadModel), uploadToBlogCallbacks)
         }
