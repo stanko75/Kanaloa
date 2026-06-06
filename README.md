@@ -66,3 +66,14 @@ In \Kanaloa\html\templateForBlog index.html should be added, and it looks like:
 
 </html>
 ```
+
+Since GoDaddy started blocking my FTP requests from Azure, file uploads are now handled through the php/kanaloaUpload.php script. To use it, add a kanaloaUploadConfig.php file to the root folder of your hosting account. It should look like this:
+
+```php
+<?php
+
+return [
+    'username' => 'myuser',
+    'password' => 'mypassword'
+];
+```
