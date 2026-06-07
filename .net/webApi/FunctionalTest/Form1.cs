@@ -31,93 +31,38 @@ public partial class Form1 : Form
                 .AddJsonFile(JsonConfigForTests)
                 .Build();
 
-            string? addressValue = configuration.GetSection("address").Value;
-            if (address is not null) address.Text = addressValue;
+            foreach (TextBox tb in GetAllTextBoxes(this))
+            {
+                string? value = configuration[tb.Name];
 
-            string? gpsLocationsPath = configuration.GetSection("gpsLocationsPath").Value;
-            if (gpsLocationsPath is not null) tbGpsLocationsPath.Text = gpsLocationsPath;
+                if (value is not null)
+                {
+                    tb.Text = value;
+                }
+            }
+        }
+    }
 
-            string? ftpUser = configuration.GetSection("ftpUser").Value;
-            if (ftpUser is not null) tbFtpUser.Text = ftpUser;
+    private IEnumerable<TextBox> GetAllTextBoxes(Control parent)
+    {
+        foreach (Control control in parent.Controls)
+        {
+            if (control is TextBox textBox)
+                yield return textBox;
 
-            string? ftpHost = configuration.GetSection("ftpHost").Value;
-            if (ftpHost is not null) tbFtpHost.Text = ftpHost;
-
-            string? ftpPass = configuration.GetSection("ftpPass").Value;
-            if (ftpPass is not null) tbFtpPass.Text = ftpPass;
-
-            string? strImagesPath = configuration.GetSection("imagesPath").Value;
-            if (strImagesPath is not null) imagesPath.Text = strImagesPath;
-
-            string? strKmlFileName = configuration.GetSection("kmlFileName").Value;
-            if (strKmlFileName is not null) kmlFileName.Text = strKmlFileName;
-
-            string? strFolderName = configuration.GetSection("folderName").Value;
-            if (strFolderName is not null) folderName.Text = strFolderName;
-
-            string? strOgImage = configuration.GetSection("ogImage").Value;
-            if (strOgImage is not null) tbOgImage.Text = strOgImage;
-
-            string? strOgTitle = configuration.GetSection("ogTitle").Value;
-            if (strOgTitle is not null) tbOgTitle.Text = strOgTitle;
-
-            string? strBaseUrl = configuration.GetSection("baseUrl").Value;
-            if (strBaseUrl is not null) tbBaseUrl.Text = strBaseUrl;
-
-            string? strExpectedUrl = configuration.GetSection("expectedUrl").Value;
-            if (strExpectedUrl is not null) tbExpectedUrl.Text = strExpectedUrl;
-
-            string? strPrepareForUploadUrl = configuration.GetSection("PrepareForUploadUrl").Value;
-            if (strPrepareForUploadUrl is not null) tbPrepareForUploadUrl.Text = strPrepareForUploadUrl;
-
-            string? strDeleteFirstKmlPoints = configuration.GetSection("DeleteFirstKmlPoints").Value;
-            if (strDeleteFirstKmlPoints is not null) tbDeleteFirstKmlPoints.Text = strDeleteFirstKmlPoints;
-
-            string? strDeleteLastKmlPoints = configuration.GetSection("DeleteLastKmlPoints").Value;
-            if (strDeleteLastKmlPoints is not null) tbDeleteLastKmlPoints.Text = strDeleteLastKmlPoints;
-
-            string? strJoomlaCategoryId = configuration.GetSection("JoomlaCategoryId").Value;
-            if (strJoomlaCategoryId is not null) tbJoomlaCategoryId.Text = strJoomlaCategoryId;
-
-            string? strJoomlaLoginUrl = configuration.GetSection("JoomlaLoginUrl").Value;
-            if (strJoomlaLoginUrl is not null) tbJoomlaLoginUrl.Text = strJoomlaLoginUrl;
-
-            string? strJoomlaPostUrl = configuration.GetSection("JoomlaPostUrl").Value;
-            if (strJoomlaPostUrl is not null) tbJoomlaPostUrl.Text = strJoomlaPostUrl;
-
-            string? strJoomlaUserName = configuration.GetSection("JoomlaUserName").Value;
-            if (strJoomlaUserName is not null) tbJoomlaUserName.Text = strJoomlaUserName;
-
-            string? strJoomlaPass = configuration.GetSection("JoomlaPass").Value;
-            if (strJoomlaPass is not null) tbJoomlaPass.Text = strJoomlaPass;
+            foreach (var childTextBox in GetAllTextBoxes(control))
+                yield return childTextBox;
         }
     }
 
     private void Form1_FormClosed(object sender, FormClosedEventArgs e)
     {
-        var jsonConfig = new JObject
+        var jsonConfig = new JObject();
+
+        foreach (TextBox tb in GetAllTextBoxes(this))
         {
-            ["address"] = address.Text,
-            ["gpsLocationsPath"] = tbGpsLocationsPath.Text,
-            ["ftpUser"] = tbFtpUser.Text,
-            ["ftpHost"] = tbFtpHost.Text,
-            ["ftpPass"] = tbFtpPass.Text,
-            ["folderName"] = folderName.Text,
-            ["kmlFileName"] = kmlFileName.Text,
-            ["imagesPath"] = imagesPath.Text,
-            ["ogTitle"] = tbOgTitle.Text,
-            ["ogImage"] = tbOgImage.Text,
-            ["baseUrl"] = tbBaseUrl.Text,
-            ["expectedUrl"] = tbExpectedUrl.Text,
-            ["PrepareForUploadUrl"] = tbPrepareForUploadUrl.Text,
-            ["DeleteFirstKmlPoints"] = tbDeleteFirstKmlPoints.Text,
-            ["DeleteLastKmlPoints"] = tbDeleteLastKmlPoints.Text,
-            ["JoomlaCategoryId"] = tbJoomlaCategoryId.Text,
-            ["JoomlaLoginUrl"] = tbJoomlaLoginUrl.Text,
-            ["JoomlaPostUrl"] = tbJoomlaPostUrl.Text,
-            ["JoomlaUserName"] = tbJoomlaUserName.Text,
-            ["JoomlaPass"] = tbJoomlaPass.Text
-        };
+            jsonConfig[tb.Name] = tb.Text;
+        }
 
         string json = jsonConfig.ToString(Formatting.Indented);
         File.WriteAllText(@$"..\..\..\{JsonConfigForTests}", json);

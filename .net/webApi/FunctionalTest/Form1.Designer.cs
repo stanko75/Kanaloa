@@ -80,6 +80,7 @@
             UploadToBlog = new Button();
             btnCancel = new Button();
             linkLabel1 = new LinkLabel();
+            splitter1 = new Splitter();
             panel1.SuspendLayout();
             panel2.SuspendLayout();
             SuspendLayout();
@@ -99,9 +100,9 @@
             // 
             panel1.Controls.Add(log);
             panel1.Dock = DockStyle.Fill;
-            panel1.Location = new Point(0, 592);
+            panel1.Location = new Point(0, 602);
             panel1.Name = "panel1";
-            panel1.Size = new Size(926, 111);
+            panel1.Size = new Size(926, 101);
             panel1.TabIndex = 1;
             // 
             // log
@@ -111,11 +112,12 @@
             log.Multiline = true;
             log.Name = "log";
             log.ScrollBars = ScrollBars.Both;
-            log.Size = new Size(926, 111);
+            log.Size = new Size(926, 101);
             log.TabIndex = 0;
             // 
             // panel2
             // 
+            panel2.AutoScroll = true;
             panel2.Controls.Add(label20);
             panel2.Controls.Add(tbJoomlaPass);
             panel2.Controls.Add(tbJoomlaCategoryId);
@@ -571,12 +573,22 @@
             linkLabel1.Text = "https://kanaloa.azurewebsites.net/html/live/index.html";
             linkLabel1.LinkClicked += linkLabel1_LinkClicked;
             // 
+            // splitter1
+            // 
+            splitter1.Dock = DockStyle.Top;
+            splitter1.Location = new Point(0, 592);
+            splitter1.Name = "splitter1";
+            splitter1.Size = new Size(926, 10);
+            splitter1.TabIndex = 1;
+            splitter1.TabStop = false;
+            // 
             // Form1
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(926, 810);
             Controls.Add(panel1);
+            Controls.Add(splitter1);
             Controls.Add(panel2);
             Controls.Add(PostGpsPositionsFromFilesWithFileName);
             Controls.Add(UploadImage);
@@ -649,5 +661,6 @@
         private TextBox tbJoomlaCategoryId;
         private Label label20;
         private TextBox tbJoomlaPass;
+        private Splitter splitter1;
     }
 }
