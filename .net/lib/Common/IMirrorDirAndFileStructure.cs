@@ -1,6 +1,6 @@
-﻿namespace FtpHandling;
+﻿namespace Common;
 
-public interface IMirrorDirAndFileStructureOnFtp
+public interface IMirrorDirAndFileStructure
 {
     public Task? Execute(string localRootFolderWithRelativePathToCopy, string remoteRootFolder);
 }

@@ -1,16 +1,26 @@
-﻿using System.Net.Http.Headers;
+﻿using Common;
+using System.Net.Http.Headers;
 using System.Text;
 
 namespace UploadWithPhpScriptHandling;
 
-public class PhpUpload
+public class PhpUpload: ICommandHandlerAsync<PhpUploadCommand>
 {
+    public async Task Execute(PhpUploadCommand command)
+    {
+        await UploadFileAsync(command.Url
+            , command.FullFileName
+            , command.UploadPath
+            , command.UserName
+            , command.Password
+        );
+    }
 
-    private async Task<string> UploadFileAsync(string url
-        , string filePath
-        , string uploadPath
-        , string userName
-        , string password
+    private async Task<string> UploadFileAsync(string? url
+        , string? fullFileName
+        , string? uploadPath
+        , string? userName
+        , string? password
         )
     {
         using var client = new HttpClient();
@@ -25,15 +35,15 @@ public class PhpUpload
         using var form = new MultipartFormDataContent();
 
         form.Add(new StringContent(uploadPath), "folder");
-        form.Add(new StringContent(Path.GetFileName(filePath)), "fileName");
+        form.Add(new StringContent(Path.GetFileName(fullFileName)), "fileName");
 
-        byte[] fileBytes = await File.ReadAllBytesAsync(filePath);
+        byte[] fileBytes = await File.ReadAllBytesAsync(fullFileName);
 
         var fileContent = new ByteArrayContent(fileBytes);
         fileContent.Headers.ContentType =
             new MediaTypeHeaderValue("application/octet-stream");
 
-        form.Add(fileContent, "file", Path.GetFileName(filePath));
+        form.Add(fileContent, "file", Path.GetFileName(fullFileName));
 
         HttpResponseMessage response = await client.PostAsync(url, form);
 

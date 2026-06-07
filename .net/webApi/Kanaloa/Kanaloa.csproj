@@ -37,6 +37,9 @@
     <Reference Include="PostToJoomla">
       <HintPath>..\..\lib\PostToJoomla\bin\Debug\net10.0\PostToJoomla.dll</HintPath>
     </Reference>
+    <Reference Include="UploadWithPhpScriptHandling">
+      <HintPath>..\..\lib\UploadWithPhpScriptHandling\bin\Debug\net10.0\UploadWithPhpScriptHandling.dll</HintPath>
+    </Reference>
   </ItemGroup>
 
 </Project>

@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using PostToJoomla;
+using UploadWithPhpScriptHandling;
 
 namespace Kanaloa.Controllers;
 
@@ -37,7 +38,11 @@ public class UploadToBlogController(ICommandHandler<DeleteFirstAndLastKmlPointsC
             string joomlaPostUrl = CommonStaticMethods.GetValue(data, "joomlaPostUrl");
             string joomlaUserName = CommonStaticMethods.GetValue(data, "joomlaUserName");
             string joomlaPass = CommonStaticMethods.GetValue(data, "joomlaPass");
-            
+
+            string phpUserName = CommonStaticMethods.GetValue(data, "phpUserName");
+            string phpPass = CommonStaticMethods.GetValue(data, "phpPass");
+            string phpUrl = CommonStaticMethods.GetValue(data, "phpUrl");
+
             string remoteRootFolder = "allWithPics/travelBuddies/";
 
             var copyHtmlFilesToPrepareForUploadCommand = CopyHtmlFilesToPrepareForUpload(folder, kmlFileName, prepareForUpload, @"html\templateForBlog");
@@ -50,7 +55,19 @@ public class UploadToBlogController(ICommandHandler<DeleteFirstAndLastKmlPointsC
 
             DeleteFirstAndLastKmlPoints(prepareForUpload, folder, kmlFileName, strDeleteFirstKmlPoints, strDeleteLastKmlPoints);
 
-            MirrorDirAndFileRemoteOnFtp(host, user, pass, albumRoot, remoteRootFolder, folder);
+            //MirrorDirAndFileRemoteOnFtp(host, user, pass, albumRoot, remoteRootFolder, folder);
+
+            PhpUploadCommand phpUploadCommand = new PhpUploadCommand
+            {
+                UserName = phpUserName,
+                Password = phpPass,
+                Url = phpUrl,
+                UploadPath = albumRoot
+            };
+            PhpUpload phpUpload = new PhpUpload();
+            IMirrorDirAndFileStructure mirrorDirAndFileStructureWithPhpScript =
+                new MirrorDirAndFileStructureWithPhpScript(phpUpload, phpUploadCommand);
+            await mirrorDirAndFileStructureWithPhpScript.Execute(remoteRootFolder, folder);
 
             if (!string.IsNullOrWhiteSpace(joomlaCategoryId)
                 && !string.IsNullOrWhiteSpace(joomlaLoginUrl)
@@ -140,7 +157,7 @@ public class UploadToBlogController(ICommandHandler<DeleteFirstAndLastKmlPointsC
     {
         //www.milosev.com/milosev.com/gallery/allWithPics/travelBuddies/kelnTest/index.html
         IFtpUpload ftpUpload = new FtpUpload(host, user, pass);
-        IMirrorDirAndFileStructureOnFtp mirrorDirAndFileStructureOnFtp = new MirrorDirAndFileStructureOnFtp(ftpUpload);
+        IMirrorDirAndFileStructure mirrorDirAndFileStructureOnFtp = new MirrorDirAndFileStructureOnFtp(ftpUpload);
         mirrorDirAndFileStructureOnFtp.Execute(albumRoot,
             $"{remoteRootFolder}/{folder}");
     }

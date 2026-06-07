@@ -47,7 +47,7 @@ public partial class Form1 : Form
     {
         foreach (Control control in parent.Controls)
         {
-            if (control is TextBox textBox)
+            if (control is TextBox textBox && control.Name != "log")
                 yield return textBox;
 
             foreach (var childTextBox in GetAllTextBoxes(control))
@@ -121,7 +121,12 @@ public partial class Form1 : Form
             JoomlaLoginUrl = tbJoomlaLoginUrl.Text,
             JoomlaPostUrl = tbJoomlaPostUrl.Text,
             JoomlaUserName = tbJoomlaUserName.Text,
-            JoomlaPass = tbJoomlaPass.Text
+            JoomlaPass = tbJoomlaPass.Text,
+
+            PhpUserName = tbPhpUserName.Text,
+            PhpPass = tbPhpPass.Text,
+            PhpUrl = tbPhpUrl.Text
+
         };
 
         await _cancellationDecoratorUploadToBlog.Execute(command);

@@ -21,4 +21,7 @@ public class UploadToBlogCommand
     public string JoomlaPostUrl { get; set; }
     public string JoomlaUserName { get; set; }
     public string JoomlaPass { get; set; }
+    public string PhpUserName { get; set; }
+    public string PhpPass { get; set; }
+    public string PhpUrl { get; set; }
 }

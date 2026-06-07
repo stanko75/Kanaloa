@@ -1,6 +1,8 @@
-﻿namespace FtpHandling;
+﻿using Common;
 
-public class MirrorDirAndFileStructureOnFtp : IMirrorDirAndFileStructureOnFtp
+namespace FtpHandling;
+
+public class MirrorDirAndFileStructureOnFtp : IMirrorDirAndFileStructure
 {
     private readonly IFtpUpload _ftpUpload;
 

@@ -32,6 +32,12 @@
             panel1 = new Panel();
             log = new TextBox();
             panel2 = new Panel();
+            label23 = new Label();
+            tbPhpUrl = new TextBox();
+            label21 = new Label();
+            tbPhpPass = new TextBox();
+            label22 = new Label();
+            tbPhpUserName = new TextBox();
             label20 = new Label();
             tbJoomlaPass = new TextBox();
             tbJoomlaCategoryId = new TextBox();
@@ -88,7 +94,7 @@
             // PostGpsPositionsFromFilesWithFileName
             // 
             PostGpsPositionsFromFilesWithFileName.Dock = DockStyle.Bottom;
-            PostGpsPositionsFromFilesWithFileName.Location = new Point(0, 703);
+            PostGpsPositionsFromFilesWithFileName.Location = new Point(0, 827);
             PostGpsPositionsFromFilesWithFileName.Name = "PostGpsPositionsFromFilesWithFileName";
             PostGpsPositionsFromFilesWithFileName.Size = new Size(926, 23);
             PostGpsPositionsFromFilesWithFileName.TabIndex = 0;
@@ -100,9 +106,9 @@
             // 
             panel1.Controls.Add(log);
             panel1.Dock = DockStyle.Fill;
-            panel1.Location = new Point(0, 602);
+            panel1.Location = new Point(0, 688);
             panel1.Name = "panel1";
-            panel1.Size = new Size(926, 101);
+            panel1.Size = new Size(926, 139);
             panel1.TabIndex = 1;
             // 
             // log
@@ -112,12 +118,18 @@
             log.Multiline = true;
             log.Name = "log";
             log.ScrollBars = ScrollBars.Both;
-            log.Size = new Size(926, 101);
+            log.Size = new Size(926, 139);
             log.TabIndex = 0;
             // 
             // panel2
             // 
             panel2.AutoScroll = true;
+            panel2.Controls.Add(label23);
+            panel2.Controls.Add(tbPhpUrl);
+            panel2.Controls.Add(label21);
+            panel2.Controls.Add(tbPhpPass);
+            panel2.Controls.Add(label22);
+            panel2.Controls.Add(tbPhpUserName);
             panel2.Controls.Add(label20);
             panel2.Controls.Add(tbJoomlaPass);
             panel2.Controls.Add(tbJoomlaCategoryId);
@@ -165,8 +177,56 @@
             panel2.Dock = DockStyle.Top;
             panel2.Location = new Point(0, 0);
             panel2.Name = "panel2";
-            panel2.Size = new Size(926, 592);
+            panel2.Size = new Size(926, 678);
             panel2.TabIndex = 2;
+            // 
+            // label23
+            // 
+            label23.AutoSize = true;
+            label23.Location = new Point(12, 646);
+            label23.Name = "label23";
+            label23.Size = new Size(88, 15);
+            label23.TabIndex = 49;
+            label23.Text = "Php upload url:";
+            // 
+            // tbPhpUrl
+            // 
+            tbPhpUrl.Location = new Point(171, 643);
+            tbPhpUrl.Name = "tbPhpUrl";
+            tbPhpUrl.Size = new Size(555, 23);
+            tbPhpUrl.TabIndex = 48;
+            // 
+            // label21
+            // 
+            label21.AutoSize = true;
+            label21.Location = new Point(12, 617);
+            label21.Name = "label21";
+            label21.Size = new Size(129, 15);
+            label21.TabIndex = 47;
+            label21.Text = "Php upload script pass:";
+            // 
+            // tbPhpPass
+            // 
+            tbPhpPass.Location = new Point(171, 614);
+            tbPhpPass.Name = "tbPhpPass";
+            tbPhpPass.Size = new Size(555, 23);
+            tbPhpPass.TabIndex = 46;
+            // 
+            // label22
+            // 
+            label22.AutoSize = true;
+            label22.Location = new Point(12, 588);
+            label22.Name = "label22";
+            label22.Size = new Size(161, 15);
+            label22.TabIndex = 45;
+            label22.Text = "Php upload script user name:";
+            // 
+            // tbPhpUserName
+            // 
+            tbPhpUserName.Location = new Point(171, 585);
+            tbPhpUserName.Name = "tbPhpUserName";
+            tbPhpUserName.Size = new Size(555, 23);
+            tbPhpUserName.TabIndex = 44;
             // 
             // label20
             // 
@@ -531,7 +591,7 @@
             // UploadImage
             // 
             UploadImage.Dock = DockStyle.Bottom;
-            UploadImage.Location = new Point(0, 726);
+            UploadImage.Location = new Point(0, 850);
             UploadImage.Name = "UploadImage";
             UploadImage.Size = new Size(926, 23);
             UploadImage.TabIndex = 3;
@@ -542,7 +602,7 @@
             // UploadToBlog
             // 
             UploadToBlog.Dock = DockStyle.Bottom;
-            UploadToBlog.Location = new Point(0, 749);
+            UploadToBlog.Location = new Point(0, 873);
             UploadToBlog.Name = "UploadToBlog";
             UploadToBlog.Size = new Size(926, 23);
             UploadToBlog.TabIndex = 4;
@@ -553,7 +613,7 @@
             // btnCancel
             // 
             btnCancel.Dock = DockStyle.Bottom;
-            btnCancel.Location = new Point(0, 772);
+            btnCancel.Location = new Point(0, 896);
             btnCancel.Name = "btnCancel";
             btnCancel.Size = new Size(926, 23);
             btnCancel.TabIndex = 5;
@@ -565,7 +625,7 @@
             // 
             linkLabel1.AutoSize = true;
             linkLabel1.Dock = DockStyle.Bottom;
-            linkLabel1.Location = new Point(0, 795);
+            linkLabel1.Location = new Point(0, 919);
             linkLabel1.Name = "linkLabel1";
             linkLabel1.Size = new Size(298, 15);
             linkLabel1.TabIndex = 7;
@@ -576,7 +636,7 @@
             // splitter1
             // 
             splitter1.Dock = DockStyle.Top;
-            splitter1.Location = new Point(0, 592);
+            splitter1.Location = new Point(0, 678);
             splitter1.Name = "splitter1";
             splitter1.Size = new Size(926, 10);
             splitter1.TabIndex = 1;
@@ -586,7 +646,7 @@
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(926, 810);
+            ClientSize = new Size(926, 934);
             Controls.Add(panel1);
             Controls.Add(splitter1);
             Controls.Add(panel2);
@@ -651,7 +711,7 @@
         private Label label15;
         private TextBox tbDeleteFirstKmlPoints;
         private Label label16;
-        private TextBox textBox1;
+        private TextBox tbPhpPass;
         private Label label19;
         private TextBox tbJoomlaUserName;
         private Label label18;
@@ -662,5 +722,10 @@
         private Label label20;
         private TextBox tbJoomlaPass;
         private Splitter splitter1;
+        private Label label21;
+        private Label label22;
+        private TextBox tbPhpUserName;
+        private Label label23;
+        private TextBox tbPhpUrl;
     }
 }
