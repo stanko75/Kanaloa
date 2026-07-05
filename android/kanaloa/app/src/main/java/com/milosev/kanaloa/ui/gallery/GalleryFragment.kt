@@ -71,6 +71,7 @@ class GalleryFragment : Fragment() {
         val root: View = binding.root
 
         val logViewModel = ViewModelProvider(requireActivity())[LogViewModel::class.java]
+        val logViewModelLogger = LogViewModelLogger(logViewModel);
         uploadViewModel = ViewModelProvider(requireActivity())[UploadViewModel::class.java]
         uploadViewModel?.initialize(logViewModel)
 
@@ -83,7 +84,23 @@ class GalleryFragment : Fragment() {
 
         val localOgImageUri = sharedPreferences.getString("localOgImageUri.$folderNameInitial.$fileNameInitial", null)
         if (localOgImageUri != null) {
-            _binding!!.ivOgImage.setImageURI(Uri.parse(localOgImageUri))
+            val uri = Uri.parse(localOgImageUri)
+
+            try {
+                requireContext().contentResolver.openInputStream(uri)?.use {
+                    _binding!!.ivOgImage.setImageURI(uri)
+                } ?: run {
+                    _binding!!.ivOgImage.setImageDrawable(null)
+                }
+            } catch (e: Exception) {
+                logViewModelLogger.Log(
+                    LogEntry(
+                        LoggingEventType.Error,
+                        "Image is no longer accessible: $uri, exceptiom: " + e.message
+                    )
+                )
+                _binding!!.ivOgImage.setImageDrawable(null)
+            }
         }
 
         var fileName = fileNameInitial
@@ -156,7 +173,6 @@ class GalleryFragment : Fragment() {
             blogUploadModel.joomlaUserName = joomlaSharedPreferences?.getString("userName", "")
             blogUploadModel.joomlaPass = joomlaSharedPreferences?.getString("pass", "")
 
-            val logViewModelLogger = LogViewModelLogger(ViewModelProvider(requireActivity())[LogViewModel::class.java]);
             logViewModelLogger.Log(
                 LogEntry(
                     LoggingEventType.Information,
