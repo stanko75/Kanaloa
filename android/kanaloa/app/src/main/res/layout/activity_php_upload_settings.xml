@@ -35,7 +35,6 @@
                 android:layout_height="wrap_content"
                 android:autofillHints=""
                 android:hint="@string/php_upload_url"
-                android:inputType="number"
                 android:minHeight="48dp"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/tvPhpUploadUrl" />

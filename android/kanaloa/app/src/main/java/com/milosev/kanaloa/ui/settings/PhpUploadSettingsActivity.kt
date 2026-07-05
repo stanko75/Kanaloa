@@ -31,6 +31,11 @@ class PhpUploadSettingsActivity : AppCompatActivity() {
             sharedPreferences.edit {
                 putString("phpUploadUrl", binding.etPhpUploadUrl.text.toString())
             }
+            finish()
+        }
+
+        binding.btnCancel.setOnClickListener {
+            finish()
         }
     }
 }
