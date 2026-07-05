@@ -62,12 +62,13 @@ public class UploadToBlogController(ICommandHandler<DeleteFirstAndLastKmlPointsC
                 UserName = phpUserName,
                 Password = phpPass,
                 Url = phpUrl,
-                UploadPath = albumRoot
+                RemoteRootFolder = $"{remoteRootFolder}/{folder}",
+                AlbumRoot = albumRoot
             };
             PhpUpload phpUpload = new PhpUpload();
             IMirrorDirAndFileStructure mirrorDirAndFileStructureWithPhpScript =
                 new MirrorDirAndFileStructureWithPhpScript(phpUpload, phpUploadCommand);
-            await mirrorDirAndFileStructureWithPhpScript.Execute(remoteRootFolder, folder);
+            await mirrorDirAndFileStructureWithPhpScript.Execute(albumRoot);
 
             if (!string.IsNullOrWhiteSpace(joomlaCategoryId)
                 && !string.IsNullOrWhiteSpace(joomlaLoginUrl)
