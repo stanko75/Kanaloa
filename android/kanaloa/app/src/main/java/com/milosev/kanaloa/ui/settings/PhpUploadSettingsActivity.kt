@@ -24,7 +24,7 @@ class PhpUploadSettingsActivity : AppCompatActivity() {
             insets
         }
 
-        val sharedPreferences = getSharedPreferences(SharedPreferencesGlobal.JoomlaSettings, MODE_PRIVATE)
+        val sharedPreferences = getSharedPreferences(SharedPreferencesGlobal.PhpUploadSettings, MODE_PRIVATE)
         binding.etPhpUploadUrl.setText(sharedPreferences.getString("phpUploadUrl", ""))
 
         binding.btnSave.setOnClickListener {

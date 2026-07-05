@@ -20,5 +20,6 @@ object SharedPreferencesGlobal {
     const val FtpSettings = "ftpSettings"
     const val Live = "live"
     const val JoomlaSettings = "joomlaSettings"
+    const val PhpUploadSettings = "joomlaSettings"
 
 }

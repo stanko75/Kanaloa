@@ -156,6 +156,9 @@ class GalleryFragment : Fragment() {
             val joomlaSharedPreferences =
                 context?.getSharedPreferences(SharedPreferencesGlobal.JoomlaSettings, Context.MODE_PRIVATE)
 
+            val phpUploadSharedPreferences =
+                context?.getSharedPreferences(SharedPreferencesGlobal.PhpUploadSettings, Context.MODE_PRIVATE)
+
             blogUploadModel.host = ftpSharedPreferences?.getString("host", "ftp.host.com")
             blogUploadModel.user = ftpSharedPreferences?.getString("user", "")
             blogUploadModel.pass = ftpSharedPreferences?.getString("pass", "")
@@ -172,6 +175,8 @@ class GalleryFragment : Fragment() {
             blogUploadModel.joomlaPostUrl = joomlaSharedPreferences?.getString("postUrl", "")
             blogUploadModel.joomlaUserName = joomlaSharedPreferences?.getString("userName", "")
             blogUploadModel.joomlaPass = joomlaSharedPreferences?.getString("pass", "")
+
+            blogUploadModel.phpUploadUrl = phpUploadSharedPreferences?.getString("phpUploadUrl", "")
 
             logViewModelLogger.Log(
                 LogEntry(
