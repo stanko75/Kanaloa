@@ -68,7 +68,7 @@ public class UploadToBlogController(ICommandHandler<DeleteFirstAndLastKmlPointsC
             PhpUpload phpUpload = new PhpUpload();
             IMirrorDirAndFileStructure mirrorDirAndFileStructureWithPhpScript =
                 new MirrorDirAndFileStructureWithPhpScript(phpUpload, phpUploadCommand);
-            await mirrorDirAndFileStructureWithPhpScript.Execute(albumRoot);
+            await mirrorDirAndFileStructureWithPhpScript.Execute(albumRoot, "");
 
             if (!string.IsNullOrWhiteSpace(joomlaCategoryId)
                 && !string.IsNullOrWhiteSpace(joomlaLoginUrl)
@@ -85,13 +85,13 @@ public class UploadToBlogController(ICommandHandler<DeleteFirstAndLastKmlPointsC
                     , automaticallyFillMissingValuesCommand.OgTitle);
                 if (ok)
                 {
-                    return Ok(@$"Uploaded: {remoteRootFolder}/{folder}/{kmlFileName}");
+                    return Ok(@$"Uploaded: {remoteRootFolder}/{folder}/{kmlFileName}, php script result: {phpUploadCommand.Result}");
                 }
 
                 return BadRequest("Article was not saved successfully.");
             }
 
-            return Ok(@$"Uploaded: {remoteRootFolder}/{folder}/{kmlFileName}");
+            return Ok(@$"Uploaded: {remoteRootFolder}/{folder}/{kmlFileName}, php script result: {phpUploadCommand.Result}");
 
         }
         catch (Exception e)
