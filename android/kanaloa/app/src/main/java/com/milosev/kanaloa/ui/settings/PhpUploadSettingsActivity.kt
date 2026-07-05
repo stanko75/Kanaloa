@@ -26,10 +26,14 @@ class PhpUploadSettingsActivity : AppCompatActivity() {
 
         val sharedPreferences = getSharedPreferences(SharedPreferencesGlobal.PhpUploadSettings, MODE_PRIVATE)
         binding.etPhpUploadUrl.setText(sharedPreferences.getString("phpUploadUrl", ""))
+        binding.etPhpUploadPass.setText(sharedPreferences.getString("phpUploadPass", ""))
+        binding.etPhpUploadUserName.setText(sharedPreferences.getString("phpUploadUserName", ""))
 
         binding.btnSave.setOnClickListener {
             sharedPreferences.edit {
                 putString("phpUploadUrl", binding.etPhpUploadUrl.text.toString())
+                putString("phpUploadPass", binding.etPhpUploadPass.text.toString())
+                putString("phpUploadUserName", binding.etPhpUploadUserName.text.toString())
             }
             finish()
         }

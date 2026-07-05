@@ -42,6 +42,8 @@
 
     <string name="joomla_category_id">Joomla! category id:</string>
     <string name="php_upload_url">Php upload URL:</string>
+    <string name="php_upload_user_name">Php upload user name:</string>
+    <string name="php_upload_pass">Php upload password:</string>
     <string name="joomla_login_url">Joomla! login url:</string>
     <string name="joomla_post_url">Joomla! post url:</string>
     <string name="joomla_user_name">Joomla! user name:</string>

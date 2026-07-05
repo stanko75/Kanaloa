@@ -176,7 +176,9 @@ class GalleryFragment : Fragment() {
             blogUploadModel.joomlaUserName = joomlaSharedPreferences?.getString("userName", "")
             blogUploadModel.joomlaPass = joomlaSharedPreferences?.getString("pass", "")
 
-            blogUploadModel.phpUploadUrl = phpUploadSharedPreferences?.getString("phpUploadUrl", "")
+            blogUploadModel.phpUrl = phpUploadSharedPreferences?.getString("phpUploadUrl", "")
+            blogUploadModel.phpPass = phpUploadSharedPreferences?.getString("phpUploadPass", "")
+            blogUploadModel.phpUserName = phpUploadSharedPreferences?.getString("phpUploadUserName", "")
 
             logViewModelLogger.Log(
                 LogEntry(

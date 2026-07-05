@@ -16,5 +16,7 @@ class BlogUploadModel: FileFolderLocationModel() {
     var joomlaPostUrl: String? = null
     var joomlaUserName: String? = null
     var joomlaPass: String? = null
-    var phpUploadUrl: String? = null
+    var phpUrl: String? = null
+    var phpPass: String? = null
+    var phpUserName: String? = null
 }

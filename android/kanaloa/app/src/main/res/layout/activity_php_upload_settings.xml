@@ -38,6 +38,45 @@
                 android:minHeight="48dp"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/tvPhpUploadUrl" />
+
+            <TextView
+                android:id="@+id/tvPhpUploadPass"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:text="@string/php_upload_pass"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/etPhpUploadUrl" />
+
+            <EditText
+                android:id="@+id/etPhpUploadPass"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:autofillHints=""
+                android:hint="@string/php_upload_pass"
+                android:minHeight="48dp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/tvPhpUploadPass" />
+
+            <TextView
+                android:id="@+id/tvPhpUploadUserName"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:text="@string/php_upload_user_name"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/etPhpUploadPass" />
+
+            <EditText
+                android:id="@+id/etPhpUploadUserName"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:autofillHints=""
+                android:hint="@string/php_upload_user_name"
+                android:minHeight="48dp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/tvPhpUploadUserName" />
+
         </androidx.constraintlayout.widget.ConstraintLayout>
     </ScrollView>
 
