@@ -17,6 +17,7 @@ import com.milosev.kanaloa.databinding.ActivityMainBinding
 import com.milosev.kanaloa.location.LocationPermissionHelper
 import com.milosev.kanaloa.ui.settings.SettingsActivity
 import com.milosev.kanaloa.ui.settings.JoomlaSettingsActivity
+import com.milosev.kanaloa.ui.settings.PhpUploadSettingsActivity
 
 class MainActivity : AppCompatActivity() {
 
@@ -67,6 +68,12 @@ class MainActivity : AppCompatActivity() {
 
             R.id.action_joomla_settings -> {
                 val intent = Intent(this, JoomlaSettingsActivity::class.java)
+                startActivity(intent)
+                true
+            }
+
+            R.id.action_phpUpload_settings -> {
+                val intent = Intent(this, PhpUploadSettingsActivity::class.java)
                 startActivity(intent)
                 true
             }
