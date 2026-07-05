@@ -85,3 +85,4 @@ android/kanaloa/app/src/main/res/raw/config.properties
 *.kml
 .net/webApi/Kanaloa/Properties/ServiceDependencies/kanaloa - Web Deploy/profile.arm.json
 php/kanaloaUploadConfig.php
+.net/lib/.vscode/tasks.json
