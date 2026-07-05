@@ -30,6 +30,10 @@
             android:exported="false"
             android:label="@string/action_joomla_settings" />
         <activity
+            android:name=".ui.settings.PhpUploadSettingsActivity"
+            android:exported="false"
+            android:label="@string/action_phpUpload_settings" />
+        <activity
             android:name=".MainActivity"
             android:exported="true"
             android:label="@string/app_name"
