@@ -156,6 +156,8 @@ class LoadKmlFromUrl(private var getKml: IGetKml, var logViewModelLogger: ILogge
         context: Context?,
         bytes: ByteArray?
     ) {
+        if (context == null || bytes == null) return
+
         val input = java.io.ByteArrayInputStream(bytes)
 
         val parsedLayer = withContext(Dispatchers.Default) {
@@ -167,7 +169,7 @@ class LoadKmlFromUrl(private var getKml: IGetKml, var logViewModelLogger: ILogge
             val formattedSize = String.format(
                 Locale.ROOT,
                 "%.2f KB",
-                (bytes?.size?.toDouble() ?: 0.0) / 1024.0
+                bytes.size.toDouble() / 1024.0
             )
             logViewModelLogger.Log(
                 LogEntry(
