@@ -46,7 +46,25 @@ public class PostGpsPositionsFromFilesWithFileNameHandler(ILogger logger)
                 else
                 {
                     string errorMessage = await httpResponseMessage.Content.ReadAsStringAsync();
-                    throw new Exception($"{errorMessage}");
+
+                    if (string.IsNullOrWhiteSpace(errorMessage))
+                    {
+                        throw new Exception($"""
+                            Status: {(int)httpResponseMessage.StatusCode} ({httpResponseMessage.StatusCode})
+                            Reason: {httpResponseMessage.ReasonPhrase}
+                            Version: {httpResponseMessage.Version}
+                            Request: {httpResponseMessage.RequestMessage?.Method} {httpResponseMessage.RequestMessage?.RequestUri}
+                            Headers:
+                            {httpResponseMessage.Headers}
+                            Content Headers:
+                            {httpResponseMessage.Content.Headers}
+                            Body:
+                            {httpResponseMessage.Content.ReadAsStringAsync().Result}
+                        """);                    }
+                    else 
+                    {
+                        throw new Exception($"{errorMessage}");
+                    }
                 }
 
                 JObject configJson =
