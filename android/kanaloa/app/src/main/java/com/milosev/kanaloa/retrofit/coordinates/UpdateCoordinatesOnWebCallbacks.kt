@@ -30,7 +30,7 @@ class UpdateCoordinatesOnWebCallbacks(private val broadcastTickReceiver: ISendBr
                 broadcastTickReceiver.execute(
                     context,
                     IntentAction.RETROFIT_ON_RESPONSE,
-                    "${sendResponse}${response.message()}"
+                    "$sendResponse ${response.message()} url: ${response.raw().request.url}"
                 )
             }
         }
