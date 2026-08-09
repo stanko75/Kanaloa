@@ -41,13 +41,11 @@ class ReceiveListener: IReceiveListener {
     }
 
     override fun retrofitOnResponse(context: Context, intent: Intent) {
-        val mainActivityIntent = Intent(context, MainActivity::class.java).setAction(
-            IntentAction.RETROFIT_ON_RESPONSE
-        )
+        val tickIntent = Intent(IntentAction.RETROFIT_ON_RESPONSE)
         val retrofitOnResponse = intent.getStringExtra (IntentExtras.RETROFIT_ON_RESPONSE)
-        mainActivityIntent.putExtra (IntentExtras.RETROFIT_ON_RESPONSE, retrofitOnResponse)
-        mainActivityIntent.setPackage(context.packageName)
-        context.sendBroadcast(mainActivityIntent)
+        tickIntent.setPackage(context.packageName)
+        tickIntent.putExtra (IntentExtras.RETROFIT_ON_RESPONSE, retrofitOnResponse)
+        context.sendBroadcast(tickIntent)
     }
 
     override fun kmlFileName(context: Context, intent: Intent) {

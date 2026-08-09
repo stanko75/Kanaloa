@@ -2,16 +2,21 @@ package com.milosev.kanaloa.ui.home
 
 import android.Manifest
 import android.app.Activity
+import android.content.BroadcastReceiver
 import android.content.Context
+import android.content.Intent
+import android.content.IntentFilter
 import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.RequiresApi
 import androidx.core.content.ContextCompat
+import androidx.core.content.ContextCompat.registerReceiver
 import androidx.core.content.edit
 import androidx.core.view.get
 import androidx.fragment.app.Fragment
@@ -28,7 +33,11 @@ import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.milosev.kanaloa.Config
 import com.milosev.kanaloa.R
 import com.milosev.kanaloa.SharedPreferencesGlobal
+import com.milosev.kanaloa.foregroundtickservice.IntentAction
+import com.milosev.kanaloa.foregroundtickservice.IntentExtras
+import com.milosev.kanaloa.logger.LogEntry
 import com.milosev.kanaloa.logger.LogViewModelLogger
+import com.milosev.kanaloa.logger.LoggingEventType
 import com.milosev.kanaloa.retrofit.CreateRetrofitBuilder
 import com.milosev.kanaloa.retrofit.fetchlivelocation.FetchLiveLocation
 import com.milosev.kanaloa.retrofit.fetchlivelocation.IGetLiveLocationApiService
@@ -52,6 +61,7 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
     private lateinit var bottomNavigationView: BottomNavigationView
     private lateinit var fetchLiveLocation: FetchLiveLocation
     private var updateJob: Job? = null
+    private var isUiReceiverRegistered = false
 
     private var uploadViewModel: UploadViewModel? = null
     private val galleryLauncher =
@@ -87,6 +97,18 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
         uploadViewModel?.uploadPictures?.openGallery(galleryLauncher)
     }
 
+    private val uiReceiver = object : BroadcastReceiver() {
+        override fun onReceive(context: Context?, intent: Intent?) {
+            val msg = intent?.getStringExtra(IntentExtras.RETROFIT_ON_RESPONSE)
+            logViewModelLogger.Log(
+                LogEntry(
+                    LoggingEventType.Information,
+                    msg
+                )
+            )
+        }
+    }
+
     private var marker: Marker? = null
 
     @RequiresApi(Build.VERSION_CODES.O)
@@ -120,6 +142,8 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
             when (item.itemId) {
                 R.id.navigation_start -> {
 
+                    registerUiReceiver()
+
                     setStarted(true)
                     startLiveUpdaterIfNeeded()
 
@@ -135,6 +159,7 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
                 }
 
                 R.id.navigation_stop -> {
+                    unregisterUiReceiver()
                     setStarted(false)
                     liveUpdater.stop(logViewModelLogger, updateJob)
                     val serviceStopper = StopForegroundService()
@@ -248,6 +273,26 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
                 fetchLiveLocation.fetchLiveLocation(webHost, googleMap)
                 loadKmlFromUrl.loadKml(kmlUrl, googleMap, context)
             }
+        }
+    }
+
+    private fun registerUiReceiver() {
+        if (!isUiReceiverRegistered) {
+            ContextCompat.registerReceiver(
+                requireContext(),
+                uiReceiver,
+                IntentFilter(IntentAction.RETROFIT_ON_RESPONSE),
+                ContextCompat.RECEIVER_NOT_EXPORTED
+            )
+
+            isUiReceiverRegistered = true
+        }
+    }
+
+    private fun unregisterUiReceiver() {
+        if (isUiReceiverRegistered) {
+            requireContext().unregisterReceiver(uiReceiver)
+            isUiReceiverRegistered = false
         }
     }
 }
