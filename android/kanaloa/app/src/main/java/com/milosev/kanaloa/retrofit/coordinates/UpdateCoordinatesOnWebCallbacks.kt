@@ -15,23 +15,32 @@ class UpdateCoordinatesOnWebCallbacks(private val broadcastTickReceiver: ISendBr
                 response.message()
             )
         } else {
-            val sendResponse = "${response.code()}: "
-            if (response.errorBody()?.charStream() != null
-                && response.errorBody()?.charStream()?.readText() != null
-                && response.errorBody()!!.charStream().readText().isNotBlank()
-            ) {
+
+            val errorText = response.errorBody()?.string()
+            if (!errorText.isNullOrBlank()) {
                 broadcastTickReceiver.execute(
                     context,
                     IntentAction.RETROFIT_ON_RESPONSE,
-                    "${sendResponse}${response.errorBody()!!.charStream().readText()}"
+                    "${response.code()}: ${response.message()} $errorText url: ${response.raw().request.url}"
                 )
-            }
-            else {
-                broadcastTickReceiver.execute(
-                    context,
-                    IntentAction.RETROFIT_ON_RESPONSE,
-                    "$sendResponse ${response.message()} url: ${response.raw().request.url}"
-                )
+            } else {
+                val sendResponse = "${response.code()}: "
+                if (response.errorBody()?.charStream() != null
+                    && response.errorBody()?.charStream()?.readText() != null
+                    && response.errorBody()!!.charStream().readText().isNotBlank()
+                ) {
+                    broadcastTickReceiver.execute(
+                        context,
+                        IntentAction.RETROFIT_ON_RESPONSE,
+                        "${sendResponse}${response.errorBody()!!.charStream().readText()}"
+                    )
+                } else {
+                    broadcastTickReceiver.execute(
+                        context,
+                        IntentAction.RETROFIT_ON_RESPONSE,
+                        "$sendResponse ${response.message()} url: ${response.raw().request.url}"
+                    )
+                }
             }
         }
     }
