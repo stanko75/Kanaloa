@@ -36,6 +36,7 @@ public class PostGpsPositionsFromFilesWithFileNameHandler(ILogger logger)
                 StringContent content = new StringContent($@"{jObjectKmlFileFolderLatLng}", Encoding.UTF8, "text/json");
 
                 logger.Log($"Sending: {jObjectKmlFileFolderLatLng}");
+                logger.Log($"requestUri: {requestUri}");
 
                 HttpResponseMessage httpResponseMessage = await httpClientPost.PostAsync(requestUri, content);
 
