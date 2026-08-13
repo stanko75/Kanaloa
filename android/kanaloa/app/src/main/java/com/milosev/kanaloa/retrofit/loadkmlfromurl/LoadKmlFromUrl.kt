@@ -105,7 +105,7 @@ class LoadKmlFromUrl(private var getKml: IGetKml, var logViewModelLogger: ILogge
                 logViewModelLogger.Log(
                     LogEntry(
                         LoggingEventType.Error,
-                        "${sendResponse}${webApiRequest.message()}"
+                        "${sendResponse}${webApiRequest.message()} url: ${webApiRequest.raw().request.url}"
                     )
                 )
             }

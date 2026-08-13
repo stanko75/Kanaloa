@@ -8,6 +8,6 @@ import retrofit2.http.POST
 interface IUpdateCoordinatesApiService {
     @Headers("Content-Type: text/json")
     //@POST("/api/UpdateCoordinates")
-    @POST("/api/UpdateCoordinates/PostFileFolder")
+    @POST("api/UpdateCoordinates/PostFileFolder")
     fun postMethod(@Body value: String): Call<String>
 }

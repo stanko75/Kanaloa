@@ -24,6 +24,7 @@
         android:layout_height="0dp"
         android:hint="@string/log"
         android:gravity="center"
+        android:importantForAutofill="no"
         android:inputType="none"
         android:cursorVisible="false"
         android:scrollbars="vertical"

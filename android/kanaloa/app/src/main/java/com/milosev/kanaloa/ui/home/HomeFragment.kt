@@ -159,11 +159,11 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
                 }
 
                 R.id.navigation_stop -> {
-                    unregisterUiReceiver()
                     setStarted(false)
                     liveUpdater.stop(logViewModelLogger, updateJob)
                     val serviceStopper = StopForegroundService()
                     context?.let { serviceStopper.stopForegroundService(it, activity) }
+                    unregisterUiReceiver()
                     true
                 }
 

@@ -7,12 +7,18 @@ class Config(val context: Context?) {
     private val properties = Properties()
 
     init {
-        val inputStream = context?.resources?.openRawResource(R.raw.config)
-        properties.load(inputStream)
+        try {
+            val inputStream = context?.resources?.openRawResource(R.raw.config)
+            if (inputStream != null) {
+                properties.load(inputStream)
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
     }
 
     val webHost: String
-        get() = properties.getProperty("web.host")
+        get() = properties.getProperty("web.host") ?: ""
 }
 
 object SharedPreferencesGlobal {
