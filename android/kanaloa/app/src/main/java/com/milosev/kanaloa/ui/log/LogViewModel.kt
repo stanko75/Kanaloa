@@ -17,7 +17,7 @@ class LogViewModel : ViewModel() {
     val log: LiveData<String> = _log
 
     fun appendLog(entry: String) {
-/        synchronized(this) {
+        synchronized(this) {
             val current = _log.value.orEmpty()
             _log.postValue(current + entry + "\n")
         }
