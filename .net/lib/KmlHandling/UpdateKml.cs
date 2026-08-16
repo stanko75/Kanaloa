@@ -41,7 +41,7 @@ public class UpdateKml : IUpdateKml
                 KmlModel.LineString? lineString = OldKml.Document.Placemarks[0].LineString;
                 if (lineString is not null)
                 {
-                    lineString.Coordinates = lineString.Coordinates + ", " + Placemark.LineString?.Coordinates;
+                    lineString.Coordinates = lineString.Coordinates + " " + Placemark.LineString?.Coordinates;
                 }
             }
             else if (OldKml.Document.Placemarks is null
