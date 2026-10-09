@@ -39,6 +39,14 @@ public class UpdateGeospatialDataIfExistsOrCreateNewIfNotTests
             FolderName = _testFolder
         };
 
+        string geospatialDataFullFileName = Path.ChangeExtension(command.GeospatialDataFileName, command.GeospatialDataFileNameExtension);
+        geospatialDataFullFileName = Path.Join(command.FolderName, geospatialDataFullFileName);
+
+        if (File.Exists(geospatialDataFullFileName))
+        {
+            File.Delete(geospatialDataFullFileName);
+        }
+
         CreateGeoJson createGeoJson = new CreateGeoJson();
         await createGeoJson.Execute(command);
 
@@ -46,7 +54,7 @@ public class UpdateGeospatialDataIfExistsOrCreateNewIfNotTests
         UpdateGeoJson updateGeoJson = new UpdateGeoJson();
         await updateGeoJson.Execute(command);
 
-        Assert.IsTrue(IsExpectedGeoJson(command.GeospatialDataFileName, "6.982319,50.2130308,501.0483676407712"));
+        Assert.IsTrue(IsExpectedGeoJson(command.GeospatialDataFileName, "6.641421,43.1869746,2357,6.982319,50.2130308,501.0483676407712"));
     }
 
     private static bool IsExpectedGeoJson(string geoJsonFileName, string expectedCoordinates = "6.641421,43.1869746,2357")
