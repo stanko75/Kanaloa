@@ -25,6 +25,12 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PostToJoomla", "PostToJooml
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UploadWithPhpScriptHandling", "UploadWithPhpScriptHandling\UploadWithPhpScriptHandling.csproj", "{864710B5-7F16-4B95-A489-DFDE2EF37143}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GeoJsonHandling", "GeoJsonHandling\GeoJsonHandling.csproj", "{463BA0CC-C262-4AED-96CA-C14A9DA564CC}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GeospatialData", "GeospatialData\GeospatialData.csproj", "{2CBA2472-31AB-4F25-BB70-53789DBF63E6}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GeospatialData.Test", "GeospatialData.Test\GeospatialData.Test.csproj", "{52E9A731-1E9E-4CA1-8C47-12DEBB66AD9B}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -75,6 +81,18 @@ Global
 		{864710B5-7F16-4B95-A489-DFDE2EF37143}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{864710B5-7F16-4B95-A489-DFDE2EF37143}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{864710B5-7F16-4B95-A489-DFDE2EF37143}.Release|Any CPU.Build.0 = Release|Any CPU
+		{463BA0CC-C262-4AED-96CA-C14A9DA564CC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{463BA0CC-C262-4AED-96CA-C14A9DA564CC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{463BA0CC-C262-4AED-96CA-C14A9DA564CC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{463BA0CC-C262-4AED-96CA-C14A9DA564CC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2CBA2472-31AB-4F25-BB70-53789DBF63E6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2CBA2472-31AB-4F25-BB70-53789DBF63E6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2CBA2472-31AB-4F25-BB70-53789DBF63E6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2CBA2472-31AB-4F25-BB70-53789DBF63E6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{52E9A731-1E9E-4CA1-8C47-12DEBB66AD9B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{52E9A731-1E9E-4CA1-8C47-12DEBB66AD9B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{52E9A731-1E9E-4CA1-8C47-12DEBB66AD9B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{52E9A731-1E9E-4CA1-8C47-12DEBB66AD9B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
