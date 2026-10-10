@@ -1,32 +1,63 @@
-﻿namespace KmlHandling;
+﻿using Common;
+using System.Xml;
+using System.Xml.Serialization;
+using static KmlHandling.KmlModel;
 
-public class CreateKml: ICreateKml
+namespace KmlHandling;
+
+public class CreateKml: ICommandHandlerAsync<UpdateKmlIfExistsOrCreateNewIfNotCommand>
 {
-    public CreateKml(string name, string description)
+    public async Task Execute(UpdateKmlIfExistsOrCreateNewIfNotCommand command)
     {
-        Name = name; 
-        Description = description;
+        Placemark[]? placeMarks;
+        placeMarks =
+        [
+            new Placemark
+            {
+                Name = "test"
+                , Description = new XmlDocument().CreateCDataSection("test")
+                , StyleUrl= "styleUrl test"
+                , LineString = new LineString
+                {
+                    Extrude = "1"
+                    , Tessellate = "1"
+                    , AltitudeMode = "absolute"
+                    , Coordinates = command.Coordinates
+                }
+            }
+        ];
+        
+        Kml kml = GenerateKml("test", "test", null, placeMarks);
+        DoSerialization(kml, command.KmlFileName);
     }
 
-    public KmlModel.Kml GenerateKml()
+    public Kml GenerateKml(string name, string description, Style? style, Placemark[]? placeMarks)
     {
-        KmlModel.Kml kmlModel = new()
+        Kml kmlModel = new()
         {
-            Document = new KmlModel.Document
+            Document = new Document
             {
-                Name = Name
-                , Description = Description
-                , Style = Style
-                , Placemarks = PlaceMarks
+                Name = name,
+                Description = description,
+                Style = style,
+                Placemarks = placeMarks
             }
         };
 
         return kmlModel;
     }
 
-    private string? Description { get; }
-    private string? Name { get; }
+    private void DoSerialization(Kml kml, string? fileName)
+    {
+        if (fileName is null) throw new NullReferenceException("File name is empty!");
 
-    public KmlModel.Style? Style { get; set; }
-    public KmlModel.Placemark[]? PlaceMarks { get; set; }
+        TextWriter txtWriter = new StreamWriter(fileName);
+
+        XmlSerializerNamespaces ns = new();
+        ns.Add("", "http://www.opengis.net/kml/2.2");
+
+        XmlSerializer xmlSerializer = new(typeof(Kml));
+        xmlSerializer.Serialize(txtWriter, kml, ns);
+        txtWriter.Close();
+    }
 }

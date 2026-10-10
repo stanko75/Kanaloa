@@ -13,7 +13,7 @@ builder.Services.AddMvc().AddNewtonsoftJson();
 
 builder.Services.AddSingleton<IUpdateKml, UpdateKml>();
 builder.Services.AddSingleton<IKmlSerializer>(_ => new KmlSerializerTextWriter(typeof(KmlModel.Kml)));
-builder.Services.AddSingleton<ICreateKml>(_ => new CreateKml("test", "test"));
+builder.Services.AddSingleton<ICreateKml>(_ => new CreateKmlOld("test", "test"));
 builder.Services.AddSingleton<ICommandHandler<UpdateKmlIfExistsOrCreateNewIfNotCommand>, UpdateKmlIfExistsOrCreateNewIfNot>();
 
 builder.Services.AddSingleton<ICommandHandlerAsync<AddFileWithLastKnownGpsPositionCommand>, AddFileWithLastKnownGpsPosition>();

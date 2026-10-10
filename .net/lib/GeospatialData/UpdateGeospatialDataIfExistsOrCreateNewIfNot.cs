@@ -6,20 +6,20 @@ namespace GeospatialData;
 public class UpdateGeospatialDataIfExistsOrCreateNewIfNot(
     ICommandHandlerAsync<UpdateGeospatialDataIfExistsOrCreateNewIfNotCommand> updateGeospatialData
     , ICommandHandlerAsync<UpdateGeospatialDataIfExistsOrCreateNewIfNotCommand> createGeospatialData)
-    : ICommandHandler<UpdateGeospatialDataIfExistsOrCreateNewIfNotCommand>
+    : ICommandHandlerAsync<UpdateGeospatialDataIfExistsOrCreateNewIfNotCommand>
 {
-    public void Execute(UpdateGeospatialDataIfExistsOrCreateNewIfNotCommand command)
+    public async Task Execute(UpdateGeospatialDataIfExistsOrCreateNewIfNotCommand command)
     {
         if (string.IsNullOrWhiteSpace(command.Coordinates))
             throw new Exception("Coordinates cannot be empty!");
 
         if (File.Exists(command.GeospatialDataFileName))
         {
-            updateGeospatialData.Execute(command);
+            await updateGeospatialData.Execute(command);
         }
         else
         {
-            createGeospatialData.Execute(command);
+            await createGeospatialData.Execute(command);
         }
     }
 }
