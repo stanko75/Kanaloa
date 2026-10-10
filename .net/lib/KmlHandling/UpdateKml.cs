@@ -4,9 +4,9 @@ using static KmlHandling.KmlModel;
 
 namespace KmlHandling;
 
-public class UpdateKml : ICommandHandler<UpdateGeospatialDataIfExistsOrCreateNewIfNotCommand>
+public class UpdateKml : ICommandHandlerAsync<UpdateGeospatialDataIfExistsOrCreateNewIfNotCommand>
 {
-    public void Execute(UpdateGeospatialDataIfExistsOrCreateNewIfNotCommand command)
+    public async Task Execute(UpdateGeospatialDataIfExistsOrCreateNewIfNotCommand command)
     {
         Kml? kml = DoDeserialization(command.GeospatialDataFileName);
         LineString? lineString = kml?.Document?.Placemarks?[0].LineString;
@@ -14,7 +14,7 @@ public class UpdateKml : ICommandHandler<UpdateGeospatialDataIfExistsOrCreateNew
         {
             lineString.Coordinates = lineString.Coordinates + "," + command.Coordinates;
         }
-        Common.DoSerialization(kml, command.GeospatialDataFileName);
+        Common.DoSerializationAsync(kml, command.GeospatialDataFileName);
     }
 
     private Kml? DoDeserialization(string? fileName)
@@ -26,4 +26,5 @@ public class UpdateKml : ICommandHandler<UpdateGeospatialDataIfExistsOrCreateNew
         Kml? kml = (Kml?)xmlSerializer.Deserialize(fileStream);
         return kml;
     }
+
 }

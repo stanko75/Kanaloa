@@ -4,9 +4,9 @@ using static KmlHandling.KmlModel;
 
 namespace KmlHandling;
 
-public class CreateKml: ICommandHandler<UpdateGeospatialDataIfExistsOrCreateNewIfNotCommand>
+public class CreateKml: ICommandHandlerAsync<UpdateGeospatialDataIfExistsOrCreateNewIfNotCommand>
 {
-    public void Execute(UpdateGeospatialDataIfExistsOrCreateNewIfNotCommand command)
+    public async Task Execute(UpdateGeospatialDataIfExistsOrCreateNewIfNotCommand command)
     {
         if (string.IsNullOrWhiteSpace(command.GeospatialDataFileName))
             throw new Exception("KML file name cannot be empty!");
@@ -32,7 +32,7 @@ public class CreateKml: ICommandHandler<UpdateGeospatialDataIfExistsOrCreateNewI
         ];
         
         Kml kml = GenerateKml("test", "test", null, placeMarks);
-        Common.DoSerialization(kml, command.GeospatialDataFileName);
+        await Common.DoSerializationAsync(kml, command.GeospatialDataFileName);
     }
 
     public Kml GenerateKml(string name, string description, Style? style, Placemark[]? placeMarks)

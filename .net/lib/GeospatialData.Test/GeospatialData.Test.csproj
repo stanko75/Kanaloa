@@ -17,6 +17,8 @@
     <ProjectReference Include="..\GeoJsonHandling.Test\GeoJsonHandling.Test.csproj" />
     <ProjectReference Include="..\GeoJsonHandling\GeoJsonHandling.csproj" />
     <ProjectReference Include="..\GeospatialData\GeospatialData.csproj" />
+    <ProjectReference Include="..\KmlHandling.Test\KmlHandling.Test.csproj" />
+    <ProjectReference Include="..\KmlHandling\KmlHandling.csproj" />
   </ItemGroup>
 
   <ItemGroup>
