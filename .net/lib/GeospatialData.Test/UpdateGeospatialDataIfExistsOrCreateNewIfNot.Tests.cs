@@ -1,6 +1,6 @@
 ﻿using Common;
 using GeoJsonHandling;
-using System.Text.Json;
+using static GeoJsonHandling.Test.GeoJsonTests;
 
 namespace GeospatialData.Test;
 
@@ -35,65 +35,5 @@ public class UpdateGeospatialDataIfExistsOrCreateNewIfNotTests
 
         Assert.IsTrue(IsExpectedGeoJson(updateGeospatialDataIfExistsOrCreateNewIfNotCommand.GeospatialDataFileName));
     }
-
-    private static bool IsExpectedGeoJson(string geoJsonFileName, string expectedCoordinates = "6.641421,43.1869746,2357")
-    {
-        try
-        {
-            if (!File.Exists(geoJsonFileName))
-                return false;
-
-            string json = File.ReadAllText(geoJsonFileName);
-            using JsonDocument document = JsonDocument.Parse(json);
-
-            JsonElement root = document.RootElement;
-            if (!root.TryGetProperty("type", out JsonElement rootType)
-                || rootType.GetString() != "FeatureCollection")
-                return false;
-
-            if (!root.TryGetProperty("features", out JsonElement features)
-                || features.ValueKind != JsonValueKind.Array
-                || features.GetArrayLength() == 0)
-                return false;
-
-            JsonElement feature = features[0];
-            if (!feature.TryGetProperty("type", out JsonElement featureType)
-                || featureType.GetString() != "Feature")
-                return false;
-
-            if (!feature.TryGetProperty("properties", out JsonElement properties))
-                return false;
-
-            if (!properties.TryGetProperty("name", out JsonElement name)
-                || name.GetString() != "test")
-                return false;
-
-            if (!properties.TryGetProperty("description", out JsonElement description)
-                || description.GetString() != "test")
-                return false;
-
-            if (!properties.TryGetProperty("styleUrl", out JsonElement styleUrl)
-                || styleUrl.GetString() != "styleUrl test")
-                return false;
-
-            if (!feature.TryGetProperty("geometry", out JsonElement geometry))
-                return false;
-
-            if (!geometry.TryGetProperty("type", out JsonElement geometryType)
-                || geometryType.GetString() != "LineString")
-                return false;
-
-            if (!geometry.TryGetProperty("coordinates", out JsonElement coordinates)
-                || coordinates.ValueKind != JsonValueKind.String
-                || coordinates.GetString() != expectedCoordinates)
-                return false;
-
-            return true;
-        }
-        catch
-        {
-            return false;
-        }
-    }
-
+    
 }
