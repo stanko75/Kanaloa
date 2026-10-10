@@ -33,6 +33,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GeospatialData.Test", "Geos
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GeoJsonHandling.Test", "GeoJsonHandling.Test\GeoJsonHandling.Test.csproj", "{6B9D9451-8F39-4AB6-AD64-139B9FACA530}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KmlHandling.Test", "KmlHandling.Test\KmlHandling.Test.csproj", "{665C4BF7-3FEE-48DB-84E4-7DFB97BA27C9}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -99,6 +101,10 @@ Global
 		{6B9D9451-8F39-4AB6-AD64-139B9FACA530}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6B9D9451-8F39-4AB6-AD64-139B9FACA530}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{6B9D9451-8F39-4AB6-AD64-139B9FACA530}.Release|Any CPU.Build.0 = Release|Any CPU
+		{665C4BF7-3FEE-48DB-84E4-7DFB97BA27C9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{665C4BF7-3FEE-48DB-84E4-7DFB97BA27C9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{665C4BF7-3FEE-48DB-84E4-7DFB97BA27C9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{665C4BF7-3FEE-48DB-84E4-7DFB97BA27C9}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
