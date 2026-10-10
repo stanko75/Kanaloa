@@ -17,7 +17,6 @@ namespace GeoJsonHandling.Test
                 {
                     Coordinates = "6.641421,43.1869746,2357",
                     GeospatialDataFileName = _geospatialDataFileName,
-                    GeospatialDataFileNameExtension = "geojson",
                     FolderName = _testFolder
                 };
 
