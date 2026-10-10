@@ -39,6 +39,28 @@ public class UpdateGeospatialDataIfExistsOrCreateNewIfNotTests
     }
 
     [TestMethod]
+    public async Task UpdateGeoJson()
+    {
+        await CreateGeoJson();
+
+        UpdateGeospatialDataIfExistsOrCreateNewIfNotCommand updateGeospatialDataIfExistsOrCreateNewIfNotCommand =
+            new UpdateGeospatialDataIfExistsOrCreateNewIfNotCommand
+            {
+                Coordinates = "6.982319,50.2130308,501.0483676407712",
+                GeospatialDataFileName = _geospatialDataFileName,
+                GeospatialDataFileNameExtension = "geojson",
+                FolderName = _testFolder
+            };
+
+        UpdateGeoJson updateJson = new UpdateGeoJson();
+        UpdateGeospatialDataIfExistsOrCreateNewIfNot updateGeospatialDataIfExistsOrCreateNewIfNot = new UpdateGeospatialDataIfExistsOrCreateNewIfNot(updateJson,
+            null);
+        await updateGeospatialDataIfExistsOrCreateNewIfNot.Execute(updateGeospatialDataIfExistsOrCreateNewIfNotCommand);
+
+        Assert.IsTrue(IsExpectedGeoJson(updateGeospatialDataIfExistsOrCreateNewIfNotCommand.GeospatialDataFileName, "6.641421,43.1869746,2357,6.982319,50.2130308,501.0483676407712"));
+    }
+
+    [TestMethod]
     public async Task CreateKml()
     {
         UpdateGeospatialDataIfExistsOrCreateNewIfNotCommand updateGeospatialDataIfExistsOrCreateNewIfNotCommand =

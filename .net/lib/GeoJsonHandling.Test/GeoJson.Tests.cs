@@ -38,26 +38,16 @@ namespace GeoJsonHandling.Test
         [TestMethod]
         public async Task UpdateGeoJson()
         {
+            await CreateGeoJson();
+
             var command = new UpdateGeospatialDataIfExistsOrCreateNewIfNotCommand
             {
-                Coordinates = "6.641421,43.1869746,2357",
+                Coordinates = "6.982319,50.2130308,501.0483676407712",
                 GeospatialDataFileName = _geospatialDataFileName,
                 GeospatialDataFileNameExtension = "geojson",
                 FolderName = _testFolder
             };
 
-            string geospatialDataFullFileName = Path.ChangeExtension(command.GeospatialDataFileName, command.GeospatialDataFileNameExtension);
-            geospatialDataFullFileName = Path.Join(command.FolderName, geospatialDataFullFileName);
-
-            if (File.Exists(geospatialDataFullFileName))
-            {
-                File.Delete(geospatialDataFullFileName);
-            }
-
-            CreateGeoJson createGeoJson = new CreateGeoJson();
-            await createGeoJson.Execute(command);
-
-            command.Coordinates = "6.982319,50.2130308,501.0483676407712";
             UpdateGeoJson updateGeoJson = new UpdateGeoJson();
             await updateGeoJson.Execute(command);
 
