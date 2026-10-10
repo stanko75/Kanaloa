@@ -14,7 +14,7 @@ public class UpdateKml : ICommandHandlerAsync<UpdateGeospatialDataIfExistsOrCrea
         {
             lineString.Coordinates = lineString.Coordinates + "," + command.Coordinates;
         }
-        Common.DoSerializationAsync(kml, command.GeospatialDataFileName);
+        await Common.DoSerializationAsync(kml, command.GeospatialDataFileName);
     }
 
     private Kml? DoDeserialization(string? fileName)
