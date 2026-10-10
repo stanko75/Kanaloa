@@ -17,8 +17,17 @@ namespace GeoJsonHandling.Test
                 {
                     Coordinates = "6.641421,43.1869746,2357",
                     GeospatialDataFileName = _geospatialDataFileName,
+                    GeospatialDataFileNameExtension = "geojson",
                     FolderName = _testFolder
                 };
+
+            string geospatialDataFullFileName = Path.ChangeExtension(updateGeospatialDataIfExistsOrCreateNewIfNotCommand.GeospatialDataFileName, updateGeospatialDataIfExistsOrCreateNewIfNotCommand.GeospatialDataFileNameExtension);
+            geospatialDataFullFileName = Path.Join(updateGeospatialDataIfExistsOrCreateNewIfNotCommand.FolderName, geospatialDataFullFileName);
+
+            if (File.Exists(geospatialDataFullFileName))
+            {
+                File.Delete(geospatialDataFullFileName);
+            }
 
             CreateGeoJson createJson = new CreateGeoJson();
             await createJson.Execute(updateGeospatialDataIfExistsOrCreateNewIfNotCommand);

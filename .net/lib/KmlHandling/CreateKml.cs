@@ -1,13 +1,12 @@
 ﻿using Common;
 using System.Xml;
-using System.Xml.Serialization;
 using static KmlHandling.KmlModel;
 
 namespace KmlHandling;
 
-public class CreateKml: ICommandHandlerAsync<UpdateGeospatialDataIfExistsOrCreateNewIfNotCommand>
+public class CreateKml: ICommandHandler<UpdateGeospatialDataIfExistsOrCreateNewIfNotCommand>
 {
-    public async Task Execute(UpdateGeospatialDataIfExistsOrCreateNewIfNotCommand command)
+    public void Execute(UpdateGeospatialDataIfExistsOrCreateNewIfNotCommand command)
     {
         if (string.IsNullOrWhiteSpace(command.GeospatialDataFileName))
             throw new Exception("KML file name cannot be empty!");
@@ -33,7 +32,7 @@ public class CreateKml: ICommandHandlerAsync<UpdateGeospatialDataIfExistsOrCreat
         ];
         
         Kml kml = GenerateKml("test", "test", null, placeMarks);
-        DoSerialization(kml, command.GeospatialDataFileName);
+        Common.DoSerialization(kml, command.GeospatialDataFileName);
     }
 
     public Kml GenerateKml(string name, string description, Style? style, Placemark[]? placeMarks)
@@ -50,19 +49,5 @@ public class CreateKml: ICommandHandlerAsync<UpdateGeospatialDataIfExistsOrCreat
         };
 
         return kmlModel;
-    }
-
-    private void DoSerialization(Kml kml, string? fileName)
-    {
-        if (fileName is null) throw new NullReferenceException("File name is empty!");
-
-        TextWriter txtWriter = new StreamWriter(fileName);
-
-        XmlSerializerNamespaces ns = new();
-        ns.Add("", "http://www.opengis.net/kml/2.2");
-
-        XmlSerializer xmlSerializer = new(typeof(Kml));
-        xmlSerializer.Serialize(txtWriter, kml, ns);
-        txtWriter.Close();
     }
 }

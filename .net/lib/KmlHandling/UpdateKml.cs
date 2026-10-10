@@ -1,68 +1,29 @@
-﻿namespace KmlHandling;
+﻿using Common;
+using System.Xml.Serialization;
+using static KmlHandling.KmlModel;
 
-public class UpdateKml : IUpdateKml
+namespace KmlHandling;
+
+public class UpdateKml : ICommandHandler<UpdateGeospatialDataIfExistsOrCreateNewIfNotCommand>
 {
-    public KmlModel.Kml? GenerateKml()
+    public void Execute(UpdateGeospatialDataIfExistsOrCreateNewIfNotCommand command)
     {
-        if (OldKml is not null
-                && OldKml.Document is not null
-           )
+        Kml? kml = DoDeserialization(command.GeospatialDataFileName);
+        LineString? lineString = kml?.Document?.Placemarks?[0].LineString;
+        if (lineString is not null)
         {
-            if (OldKml.Document.Style is not null
-                    && Style is not null
-                )
-            {
-                if (!string.Equals(OldKml.Document.Style.Id, Style.Id))
-                {
-                    OldKml.Document.Style.Id = Style.Id;
-                }
-
-                if (OldKml.Document.Style.PolyStyle is not null
-                        && Style.PolyStyle is not null
-                        && !string.Equals(OldKml.Document.Style.PolyStyle.Color, Style.PolyStyle.Color)
-                    )
-                {
-                    OldKml.Document.Style.PolyStyle.Color = Style.PolyStyle.Color;
-                }
-
-                if (OldKml.Document.Style.LineStyle is not null
-                        && Style.LineStyle is not null
-                        && !string.Equals(OldKml.Document.Style.LineStyle.Color, Style.LineStyle.Color)
-                    )
-                {
-                    OldKml.Document.Style.LineStyle.Color = Style.LineStyle.Color;
-                }
-            }
-
-            if (OldKml.Document.Placemarks is not null
-                    && Placemark is not null
-                )
-            {
-                KmlModel.LineString? lineString = OldKml.Document.Placemarks[0].LineString;
-                if (lineString is not null)
-                {
-                    lineString.Coordinates = lineString.Coordinates + " " + Placemark.LineString?.Coordinates;
-                }
-            }
-            else if (OldKml.Document.Placemarks is null
-                     && Placemark is not null)
-            {
-                OldKml.Document.Placemarks = new KmlModel.Placemark[1];
-                OldKml.Document.Placemarks[0] = new KmlModel.Placemark
-                {
-                    LineString = new KmlModel.LineString
-                    {
-                        Coordinates = Placemark.LineString?.Coordinates
-                    }
-                };
-            }
+            lineString.Coordinates = lineString.Coordinates + "," + command.Coordinates;
         }
-
-        return OldKml;
+        Common.DoSerialization(kml, command.GeospatialDataFileName);
     }
 
-    public KmlModel.Style? Style { get; set; }
-    public KmlModel.Placemark? Placemark { get; set; }
+    private Kml? DoDeserialization(string? fileName)
+    {
+        if (fileName is null) throw new NullReferenceException("File name is empty!");
 
-    public KmlModel.Kml? OldKml { get; set; }
+        XmlSerializer xmlSerializer = new XmlSerializer(typeof(Kml));
+        using FileStream fileStream = File.OpenRead(fileName);
+        Kml? kml = (Kml?)xmlSerializer.Deserialize(fileStream);
+        return kml;
+    }
 }

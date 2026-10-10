@@ -10,19 +10,58 @@ public class KmlTests
     private readonly string _geospatialDataFileName = "test";
 
     [TestMethod]
-    public async Task CreateKml()
+    public void CreateKml()
     {
         UpdateGeospatialDataIfExistsOrCreateNewIfNotCommand updateGeospatialDataIfExistsOrCreateNewIfNotCommand =
             new UpdateGeospatialDataIfExistsOrCreateNewIfNotCommand
             {
                 Coordinates = "6.641421,43.1869746,2357",
                 GeospatialDataFileName = _geospatialDataFileName,
+                GeospatialDataFileNameExtension = "kml",
                 FolderName = _testFolder
             };
 
+        string geospatialDataFullFileName = Path.ChangeExtension(updateGeospatialDataIfExistsOrCreateNewIfNotCommand.GeospatialDataFileName, updateGeospatialDataIfExistsOrCreateNewIfNotCommand.GeospatialDataFileNameExtension);
+        geospatialDataFullFileName = Path.Join(updateGeospatialDataIfExistsOrCreateNewIfNotCommand.FolderName, geospatialDataFullFileName);
+
+        if (File.Exists(geospatialDataFullFileName))
+        {
+            File.Delete(geospatialDataFullFileName);
+        }
+
         CreateKml createKml = new CreateKml();
-        await createKml.Execute(updateGeospatialDataIfExistsOrCreateNewIfNotCommand);
+        createKml.Execute(updateGeospatialDataIfExistsOrCreateNewIfNotCommand);
         Assert.IsTrue(IsExpectedKml(updateGeospatialDataIfExistsOrCreateNewIfNotCommand.GeospatialDataFileName));
+    }
+
+    [TestMethod]
+    public void UpdateKml()
+    {
+        UpdateGeospatialDataIfExistsOrCreateNewIfNotCommand updateGeospatialDataIfExistsOrCreateNewIfNotCommand =
+            new UpdateGeospatialDataIfExistsOrCreateNewIfNotCommand
+            {
+                Coordinates = "6.641421,43.1869746,2357",
+                GeospatialDataFileName = _geospatialDataFileName,
+                GeospatialDataFileNameExtension = "kml",
+                FolderName = _testFolder
+            };
+
+        string geospatialDataFullFileName = Path.ChangeExtension(updateGeospatialDataIfExistsOrCreateNewIfNotCommand.GeospatialDataFileName, updateGeospatialDataIfExistsOrCreateNewIfNotCommand.GeospatialDataFileNameExtension);
+        geospatialDataFullFileName = Path.Join(updateGeospatialDataIfExistsOrCreateNewIfNotCommand.FolderName, geospatialDataFullFileName);
+
+        if (File.Exists(geospatialDataFullFileName))
+        {
+            File.Delete(geospatialDataFullFileName);
+        }
+
+        CreateKml createKml = new CreateKml();
+        createKml.Execute(updateGeospatialDataIfExistsOrCreateNewIfNotCommand);
+
+        updateGeospatialDataIfExistsOrCreateNewIfNotCommand.Coordinates = "6.982319,50.2130308,501.0483676407712";
+        UpdateKml updateKml = new UpdateKml();
+        updateKml.Execute(updateGeospatialDataIfExistsOrCreateNewIfNotCommand);
+
+        Assert.IsTrue(IsExpectedKml(updateGeospatialDataIfExistsOrCreateNewIfNotCommand.GeospatialDataFileName, "6.641421,43.1869746,2357,6.982319,50.2130308,501.0483676407712"));
     }
 
     public static bool IsExpectedKml(string kmlFileName, string expectedCoordinates = "6.641421,43.1869746,2357")
