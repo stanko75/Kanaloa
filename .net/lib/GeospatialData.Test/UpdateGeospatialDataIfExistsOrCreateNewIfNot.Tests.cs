@@ -85,4 +85,26 @@ public class UpdateGeospatialDataIfExistsOrCreateNewIfNotTests
         Assert.IsTrue(IsExpectedKml(updateGeospatialDataIfExistsOrCreateNewIfNotCommand.GeospatialDataFileName));
     }
 
+    [TestMethod]
+    public async Task UpdateKml()
+    {
+        await CreateKml();
+
+        UpdateGeospatialDataIfExistsOrCreateNewIfNotCommand updateGeospatialDataIfExistsOrCreateNewIfNotCommand =
+            new UpdateGeospatialDataIfExistsOrCreateNewIfNotCommand
+            {
+                Coordinates = "6.982319,50.2130308,501.0483676407712",
+                GeospatialDataFileName = _geospatialDataFileName,
+                GeospatialDataFileNameExtension = "kml",
+                FolderName = _testFolder
+            };
+
+        UpdateKml updateKml = new UpdateKml();
+        UpdateGeospatialDataIfExistsOrCreateNewIfNot updateGeospatialDataIfExistsOrCreateNewIfNot = new UpdateGeospatialDataIfExistsOrCreateNewIfNot(updateKml,
+            null);
+        await updateGeospatialDataIfExistsOrCreateNewIfNot.Execute(updateGeospatialDataIfExistsOrCreateNewIfNotCommand);
+
+        Assert.IsTrue(IsExpectedKml(updateGeospatialDataIfExistsOrCreateNewIfNotCommand.GeospatialDataFileName, "6.641421,43.1869746,2357,6.982319,50.2130308,501.0483676407712"));
+    }
+
 }
