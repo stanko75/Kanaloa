@@ -1,5 +1,6 @@
 using Common;
 using FileHandling;
+using GeospatialData;
 using ImageHandling;
 using Kanaloa;
 using KmlHandling;
@@ -11,22 +12,24 @@ builder.Services.AddOpenApi();
 
 builder.Services.AddMvc().AddNewtonsoftJson();
 
-builder.Services.AddSingleton<IUpdateKml, UpdateKml>();
-builder.Services.AddSingleton<IKmlSerializer>(_ => new KmlSerializerTextWriter(typeof(KmlModel.Kml)));
-builder.Services.AddSingleton<ICreateKml>(_ => new CreateKmlOld("test", "test"));
-builder.Services.AddSingleton<ICommandHandler<UpdateKmlIfExistsOrCreateNewIfNotCommand>, UpdateKmlIfExistsOrCreateNewIfNot>();
+builder.Services.AddKeyedSingleton<
+    ICommandHandlerAsync<UpdateGeospatialDataIfExistsOrCreateNewIfNotCommand>,
+    UpdateKml>("UpdateGeospatialData");
+
+builder.Services.AddKeyedSingleton<
+    ICommandHandlerAsync<UpdateGeospatialDataIfExistsOrCreateNewIfNotCommand>,
+    CreateKml>("CreateGeospatialData");
 
 builder.Services.AddSingleton<ICommandHandlerAsync<AddFileWithLastKnownGpsPositionCommand>, AddFileWithLastKnownGpsPosition>();
 builder.Services.AddSingleton<ICommandHandlerAsync<WriteConfigurationToJsonFileCommand>, WriteConfigurationToJsonFile>();
-builder.Services.AddSingleton<ISaveKmlUpdateLivePositionSaveConfigFile, SaveKmlUpdateLivePositionSaveConfigFile>();
+builder.Services.AddSingleton<ICommandHandlerAsync<UpdateGeospatialDataIfExistsOrCreateNewIfNotCommand>, UpdateGeospatialDataIfExistsOrCreateNewIfNot>();
+builder.Services.AddSingleton<ISaveGeospatialDataUpdateLivePositionSaveConfigFile, SaveGeospatialDataUpdateLivePositionSaveConfigFile>();
 builder.Services.AddScoped<ICommandHandlerAsync<PrepareToResizeImageDecoratorCommand>, PrepareToResizeImageDecorator>();
 builder.Services.AddScoped<ICommandHandler<ResizeImageCommand>, ResizeImage>();
 builder.Services.AddScoped<ICommandHandler<ExtractGpsInfoFromImageCommand>, ExtractGpsInfoFromImage>();
 builder.Services.AddScoped<ICommandHandler<UpdateOrCreateJsonFileWithListOfImagesForThumbsCommand>, UpdateOrCreateJsonFileWithListOfImagesForThumbs>();
 builder.Services.AddScoped<ICommandHandler<UpdateJsonIfExistsOrCreateNewIfNotCommand>, UpdateJsonIfExistsOrCreateNewIfNot>();
 builder.Services.AddScoped<ICommandHandler<UpdateOrCreateJsonFileWithListOfImagesCommand>, UpdateOrCreateJsonFileWithListOfImages>();
-
-builder.Services.AddScoped<ICommandHandler<DeleteFirstAndLastKmlPointsCommand>, DeleteFirstAndLastKmlPoints>();
 
 builder.Services.Configure<KanaloaSettings>(builder.Configuration.GetSection("KanaloaSettings"));
 

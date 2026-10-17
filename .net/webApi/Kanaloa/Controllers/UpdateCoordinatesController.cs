@@ -1,6 +1,5 @@
 ﻿using Common;
 using FileHandling;
-using KmlHandling;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json.Linq;
@@ -10,7 +9,7 @@ namespace Kanaloa.Controllers;
 [Route("api/[controller]")]
 [ApiController]
 public class UpdateCoordinatesController(
-    ISaveKmlUpdateLivePositionSaveConfigFile saveKmlUpdateLivePositionSaveConfigFile,
+    ISaveGeospatialDataUpdateLivePositionSaveConfigFile saveKmlUpdateLivePositionSaveConfigFile,
     IOptions<KanaloaSettings> kanaloaSettings)
     : ControllerBase
 {
@@ -43,14 +42,15 @@ public class UpdateCoordinatesController(
                 WebFolderName = folderName
             };
 
-            var updateKmlIfExistsOrCreateNewIfNotCommand = new UpdateKmlIfExistsOrCreateNewIfNotCommand
+            var updateGeospatialDataIfExistsOrCreateNewIfNotCommand = new UpdateGeospatialDataIfExistsOrCreateNewIfNotCommand
             {
-                KmlFileName = kmlFileName,
+                GeospatialDataFileNameExtension = "kml",
+                GeospatialDataFileName = kmlFileName,
                 Coordinates = coordinates,
                 FolderName = folderName
             };
 
-            await saveKmlUpdateLivePositionSaveConfigFile.Execute(updateKmlIfExistsOrCreateNewIfNotCommand
+            await saveKmlUpdateLivePositionSaveConfigFile.Execute(updateGeospatialDataIfExistsOrCreateNewIfNotCommand
                 , addFileWithLastKnownGpsPositionCommand
                 , writeConfigurationToJsonFileCommand);
 

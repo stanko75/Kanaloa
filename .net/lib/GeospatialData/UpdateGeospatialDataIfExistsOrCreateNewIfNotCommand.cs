@@ -2,7 +2,7 @@
 
 public class UpdateGeospatialDataIfExistsOrCreateNewIfNotCommand
 {
-    public string GeospatialDataFileNameExtension { get; set; }
+    public string? GeospatialDataFileNameExtension { get; set; }
 
     public string GeospatialDataFileName
     {

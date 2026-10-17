@@ -1,11 +1,14 @@
 ﻿using Common;
-using System.Xml.Serialization;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace GeospatialData;
 
 public class UpdateGeospatialDataIfExistsOrCreateNewIfNot(
-    ICommandHandlerAsync<UpdateGeospatialDataIfExistsOrCreateNewIfNotCommand> updateGeospatialData
-    , ICommandHandlerAsync<UpdateGeospatialDataIfExistsOrCreateNewIfNotCommand> createGeospatialData)
+    [FromKeyedServices("UpdateGeospatialData")]
+    ICommandHandlerAsync<UpdateGeospatialDataIfExistsOrCreateNewIfNotCommand> updateGeospatialData,
+
+    [FromKeyedServices("CreateGeospatialData")]
+    ICommandHandlerAsync<UpdateGeospatialDataIfExistsOrCreateNewIfNotCommand> createGeospatialData)
     : ICommandHandlerAsync<UpdateGeospatialDataIfExistsOrCreateNewIfNotCommand>
 {
     public async Task Execute(UpdateGeospatialDataIfExistsOrCreateNewIfNotCommand command)
