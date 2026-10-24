@@ -89,3 +89,4 @@ php/kanaloaUploadConfig.php
 .net/webApi/Kanaloa/.vscode/tasks.json
 .net/webApi/Kanaloa/.vscode/settings.json
 /.net/publish
+/.net/publishRemote
