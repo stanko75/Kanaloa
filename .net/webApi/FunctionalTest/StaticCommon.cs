@@ -31,9 +31,15 @@ public class StaticCommon
         string extension, ILogger logger, bool checkInRoot = false)
     {
         UriBuilder uriBuilder = new UriBuilder(addressText);
-        uriBuilder.Path = checkInRoot
-            ? Path.ChangeExtension(localFileName, extension)
-            : Path.Combine(folderNameString, Path.ChangeExtension(localFileName, extension));
+
+        string fileName = Path.ChangeExtension(localFileName, extension);
+
+        string relativePath = checkInRoot
+            ? fileName
+            : $"{folderNameString.Trim('/')}/{fileName}";
+
+        uriBuilder.Path = $"{uriBuilder.Path.TrimEnd('/')}/{relativePath.TrimStart('/')}";
+
         Uri fileNameUri = uriBuilder.Uri;
         if (!string.Equals(fileNameInConfigJsonOnWeb, fileNameUri.AbsoluteUri,
                 StringComparison.InvariantCultureIgnoreCase))
