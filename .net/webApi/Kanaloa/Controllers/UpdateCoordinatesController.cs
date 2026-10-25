@@ -9,7 +9,7 @@ namespace Kanaloa.Controllers;
 [Route("api/[controller]")]
 [ApiController]
 public class UpdateCoordinatesController(
-    ISaveGeospatialDataUpdateLivePositionSaveConfigFile saveKmlUpdateLivePositionSaveConfigFile,
+    ISaveGeospatialDataUpdateLivePositionSaveConfigFile saveGeospatialDataUpdateLivePositionSaveConfigFile,
     IOptions<KanaloaSettings> kanaloaSettings)
     : ControllerBase
 {
@@ -50,7 +50,7 @@ public class UpdateCoordinatesController(
                 FolderName = folderName
             };
 
-            await saveKmlUpdateLivePositionSaveConfigFile.Execute(updateGeospatialDataIfExistsOrCreateNewIfNotCommand
+            await saveGeospatialDataUpdateLivePositionSaveConfigFile.Execute(updateGeospatialDataIfExistsOrCreateNewIfNotCommand
                 , addFileWithLastKnownGpsPositionCommand
                 , writeConfigurationToJsonFileCommand);
 
