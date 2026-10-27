@@ -2,37 +2,35 @@
 
 public class WriteConfigurationToJsonFileCommand: CommandBase
 {
-    private string _rootUrl = string.Empty;
-    string _folderName = string.Empty;
-    string _kmlFileName = string.Empty;
-
     public string WebFolderName
     {
         get
         {
-            _folderName = string.IsNullOrWhiteSpace(_folderName) ? "default" : _folderName;
-            _folderName =
-                CommonStatic.ConvertRelativeWindowsPathToUri(RootUrl, _folderName).AbsoluteUri;
-            if (!_folderName.EndsWith("/"))
+            field = string.IsNullOrWhiteSpace(field) ? "default" : field;
+            field =
+                CommonStatic.ConvertRelativeWindowsPathToUri(RootUrl, field).AbsoluteUri;
+            if (!field.EndsWith("/"))
             {
-                _folderName += "/";
+                field += "/";
             }
 
-            return _folderName;
+            return field;
         }
-        set => _folderName = value;
-    }
+        set;
+    } = string.Empty;
 
-    public string KmlFileName
+    public string? GeospatialDataFileNameExtension { get; set; }
+
+    public string GeospatialDataFileName
     {
         get
         {
-            _kmlFileName = string.IsNullOrWhiteSpace(_kmlFileName) ? "default" : _kmlFileName;
-            _kmlFileName = Path.ChangeExtension(_kmlFileName, "kml");
-            return Path.Combine(WebFolderName, _kmlFileName);
+            field = string.IsNullOrWhiteSpace(field) ? "default" : field;
+            field = Path.ChangeExtension(field, GeospatialDataFileNameExtension);
+            return Path.Combine(WebFolderName, field);
         }
-        set => _kmlFileName = value;
-    }
+        set;
+    } = string.Empty;
 
     public string ConfigFileName { get; set; } = "config.json";
 
@@ -40,18 +38,18 @@ public class WriteConfigurationToJsonFileCommand: CommandBase
     {
         get
         {
-            if (!_rootUrl.StartsWith("http"))
+            if (!field.StartsWith("http"))
             {
-                _rootUrl = "http://" + _rootUrl;
+                field = "http://" + field;
             }
 
-            if (!_rootUrl.EndsWith("/"))
+            if (!field.EndsWith("/"))
             {
-                _rootUrl += "/";
+                field += "/";
             }
 
-            return _rootUrl;
+            return field;
         }
-        set => _rootUrl = value;
-    }
+        set;
+    } = string.Empty;
 }

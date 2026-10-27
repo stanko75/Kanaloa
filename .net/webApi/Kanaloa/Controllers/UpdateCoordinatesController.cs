@@ -22,7 +22,7 @@ public class UpdateCoordinatesController(
     {
         try
         {
-            string kmlFileName = CommonStaticMethods.GetValue(data, "kmlFileName");
+            string geospatialDataFileName = CommonStaticMethods.GetValue(data, "geospatialDataFileName");
             string folderName = CommonStaticMethods.GetValue(data, "folderName");
             string latitude = CommonStaticMethods.GetValue(data, "Latitude");
             string longitude = CommonStaticMethods.GetValue(data, "Longitude");
@@ -35,19 +35,20 @@ public class UpdateCoordinatesController(
                 GpsCommand = gps
             };
 
+            var updateGeospatialDataIfExistsOrCreateNewIfNotCommand = new UpdateGeospatialDataIfExistsOrCreateNewIfNotCommand
+            {
+                GeospatialDataFileNameExtension = "geoJson",
+                GeospatialDataFileName = geospatialDataFileName,
+                Coordinates = coordinates,
+                FolderName = folderName
+            };
+
             var writeConfigurationToJsonFileCommand = new WriteConfigurationToJsonFileCommand
             {
                 RootUrl = _kanaloaSettings.RootUrl,
-                KmlFileName = kmlFileName,
-                WebFolderName = folderName
-            };
-
-            var updateGeospatialDataIfExistsOrCreateNewIfNotCommand = new UpdateGeospatialDataIfExistsOrCreateNewIfNotCommand
-            {
-                GeospatialDataFileNameExtension = "kml",
-                GeospatialDataFileName = kmlFileName,
-                Coordinates = coordinates,
-                FolderName = folderName
+                GeospatialDataFileName = geospatialDataFileName,
+                WebFolderName = folderName,
+                GeospatialDataFileNameExtension = updateGeospatialDataIfExistsOrCreateNewIfNotCommand.GeospatialDataFileNameExtension
             };
 
             await saveGeospatialDataUpdateLivePositionSaveConfigFile.Execute(updateGeospatialDataIfExistsOrCreateNewIfNotCommand

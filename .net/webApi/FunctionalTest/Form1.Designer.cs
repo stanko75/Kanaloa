@@ -81,7 +81,7 @@
             folderName = new TextBox();
             label2 = new Label();
             label1 = new Label();
-            kmlFileName = new TextBox();
+            geospatialDataFileName = new TextBox();
             UploadImage = new Button();
             UploadToBlog = new Button();
             btnCancel = new Button();
@@ -173,7 +173,7 @@
             panel2.Controls.Add(folderName);
             panel2.Controls.Add(label2);
             panel2.Controls.Add(label1);
-            panel2.Controls.Add(kmlFileName);
+            panel2.Controls.Add(geospatialDataFileName);
             panel2.Dock = DockStyle.Top;
             panel2.Location = new Point(0, 0);
             panel2.Name = "panel2";
@@ -577,16 +577,16 @@
             label1.AutoSize = true;
             label1.Location = new Point(12, 69);
             label1.Name = "label1";
-            label1.Size = new Size(83, 15);
+            label1.Size = new Size(191, 15);
             label1.TabIndex = 1;
-            label1.Text = "Kml file name:";
+            label1.Text = "GeospatialDataFileName file name:";
             // 
-            // kmlFileName
+            // geospatialDataFileName
             // 
-            kmlFileName.Location = new Point(118, 66);
-            kmlFileName.Name = "kmlFileName";
-            kmlFileName.Size = new Size(608, 23);
-            kmlFileName.TabIndex = 2;
+            geospatialDataFileName.Location = new Point(220, 66);
+            geospatialDataFileName.Name = "geospatialDataFileName";
+            geospatialDataFileName.Size = new Size(506, 23);
+            geospatialDataFileName.TabIndex = 2;
             // 
             // UploadImage
             // 
@@ -672,7 +672,7 @@
         private Panel panel1;
         private Panel panel2;
         private Label label1;
-        private TextBox kmlFileName;
+        private TextBox geospatialDataFileName;
         private TextBox log;
         private TextBox folderName;
         private Label label2;

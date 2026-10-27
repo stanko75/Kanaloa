@@ -73,7 +73,8 @@ public partial class Form1 : Form
         var command = new PostGpsPositionsFromFilesWithFileNameCommand
         {
             AddressText = address.Text,
-            KmlFileName = kmlFileName.Text,
+            GeospatialDataFileName = geospatialDataFileName.Text,
+            GeospatialDataFileNameExtension = "geoJson",
             FolderName = folderName.Text,
             HttpClientPost = HttpClientPost,
             GpsLocationsPath = tbGpsLocationsPath.Text
@@ -87,7 +88,7 @@ public partial class Form1 : Form
         var command = new UploadImageCommand
         {
             AddressText = address.Text,
-            KmlFileName = kmlFileName.Text,
+            GeospatialDataFileName = geospatialDataFileName.Text,
             FolderName = folderName.Text,
             HttpClientPost = HttpClientPost,
             ImagesPath = imagesPath.Text
@@ -101,7 +102,7 @@ public partial class Form1 : Form
         var command = new UploadToBlogCommand
         {
             AddressText = address.Text,
-            KmlFileName = kmlFileName.Text,
+            GeospatialDataFileName = geospatialDataFileName.Text,
             FolderName = folderName.Text,
             HttpClientPost = HttpClientPost,
             FtpHost = tbFtpHost.Text,

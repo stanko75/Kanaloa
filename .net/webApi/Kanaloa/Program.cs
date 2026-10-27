@@ -1,9 +1,9 @@
 using Common;
 using FileHandling;
+using GeoJsonHandling;
 using GeospatialData;
 using ImageHandling;
 using Kanaloa;
-using KmlHandling;
 using Microsoft.Extensions.FileProviders;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -14,11 +14,11 @@ builder.Services.AddMvc().AddNewtonsoftJson();
 
 builder.Services.AddKeyedSingleton<
     ICommandHandlerAsync<UpdateGeospatialDataIfExistsOrCreateNewIfNotCommand>,
-    UpdateKml>("UpdateGeospatialData");
+    UpdateGeoJson>("UpdateGeospatialData");
 
 builder.Services.AddKeyedSingleton<
     ICommandHandlerAsync<UpdateGeospatialDataIfExistsOrCreateNewIfNotCommand>,
-    CreateKml>("CreateGeospatialData");
+    CreateGeoJson>("CreateGeospatialData");
 
 builder.Services.AddSingleton<ICommandHandlerAsync<AddFileWithLastKnownGpsPositionCommand>, AddFileWithLastKnownGpsPosition>();
 builder.Services.AddSingleton<ICommandHandlerAsync<WriteConfigurationToJsonFileCommand>, WriteConfigurationToJsonFile>();

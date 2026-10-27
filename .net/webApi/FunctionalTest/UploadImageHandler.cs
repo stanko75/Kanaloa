@@ -12,7 +12,7 @@ public class UploadImageHandler(ILogger logger) : ICommandHandler<UploadImageCom
 
     public async Task Execute(UploadImageCommand command)
     {
-        string kmlFileName = command.KmlFileName;
+        string geospatialDataFileName = command.GeospatialDataFileName;
         string folderName = command.FolderName;
         string addressText = command.AddressText;
         string imagesPath = command.ImagesPath;
@@ -21,7 +21,7 @@ public class UploadImageHandler(ILogger logger) : ICommandHandler<UploadImageCom
             CancellationToken cancellationToken = CancellationTokenSource.Token;
             HttpClient httpClientPost = command.HttpClientPost;
 
-            if (string.IsNullOrWhiteSpace(kmlFileName)) kmlFileName = "default";
+            if (string.IsNullOrWhiteSpace(geospatialDataFileName)) geospatialDataFileName = "default";
             if (string.IsNullOrWhiteSpace(folderName)) folderName = "default";
 
             if (Directory.Exists(imagesPath))
@@ -32,13 +32,13 @@ public class UploadImageHandler(ILogger logger) : ICommandHandler<UploadImageCom
                     cancellationToken.ThrowIfCancellationRequested();
                     string base64Image = ConvertImageToBase64(imageFile);
 
-                    JObject jObjectKmlFileFolder = new JObject();
-                    jObjectKmlFileFolder["folderName"] = folderName;
-                    jObjectKmlFileFolder["kmlFileName"] = kmlFileName;
-                    jObjectKmlFileFolder["base64Image"] = base64Image;
-                    jObjectKmlFileFolder["imageFileName"] = Path.GetFileName(imageFile);
+                    JObject jObjectGeospatialDataFileNameFileFolder = new JObject();
+                    jObjectGeospatialDataFileNameFileFolder["folderName"] = folderName;
+                    jObjectGeospatialDataFileNameFileFolder["kmlFileName"] = geospatialDataFileName;
+                    jObjectGeospatialDataFileNameFileFolder["base64Image"] = base64Image;
+                    jObjectGeospatialDataFileNameFileFolder["imageFileName"] = Path.GetFileName(imageFile);
 
-                    string jsonContent = jObjectKmlFileFolder.ToString();
+                    string jsonContent = jObjectGeospatialDataFileNameFileFolder.ToString();
                     StringContent content = new StringContent(jsonContent);
                     content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
 

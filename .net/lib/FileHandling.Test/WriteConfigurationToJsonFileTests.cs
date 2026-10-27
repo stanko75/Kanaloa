@@ -16,7 +16,8 @@ public class WriteConfigurationToJsonFileTests
 
         WriteConfigurationToJsonFileCommand command = new()
         {
-            RootUrl = rootUrl
+            RootUrl = rootUrl,
+            GeospatialDataFileNameExtension = "geoJson"
         };
 
         if (File.Exists(command.ConfigFileName))
@@ -27,7 +28,7 @@ public class WriteConfigurationToJsonFileTests
         await writeConfigurationToJsonFile.Execute(command);
 
         JObject configJson = JObject.Parse(await File.ReadAllTextAsync(command.ConfigFileName));
-        Assert.AreEqual(configJson["KmlFileName"], "http://milosev.com/default/default.kml");
+        Assert.AreEqual(configJson["GeospatialDataFileName"], "http://milosev.com/default/default." + command.GeospatialDataFileNameExtension);
         Assert.AreEqual(configJson["CurrentLocation"], "http://milosev.com/live.json");
         Assert.AreEqual(configJson["LiveImageMarkersJsonUrl"], "http://milosev.com/default/defaultThumbs.json");
     }

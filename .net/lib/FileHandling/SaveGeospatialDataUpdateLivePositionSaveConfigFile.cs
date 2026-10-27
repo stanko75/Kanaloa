@@ -11,7 +11,7 @@ public class SaveGeospatialDataUpdateLivePositionSaveConfigFile(
         AddFileWithLastKnownGpsPositionCommand addFileWithLastKnownGpsPositionCommand
         , WriteConfigurationToJsonFileCommand writeConfigurationToJsonFileCommand)
     {
-        updateGeospatialDataIfExistsOrCreateNewIfNot.Execute(updateGeospatialDataIfExistsOrCreateNewIfNotCommand);
+        await updateGeospatialDataIfExistsOrCreateNewIfNot.Execute(updateGeospatialDataIfExistsOrCreateNewIfNotCommand);
         await writeConfigurationToJsonFile.Execute(writeConfigurationToJsonFileCommand);
         await addFileWithLastKnownGpsPosition.Execute(addFileWithLastKnownGpsPositionCommand);
     }

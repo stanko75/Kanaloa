@@ -26,6 +26,9 @@
     <Reference Include="FtpHandling">
       <HintPath>..\..\lib\FtpHandling\bin\Debug\net10.0\FtpHandling.dll</HintPath>
     </Reference>
+    <Reference Include="GeoJsonHandling">
+      <HintPath>..\..\lib\GeoJsonHandling\bin\Debug\net10.0\GeoJsonHandling.dll</HintPath>
+    </Reference>
     <Reference Include="GeospatialData">
       <HintPath>..\..\lib\GeospatialData\bin\Debug\net10.0\GeospatialData.dll</HintPath>
     </Reference>
@@ -34,9 +37,6 @@
     </Reference>
     <Reference Include="ImageHandling">
       <HintPath>..\..\lib\ImageHandling\bin\Debug\net10.0\ImageHandling.dll</HintPath>
-    </Reference>
-    <Reference Include="KmlHandling">
-      <HintPath>..\..\lib\KmlHandling\bin\Debug\net10.0\KmlHandling.dll</HintPath>
     </Reference>
     <Reference Include="PostToJoomla">
       <HintPath>..\..\lib\PostToJoomla\bin\Debug\net10.0\PostToJoomla.dll</HintPath>

@@ -2,7 +2,7 @@
 
 public class UploadImageCommand
 {
-    public string KmlFileName { get; set; }
+    public string GeospatialDataFileName { get; set; }
     public string FolderName { get; set; }
     public string AddressText { get; set; }
     public string ImagesPath { get; set; }

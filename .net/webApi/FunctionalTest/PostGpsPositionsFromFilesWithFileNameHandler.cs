@@ -17,10 +17,10 @@ public class PostGpsPositionsFromFilesWithFileNameHandler(ILogger logger)
         CancellationToken? cancellationToken = CancellationTokenSource?.Token;
         HttpClient httpClientPost = command.HttpClientPost;
 
-        JObject jObjectKmlFileFolderLatLng = new JObject
+        JObject jObjectGeospatialDataFileFolderLatLng = new JObject
         {
             ["folderName"] = command.FolderName,
-            ["kmlFileName"] = command.KmlFileName
+            ["geospatialDataFileName"] = command.GeospatialDataFileName
         };
 
         if (Directory.Exists(gpsLocationsPath))
@@ -29,13 +29,13 @@ public class PostGpsPositionsFromFilesWithFileNameHandler(ILogger logger)
             {
                 cancellationToken?.ThrowIfCancellationRequested();
                 JObject myJObject = JObject.Parse(await File.ReadAllTextAsync(file));
-                jObjectKmlFileFolderLatLng["Longitude"] = myJObject["lng"] ?? myJObject["Longitude"];
-                jObjectKmlFileFolderLatLng["Latitude"] = myJObject["lat"] ?? myJObject["Latitude"];
+                jObjectGeospatialDataFileFolderLatLng["Longitude"] = myJObject["lng"] ?? myJObject["Longitude"];
+                jObjectGeospatialDataFileFolderLatLng["Latitude"] = myJObject["lat"] ?? myJObject["Latitude"];
 
                 string requestUri = Path.Combine(addressText, @"api/UpdateCoordinates/PostFileFolder");
-                StringContent content = new StringContent($@"{jObjectKmlFileFolderLatLng}", Encoding.UTF8, "text/json");
+                StringContent content = new StringContent($@"{jObjectGeospatialDataFileFolderLatLng}", Encoding.UTF8, "text/json");
 
-                logger.Log($"Sending: {jObjectKmlFileFolderLatLng}");
+                logger.Log($"Sending: {jObjectGeospatialDataFileFolderLatLng}");
                 logger.Log($"requestUri: {requestUri}");
 
                 HttpResponseMessage httpResponseMessage = await httpClientPost.PostAsync(requestUri, content);
@@ -72,22 +72,22 @@ public class PostGpsPositionsFromFilesWithFileNameHandler(ILogger logger)
                     await StaticCommon.GetConfigJson(StaticCommon.GetConfigJsonUri(addressText).AbsoluteUri,
                         httpClientPost, logger);
 
-                string? klmFileName = configJson["KmlFileName"]?.ToString();
+                string? klmFileName = configJson["GeospatialDataFileName"]?.ToString();
                 string? currentLocation = configJson["CurrentLocation"]?.ToString();
                 //string? liveImageMarkersJsonUrl = configJson?["LiveImageMarkersJsonUrl"]?.ToString();
 
-                UriBuilder kmlUri = StaticCommon.CheckConfigJson(addressText, command.FolderName, klmFileName,
-                    command.KmlFileName, "kml", logger);
+                UriBuilder geospatialDataUri = StaticCommon.CheckConfigJson(addressText, command.FolderName, klmFileName,
+                    command.GeospatialDataFileName, command.GeospatialDataFileNameExtension, logger);
                 UriBuilder testJsonUri =
                     StaticCommon.CheckConfigJson(addressText, command.FolderName, currentLocation, "live", "json",
                         logger, true);
                 try
                 {
-                    await httpClientPost.GetStringAsync(kmlUri.Uri.AbsoluteUri);
+                    await httpClientPost.GetStringAsync(geospatialDataUri.Uri.AbsoluteUri);
                 }
                 catch (Exception ex)
                 {
-                    logger.Log(new Exception("There is error with kmlFile:" + kmlUri.Uri.AbsoluteUri));
+                    logger.Log(new Exception("There is error with geospatialDataFileName:" + geospatialDataUri.Uri.AbsoluteUri));
                     logger.Log(ex);
                     throw;
                 }

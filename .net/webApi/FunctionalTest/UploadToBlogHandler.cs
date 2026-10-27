@@ -11,7 +11,7 @@ public class UploadToBlogHandler(ILogger logger) : ICommandHandler<UploadToBlogC
 
     public async Task Execute(UploadToBlogCommand command)
     {
-        string kmlFileName = command.KmlFileName;
+        string kmlFileName = command.GeospatialDataFileName;
         string folderName = command.FolderName;
         string addressText = command.AddressText;
         string ftpHost = command.FtpHost;

@@ -1,6 +1,6 @@
 ﻿using Common;
 using FtpHandling;
-using KmlHandling;
+using GeoJsonHandling;
 using HtmlHandling;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
@@ -12,7 +12,7 @@ namespace Kanaloa.Controllers;
 
 [Route("api/[controller]")]
 [ApiController]
-public class UploadToBlogController(ICommandHandler<DeleteFirstAndLastKmlPointsCommand> deleteFirstAndLastKmlPoints) : ControllerBase
+public class UploadToBlogController(ICommandHandler<DeleteFirstAndLastGeoJsonPointsCommand> deleteFirstAndLastGeoJsonPoints) : ControllerBase
 {
     [HttpPost]
     [Route("UploadToBlog")]
@@ -29,8 +29,8 @@ public class UploadToBlogController(ICommandHandler<DeleteFirstAndLastKmlPointsC
             string host = CommonStaticMethods.GetValue(data, "host");
             string user = CommonStaticMethods.GetValue(data, "user");
             string pass = CommonStaticMethods.GetValue(data, "pass");
-            string strDeleteLastKmlPoints = CommonStaticMethods.GetValue(data, "deleteLastKmlPoints");
-            string strDeleteFirstKmlPoints = CommonStaticMethods.GetValue(data, "deleteFirstKmlPoints");
+            string strDeleteLastGeoJsonPoints = CommonStaticMethods.GetValue(data, "deleteLastKmlPoints");
+            string strDeleteFirstGeoJsonPoints = CommonStaticMethods.GetValue(data, "deleteFirstKmlPoints");
             string prepareForUpload = "prepareForUpload";
 
             string joomlaCategoryId = CommonStaticMethods.GetValue(data, "joomlaCategoryId");
@@ -53,7 +53,7 @@ public class UploadToBlogController(ICommandHandler<DeleteFirstAndLastKmlPointsC
 
             var albumRoot = ReplaceKeysInFiles(copyHtmlFilesToPrepareForUploadCommand, listOfKeyValuesToReplaceInFiles, folder);
 
-            DeleteFirstAndLastKmlPoints(prepareForUpload, folder, kmlFileName, strDeleteFirstKmlPoints, strDeleteLastKmlPoints);
+            DeleteFirstAndLastGeoJsonPoints(prepareForUpload, folder, kmlFileName, strDeleteFirstGeoJsonPoints, strDeleteLastGeoJsonPoints);
 
             //MirrorDirAndFileRemoteOnFtp(host, user, pass, albumRoot, remoteRootFolder, folder);
 
@@ -125,32 +125,32 @@ public class UploadToBlogController(ICommandHandler<DeleteFirstAndLastKmlPointsC
         return openAdminPageAndPostArticleCommand.IsSaved;
     }
 
-    private void DeleteFirstAndLastKmlPoints(string prepareForUpload, string folder, string kmlFileName,
-        string strDeleteFirstKmlPoints, string strDeleteLastKmlPoints)
+    private void DeleteFirstAndLastGeoJsonPoints(string prepareForUpload, string folder, string kmlFileName,
+        string strDeleteFirstGeoJsonPoints, string strDeleteLastGeoJsonPoints)
     {
-        DeleteFirstAndLastKmlPointsCommand deleteFirstAndLastKmlPointsCommand =
-            new DeleteFirstAndLastKmlPointsCommand();
-        deleteFirstAndLastKmlPointsCommand.Folder = Path.Join(Path.Join(prepareForUpload, folder), "kml");
-        deleteFirstAndLastKmlPointsCommand.KmlFileName = kmlFileName;
-        if (int.TryParse(strDeleteFirstKmlPoints, out int intDeleteFirstKmlPoints))
+        DeleteFirstAndLastGeoJsonPointsCommand deleteFirstAndLastGeoJsonPointsCommand =
+            new DeleteFirstAndLastGeoJsonPointsCommand();
+        deleteFirstAndLastGeoJsonPointsCommand.Folder = Path.Join(Path.Join(prepareForUpload, folder), "geojson");
+        deleteFirstAndLastGeoJsonPointsCommand.GeoJsonFileName = kmlFileName;
+        if (int.TryParse(strDeleteFirstGeoJsonPoints, out int intDeleteFirstGeoJsonPoints))
         {
-            deleteFirstAndLastKmlPointsCommand.DeleteFirstKmlPoints = intDeleteFirstKmlPoints;
+            deleteFirstAndLastGeoJsonPointsCommand.DeleteFirstGeoJsonPoints = intDeleteFirstGeoJsonPoints;
         }
         else
         {
-            throw new InvalidCastException("Cannot cast deleteFirstKmlPoints to int");
+            throw new InvalidCastException("Cannot cast deleteFirstGeoJsonPoints to int");
         }
 
-        if (int.TryParse(strDeleteLastKmlPoints, out int intDeleteLastKmlPoints))
+        if (int.TryParse(strDeleteLastGeoJsonPoints, out int intDeleteLastGeoJsonPoints))
         {
-            deleteFirstAndLastKmlPointsCommand.DeleteLastKmlPoints = intDeleteLastKmlPoints;
+            deleteFirstAndLastGeoJsonPointsCommand.DeleteLastGeoJsonPoints = intDeleteLastGeoJsonPoints;
         }
         else
         {
-            throw new InvalidCastException("Cannot cast deleteLastKmlPoints to int");
+            throw new InvalidCastException("Cannot cast deleteLastGeoJsonPoints to int");
         }
 
-        deleteFirstAndLastKmlPoints.Execute(deleteFirstAndLastKmlPointsCommand);
+        deleteFirstAndLastGeoJsonPoints.Execute(deleteFirstAndLastGeoJsonPointsCommand);
     }
 
     private static void MirrorDirAndFileRemoteOnFtp(string host, string user, string pass, string albumRoot,
