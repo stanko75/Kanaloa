@@ -176,4 +176,9 @@ public partial class Form1 : Form
     {
         address.Text = "https://kanaloa.azurewebsites.net/";
     }
+
+    private void btnMilosevComAddress_Click(object sender, EventArgs e)
+    {
+        address.Text = "https://www.milosev.com/kanaloa/";
+    }
 }

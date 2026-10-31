@@ -32,6 +32,7 @@
             panel1 = new Panel();
             log = new TextBox();
             panel2 = new Panel();
+            btnMilosevComAddress = new Button();
             label23 = new Label();
             tbPhpUrl = new TextBox();
             label21 = new Label();
@@ -96,7 +97,7 @@
             PostGpsPositionsFromFilesWithFileName.Dock = DockStyle.Bottom;
             PostGpsPositionsFromFilesWithFileName.Location = new Point(0, 827);
             PostGpsPositionsFromFilesWithFileName.Name = "PostGpsPositionsFromFilesWithFileName";
-            PostGpsPositionsFromFilesWithFileName.Size = new Size(926, 23);
+            PostGpsPositionsFromFilesWithFileName.Size = new Size(1032, 23);
             PostGpsPositionsFromFilesWithFileName.TabIndex = 0;
             PostGpsPositionsFromFilesWithFileName.Text = "PostGpsPositionsFromFilesWithFileName";
             PostGpsPositionsFromFilesWithFileName.UseVisualStyleBackColor = true;
@@ -108,7 +109,7 @@
             panel1.Dock = DockStyle.Fill;
             panel1.Location = new Point(0, 688);
             panel1.Name = "panel1";
-            panel1.Size = new Size(926, 139);
+            panel1.Size = new Size(1032, 139);
             panel1.TabIndex = 1;
             // 
             // log
@@ -118,12 +119,13 @@
             log.Multiline = true;
             log.Name = "log";
             log.ScrollBars = ScrollBars.Both;
-            log.Size = new Size(926, 139);
+            log.Size = new Size(1032, 139);
             log.TabIndex = 0;
             // 
             // panel2
             // 
             panel2.AutoScroll = true;
+            panel2.Controls.Add(btnMilosevComAddress);
             panel2.Controls.Add(label23);
             panel2.Controls.Add(tbPhpUrl);
             panel2.Controls.Add(label21);
@@ -177,8 +179,18 @@
             panel2.Dock = DockStyle.Top;
             panel2.Location = new Point(0, 0);
             panel2.Name = "panel2";
-            panel2.Size = new Size(926, 678);
+            panel2.Size = new Size(1032, 678);
             panel2.TabIndex = 2;
+            // 
+            // btnMilosevComAddress
+            // 
+            btnMilosevComAddress.Location = new Point(894, 11);
+            btnMilosevComAddress.Name = "btnMilosevComAddress";
+            btnMilosevComAddress.Size = new Size(110, 23);
+            btnMilosevComAddress.TabIndex = 50;
+            btnMilosevComAddress.Text = "Use milosev.com";
+            btnMilosevComAddress.UseVisualStyleBackColor = true;
+            btnMilosevComAddress.Click += btnMilosevComAddress_Click;
             // 
             // label23
             // 
@@ -593,7 +605,7 @@
             UploadImage.Dock = DockStyle.Bottom;
             UploadImage.Location = new Point(0, 850);
             UploadImage.Name = "UploadImage";
-            UploadImage.Size = new Size(926, 23);
+            UploadImage.Size = new Size(1032, 23);
             UploadImage.TabIndex = 3;
             UploadImage.Text = "UploadImage";
             UploadImage.UseVisualStyleBackColor = true;
@@ -604,7 +616,7 @@
             UploadToBlog.Dock = DockStyle.Bottom;
             UploadToBlog.Location = new Point(0, 873);
             UploadToBlog.Name = "UploadToBlog";
-            UploadToBlog.Size = new Size(926, 23);
+            UploadToBlog.Size = new Size(1032, 23);
             UploadToBlog.TabIndex = 4;
             UploadToBlog.Text = "UploadToBlog";
             UploadToBlog.UseVisualStyleBackColor = true;
@@ -615,7 +627,7 @@
             btnCancel.Dock = DockStyle.Bottom;
             btnCancel.Location = new Point(0, 896);
             btnCancel.Name = "btnCancel";
-            btnCancel.Size = new Size(926, 23);
+            btnCancel.Size = new Size(1032, 23);
             btnCancel.TabIndex = 5;
             btnCancel.Text = "Cancel";
             btnCancel.UseVisualStyleBackColor = true;
@@ -638,7 +650,7 @@
             splitter1.Dock = DockStyle.Top;
             splitter1.Location = new Point(0, 678);
             splitter1.Name = "splitter1";
-            splitter1.Size = new Size(926, 10);
+            splitter1.Size = new Size(1032, 10);
             splitter1.TabIndex = 1;
             splitter1.TabStop = false;
             // 
@@ -646,7 +658,7 @@
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(926, 934);
+            ClientSize = new Size(1032, 934);
             Controls.Add(panel1);
             Controls.Add(splitter1);
             Controls.Add(panel2);
@@ -727,5 +739,6 @@
         private TextBox tbPhpUserName;
         private Label label23;
         private TextBox tbPhpUrl;
+        private Button btnMilosevComAddress;
     }
 }
