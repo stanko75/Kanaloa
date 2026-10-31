@@ -12,7 +12,8 @@
                     {
                         center: { lat: 50.7541783, lng: 7.0881042 },
                         scrollwheel: true,
-                        zoom: 10
+                        zoom: 10,
+                        mapId: "myMapId"
                     });
 
                 map.data.loadGeoJson(
@@ -42,7 +43,7 @@
                     function (data) {
                         gpsLatLng = new google.maps.LatLng(data.lat, data.lng);
 
-                        marker = new google.maps.Marker({
+                        marker = new google.maps.marker.AdvancedMarkerElement({
                             position: gpsLatLng,
                             map: map
                         });
@@ -66,7 +67,7 @@
                         function (data) {
                             gpsLatLng = new google.maps.LatLng(data.lat, data.lng);
 
-                            marker.setPosition(gpsLatLng);
+                            marker.position = gpsLatLng;
 
                             map.setCenter(gpsLatLng);
                         }).done(function () {
