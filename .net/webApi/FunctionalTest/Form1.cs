@@ -74,7 +74,7 @@ public partial class Form1 : Form
         {
             AddressText = address.Text,
             GeospatialDataFileName = geospatialDataFileName.Text,
-            GeospatialDataFileNameExtension = "geoJson",
+            GeospatialDataFileNameExtension = "geojson",
             FolderName = folderName.Text,
             HttpClientPost = HttpClientPost,
             GpsLocationsPath = tbGpsLocationsPath.Text
