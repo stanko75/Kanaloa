@@ -15,13 +15,11 @@
                         zoom: 10
                     });
 
-                var kmlLayer = new google.maps.KmlLayer({
-                    url: config.KmlFileName + "?dummy=" + (new Date()).getTime(),
-                    map: map,
-                    preserveViewport: true
+                map.data.loadGeoJson(
+                    config.GeospatialDataFileName + "?dummy=" + (new Date()).getTime()
+                );
 
-                });
-
+                /*
                 google.maps.event.addListener(kmlLayer,
                     "metadata_changed",
                     function () {
@@ -38,6 +36,7 @@
                             // Failure
                         }
                     });
+                    */
 
                 $.getJSON(config.CurrentLocation,
                     function (data) {
@@ -59,11 +58,9 @@
 
                 window.setInterval(function () {
                     google.maps.event.trigger(map, 'resize');
-                    kmlLayer = new google.maps.KmlLayer({
-                        url: config.KmlFileName + "?dummy=" + (new Date()).getTime(),
-                        map: map,
-                        preserveViewport: true
-                    });
+                    map.data.loadGeoJson(
+                        config.GeospatialDataFileName + "?dummy=" + (new Date()).getTime()
+                    );
 
                     $.getJSON(config.CurrentLocation,
                         function (data) {
