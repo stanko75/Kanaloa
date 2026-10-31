@@ -17,7 +17,7 @@ public class WriteConfigurationToJsonFileTests
         WriteConfigurationToJsonFileCommand command = new()
         {
             RootUrl = rootUrl,
-            GeospatialDataFileNameExtension = "geoJson"
+            GeospatialDataFileNameExtension = "geojson"
         };
 
         if (File.Exists(command.ConfigFileName))

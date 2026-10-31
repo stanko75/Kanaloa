@@ -37,7 +37,7 @@ public class UpdateCoordinatesController(
 
             var updateGeospatialDataIfExistsOrCreateNewIfNotCommand = new UpdateGeospatialDataIfExistsOrCreateNewIfNotCommand
             {
-                GeospatialDataFileNameExtension = "geoJson",
+                GeospatialDataFileNameExtension = "geojson",
                 GeospatialDataFileName = geospatialDataFileName,
                 Coordinates = coordinates,
                 FolderName = folderName
