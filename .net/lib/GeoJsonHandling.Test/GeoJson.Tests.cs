@@ -102,8 +102,25 @@ namespace GeoJsonHandling.Test
                     return false;
 
                 if (!geometry.TryGetProperty("coordinates", out JsonElement coordinates)
-                    || coordinates.ValueKind != JsonValueKind.String
-                    || coordinates.GetString() != expectedCoordinates)
+                    || coordinates.ValueKind != JsonValueKind.Array)
+                    return false;
+
+                List<string> values = [];
+                foreach (JsonElement point in coordinates.EnumerateArray())
+                {
+                    if (point.ValueKind != JsonValueKind.Array)
+                        return false;
+
+                    foreach (JsonElement number in point.EnumerateArray())
+                    {
+                        if (number.ValueKind != JsonValueKind.Number)
+                            return false;
+
+                        values.Add(number.ToString());
+                    }
+                }
+
+                if (string.Join(",", values) != expectedCoordinates)
                     return false;
 
                 return true;

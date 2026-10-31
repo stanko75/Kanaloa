@@ -30,7 +30,7 @@ public class CreateGeoJson: ICommandHandlerAsync<UpdateGeospatialDataIfExistsOrC
                     geometry = new
                     {
                         type = "LineString",
-                        coordinates
+                        coordinates = JsonSerializer.Deserialize<double[][]>( $@"[[{coordinates}]]" )
                     }
                 }
             }

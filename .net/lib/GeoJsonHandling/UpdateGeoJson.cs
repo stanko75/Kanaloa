@@ -16,7 +16,9 @@ public class UpdateGeoJson: ICommandHandlerAsync<UpdateGeospatialDataIfExistsOrC
         string json = await File.ReadAllTextAsync(command.GeospatialDataFileName);
         JsonObject geoJson = JsonNode.Parse(json)!.AsObject();
 
-        geoJson["features"]![0]!["geometry"]!["coordinates"] = geoJson["features"]![0]!["geometry"]!["coordinates"] + "," + command.Coordinates;
+        JsonArray coordinates = geoJson["features"]![0]!["geometry"]!["coordinates"]!.AsArray();
+        JsonNode? newCoordinate = JsonSerializer.Deserialize<JsonNode>($"[{command.Coordinates}]");
+        coordinates.Add(newCoordinate);
 
         string updatedJson = geoJson.ToJsonString(new JsonSerializerOptions { WriteIndented = true });
         await File.WriteAllTextAsync(command.GeospatialDataFileName, updatedJson);
