@@ -45,11 +45,11 @@ class StartForegroundService {
             PackageManager.DONT_KILL_APP
         )
 
-        val fileName = sharedPreferences.getString("kmlFileName", "default")
+        val fileName = sharedPreferences.getString("geospatialDataFileName", "default")
         val folderName = sharedPreferences.getString("folderName", "default")
 
         intentStartForegroundTickService.putExtra(
-            IntentExtras.KML_FILE_NAME,
+            IntentExtras.GEOSPATIAL_DATA_FILENAME,
             fileName
         )
 

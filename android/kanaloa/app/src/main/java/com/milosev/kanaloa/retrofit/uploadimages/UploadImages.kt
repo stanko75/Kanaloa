@@ -15,14 +15,14 @@ class UploadImages(
     var uploadImagesCallbacks: IUploadImagesCallbacks
 ) : IUploadImages {
     @RequiresApi(Build.VERSION_CODES.O)
-    override fun uploadImage(imgUri: Uri, imageFileName: String, folderName: String, kmlFileName: String, context: Context): String? {
+    override fun uploadImage(imgUri: Uri, imageFileName: String, folderName: String, geospatialDataFileName: String, context: Context): String? {
 
         val base64Image = convertImageToBase64(context, imgUri)
         val jsonValue = JsonObject().apply {
             addProperty("base64Image", base64Image)
             addProperty("imageFileName", imageFileName)
             addProperty("folderName", folderName)
-            addProperty("kmlFileName", kmlFileName)
+            addProperty("geospatialDataFileName", geospatialDataFileName)
         }
         val webApiRequest = uploadImagesApiService.uploadImage(jsonValue)
 

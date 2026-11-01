@@ -21,7 +21,7 @@ class UploadPictures(
             context.getSharedPreferences(SharedPreferencesGlobal.Settings, Context.MODE_PRIVATE)
 
         val folderName: String = fileAndFolderNameSharedPreferences.getString("folderName", "").toString()
-        val kmlFileName: String = fileAndFolderNameSharedPreferences.getString("kmlFileName", "").toString()
+        val geospatialDataFileName: String = fileAndFolderNameSharedPreferences.getString("geospatialDataFileName", "").toString()
 
         for (image in images) {
             val cursor = context.contentResolver.query(image, null, null, null, null)
@@ -29,7 +29,7 @@ class UploadPictures(
                 val nameIndex = innerCursor.getColumnIndex(OpenableColumns.DISPLAY_NAME)
                 innerCursor.moveToFirst()
                 val imageName = innerCursor.getString(nameIndex)
-                uploadImages.uploadImage(image, imageName, folderName, kmlFileName, context)
+                uploadImages.uploadImage(image, imageName, folderName, geospatialDataFileName, context)
             }
         }
     }

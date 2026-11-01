@@ -48,12 +48,12 @@ class ReceiveListener: IReceiveListener {
         context.sendBroadcast(tickIntent)
     }
 
-    override fun kmlFileName(context: Context, intent: Intent) {
+    override fun geospatialDataFileName(context: Context, intent: Intent) {
         val mainActivityIntent = Intent(context, MainActivity::class.java).setAction(
-            IntentAction.KML_FILE_NAME
+            IntentAction.GEOSPATIAL_DATA_FILENAME
         )
-        val kmlFileName = intent.getStringExtra(IntentExtras.KML_FILE_NAME)
-        mainActivityIntent.putExtra(IntentExtras.KML_FILE_NAME, kmlFileName)
+        val geospatialDataFileName = intent.getStringExtra(IntentExtras.GEOSPATIAL_DATA_FILENAME)
+        mainActivityIntent.putExtra(IntentExtras.GEOSPATIAL_DATA_FILENAME, geospatialDataFileName)
         mainActivityIntent.setPackage(context.packageName)
         context.sendBroadcast(mainActivityIntent)
     }

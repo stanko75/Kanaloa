@@ -4,5 +4,5 @@ import android.content.Context
 import android.net.Uri
 
 interface IUploadImages {
-    fun uploadImage(imgUri: Uri, imageFileName: String, folderName: String, kmlFileName: String, context: Context): String?
+    fun uploadImage(imgUri: Uri, imageFileName: String, folderName: String, geospatialDataFileName: String, context: Context): String?
 }

@@ -1,7 +1,7 @@
 package com.milosev.kanaloa.foregroundtickservice
 
 object IntentAction {
-    const val KML_FILE_NAME = "kmlFileName"
+    const val GEOSPATIAL_DATA_FILENAME = "geospatialDataFileName"
     const val FOLDER_NAME = "folderName"
     const val START_FOREGROUND_TICK_SERVICE = "startForegroundTickService"
     const val STOP_FOREGROUND_TICK_SERVICE = "stopForegroundTickService"
@@ -13,7 +13,7 @@ object IntentAction {
 
 object IntentExtras {
     const val FOLDER_NAME = "folderName"
-    const val KML_FILE_NAME = "kmlFileName"
+    const val GEOSPATIAL_DATA_FILENAME = "geospatialDataFileName"
     const val NUM_OF_TICKS = "numOfTicks"
     const val NUM_OF_SECONDS_FOR_TICK = "numOfSecondsForTick"
     const val RETROFIT_ON_RESPONSE = "retrofitOnResponse"

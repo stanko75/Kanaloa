@@ -226,7 +226,7 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
                 SharedPreferencesGlobal.Settings,
                 Context.MODE_PRIVATE
             )
-        val fileName = sharedPreferences.getString("kmlFileName", "default.kml")
+        val fileName = sharedPreferences.getString("geospatialDataFileName", "default.kml")
         val folderName = sharedPreferences.getString("folderName", "default")
         val kmlUrl = "$webHost/$folderName/$fileName"
         return kmlUrl

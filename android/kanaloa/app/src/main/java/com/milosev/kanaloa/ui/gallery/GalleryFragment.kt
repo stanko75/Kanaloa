@@ -78,7 +78,7 @@ class GalleryFragment : Fragment() {
         val sharedPreferences = requireContext().getSharedPreferences(SharedPreferencesGlobal.Settings, Context.MODE_PRIVATE)
 
         val folderNameInitial = sharedPreferences.getString("folderName", "default")
-        var fileNameInitial = sharedPreferences.getString("kmlFileName", "default.kml")
+        var fileNameInitial = sharedPreferences.getString("geospatialDataFileName", "default.kml")
         // Handle case where it might have been saved as "default" previously
         if (fileNameInitial == "default") fileNameInitial = "default.kml"
 
@@ -126,7 +126,7 @@ class GalleryFragment : Fragment() {
             }
 
             sharedPreferences.edit {
-                putString("kmlFileName", fileName)
+                putString("geospatialDataFileName", fileName)
                 putString("folderName", binding.editTextFolderName.text.toString())
                 putString("ogTitle", binding.editTextOgTitle.text.toString())
                 putString("ogImage", binding.editTextOgImage.text.toString())
@@ -163,7 +163,7 @@ class GalleryFragment : Fragment() {
             blogUploadModel.user = ftpSharedPreferences?.getString("user", "")
             blogUploadModel.pass = ftpSharedPreferences?.getString("pass", "")
             blogUploadModel.folderName = fileAndFolderNameSharedPreferences?.getString("folderName", "")
-            blogUploadModel.kmlFileName = fileAndFolderNameSharedPreferences?.getString("kmlFileName","")
+            blogUploadModel.geospatialDataFileName = fileAndFolderNameSharedPreferences?.getString("geospatialDataFileName","")
             blogUploadModel.ogTitle = fileAndFolderNameSharedPreferences?.getString("ogTitle", "")
             blogUploadModel.ogImage = fileAndFolderNameSharedPreferences?.getString("ogImage","")
             blogUploadModel.baseUrl = fileAndFolderNameSharedPreferences?.getString("baseUrl","")

@@ -29,9 +29,9 @@ class BroadcastTickReceiver : BroadcastReceiver() {
                 receiveListener.numOfTicks(context, intent)
             }
 
-            IntentAction.KML_FILE_NAME -> {
+            IntentAction.GEOSPATIAL_DATA_FILENAME -> {
                 receiveListener.numOfTicks(context, intent)
-                receiveListener.kmlFileName(context, intent)
+                receiveListener.geospatialDataFileName(context, intent)
             }
 
             IntentAction.RETROFIT_ON_RESPONSE -> {
