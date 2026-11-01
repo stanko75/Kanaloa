@@ -1,5 +1,6 @@
-﻿using System.Diagnostics;
-using Common;
+﻿using Common;
+using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using JsonSerializer = System.Text.Json.JsonSerializer;
 
@@ -12,6 +13,10 @@ public class UpdateJsonIfExistsOrCreateNewIfNot : ICommandHandler<UpdateJsonIfEx
         if (command.LatLngModel is null) throw new NullReferenceException("LatLngModel is null!");
         if (command.JsonFileName is null) throw new NullReferenceException("JsonFileName is null!");
 
+        string jsonFileName = command.JsonFileName
+            .Replace('\\', Path.DirectorySeparatorChar)
+            .Replace('/', Path.DirectorySeparatorChar);
+
         var latLngFileModel = new LatLngFileNameModel
         {
             Latitude = command.LatLngModel.Latitude,
@@ -23,9 +28,9 @@ public class UpdateJsonIfExistsOrCreateNewIfNot : ICommandHandler<UpdateJsonIfEx
 
         List<LatLngFileNameModel>? latLngFileModels = new List<LatLngFileNameModel>();
 
-        if (File.Exists(command.JsonFileName))
+        if (File.Exists(jsonFileName))
         {
-            string jsonString = File.ReadAllText(command.JsonFileName);
+            string jsonString = File.ReadAllText(jsonFileName);
             try
             {
                 latLngFileModels =
@@ -59,11 +64,12 @@ public class UpdateJsonIfExistsOrCreateNewIfNot : ICommandHandler<UpdateJsonIfEx
         }
 
         if (string.IsNullOrEmpty(latLngFileName)) return;
-        string? folder = Path.GetDirectoryName(command.JsonFileName);
+
+        string? folder = Path.GetDirectoryName(jsonFileName);
         if (!string.IsNullOrWhiteSpace(folder) && !Directory.Exists(folder))
         {
             Directory.CreateDirectory(folder);
         }
-        File.WriteAllText(command.JsonFileName, latLngFileName);
+        File.WriteAllText(jsonFileName, latLngFileName);
     }
 }

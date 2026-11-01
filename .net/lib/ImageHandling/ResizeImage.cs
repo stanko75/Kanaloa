@@ -1,105 +1,133 @@
-﻿using System.Drawing;
-using System.Drawing.Drawing2D;
-using System.Drawing.Imaging;
-using Common;
+﻿using Common;
+using SkiaSharp;
 
 namespace ImageHandling;
-[System.Runtime.Versioning.SupportedOSPlatform("windows")]
-public class ResizeImage: ICommandHandler<ResizeImageCommand>
+
+public class ResizeImage : ICommandHandler<ResizeImageCommand>
 {
     public void Execute(ResizeImageCommand command)
     {
         if (command.OriginalFileName is null || command.SaveTo is null)
         {
-            throw new NullReferenceException("OriginalFileName or SaveTo is null");
+            throw new NullReferenceException(
+                "OriginalFileName or SaveTo is null");
         }
 
-        using Image image = Image.FromFile(command.OriginalFileName);
-        using Image thumbnail = new Bitmap(command.CanvasWidth, command.CanvasHeight);
-        using Graphics graphic = Graphics.FromImage(thumbnail);
-        graphic.InterpolationMode = InterpolationMode.HighQualityBicubic;
-        graphic.SmoothingMode = SmoothingMode.HighQuality;
-        graphic.PixelOffsetMode = PixelOffsetMode.HighQuality;
-        graphic.CompositingQuality = CompositingQuality.HighQuality;
+        if (command.CanvasWidth <= 0 || command.CanvasHeight <= 0)
+        {
+            throw new ArgumentOutOfRangeException(
+                nameof(command), "Canvas dimensions must be positive.");
+        }
 
-        int originalWidth = image.Width;
-        int originalHeight = image.Height;
+        using var codec = SKCodec.Create(command.OriginalFileName)
+            ?? throw new InvalidOperationException("Unable to decode image.");
+
+        var orientation = codec.EncodedOrigin;
+
+        using var original = SKBitmap.Decode(codec)
+            ?? throw new InvalidOperationException("Unable to decode bitmap.");
+
+        bool swapDimensions = orientation is
+            SKEncodedOrigin.LeftTop or
+            SKEncodedOrigin.RightTop or
+            SKEncodedOrigin.RightBottom or
+            SKEncodedOrigin.LeftBottom;
+
+        int originalWidth = swapDimensions ? original.Height : original.Width;
+        int originalHeight = swapDimensions ? original.Width : original.Height;
 
         double ratioX = command.CanvasWidth / (double)originalWidth;
         double ratioY = command.CanvasHeight / (double)originalHeight;
+        double ratio = Math.Min(ratioX, ratioY);
 
-        double ratio = ratioX < ratioY ? ratioX : ratioY;
+        int newWidth = Math.Max(1, Convert.ToInt32(originalWidth * ratio));
+        int newHeight = Math.Max(1, Convert.ToInt32(originalHeight * ratio));
 
-        int newHeight = Convert.ToInt32(originalHeight * ratio);
-        int newWidth = Convert.ToInt32(originalWidth * ratio);
+        int posX = Convert.ToInt32((command.CanvasWidth - newWidth) / 2.0);
+        int posY = Convert.ToInt32((command.CanvasHeight - newHeight) / 2.0);
 
-        int posX = Convert.ToInt32((command.CanvasWidth - originalWidth * ratio) / 2);
-        int posY = Convert.ToInt32((command.CanvasHeight - originalHeight * ratio) / 2);
+        using var thumbnail = new SKBitmap(
+            command.CanvasWidth,
+            command.CanvasHeight);
 
-        graphic.Clear(Color.White); // white padding
-
-        graphic.DrawImage(image, posX, posY, newWidth, newHeight);
-
-        ImageCodecInfo[] info = ImageCodecInfo.GetImageEncoders();
-        var encoderParameters = new EncoderParameters(1);
-        encoderParameters.Param[0] = new EncoderParameter(Encoder.Quality,
-            100L);
-
-        int orientationKey = 0x0112;
-        const int notSpecified = 0;
-        const int normalOrientation = 1;
-        const int mirrorHorizontal = 2;
-        const int upsideDown = 3;
-        const int mirrorVertical = 4;
-        const int mirrorHorizontalAndRotateRight = 5;
-        const int rotateLeft = 6;
-        const int mirrorHorizontalAndRotateLeft = 7;
-        const int rotateRight = 8;
-
-        if (image.PropertyIdList.Contains(orientationKey))
+        using (var canvas = new SKCanvas(thumbnail))
         {
-            if (image.PropertyIdList.Contains(orientationKey))
+            canvas.Clear(SKColors.White);
+
+            canvas.Save();
+
+            // EXIF-Orientierung anwenden
+            switch (orientation)
             {
-                byte[]? value = image.GetPropertyItem(orientationKey)!.Value;
-                if (value != null)
-                {
-                    var orientation = (int)value[0];
-                    switch (orientation)
-                    {
-                        case notSpecified: // Assume it is good.
-                        case normalOrientation:
-                            // No rotation required.
-                            break;
-                        case mirrorHorizontal:
-                            thumbnail.RotateFlip(RotateFlipType.RotateNoneFlipX);
-                            break;
-                        case upsideDown:
-                            thumbnail.RotateFlip(RotateFlipType.Rotate180FlipNone);
-                            break;
-                        case mirrorVertical:
-                            thumbnail.RotateFlip(RotateFlipType.Rotate180FlipX);
-                            break;
-                        case mirrorHorizontalAndRotateRight:
-                            thumbnail.RotateFlip(RotateFlipType.Rotate90FlipX);
-                            break;
-                        case rotateLeft:
-                            thumbnail.RotateFlip(RotateFlipType.Rotate90FlipNone);
-                            break;
-                        case mirrorHorizontalAndRotateLeft:
-                            thumbnail.RotateFlip(RotateFlipType.Rotate270FlipX);
-                            break;
-                        case rotateRight:
-                            thumbnail.RotateFlip(RotateFlipType.Rotate270FlipNone);
-                            break;
-                        default:
-                            throw new NotImplementedException("An orientation of " + orientation +
-                                                              " isn't implemented.");
-                    }
-                }
+                case SKEncodedOrigin.TopRight:
+                    canvas.Translate(command.CanvasWidth, 0);
+                    canvas.Scale(-1, 1);
+                    break;
+
+                case SKEncodedOrigin.BottomRight:
+                    canvas.Translate(command.CanvasWidth, command.CanvasHeight);
+                    canvas.RotateDegrees(180);
+                    break;
+
+                case SKEncodedOrigin.BottomLeft:
+                    canvas.Translate(0, command.CanvasHeight);
+                    canvas.Scale(1, -1);
+                    break;
+
+                case SKEncodedOrigin.LeftTop:
+                    canvas.Translate(0, command.CanvasHeight);
+                    canvas.RotateDegrees(-90);
+                    canvas.Scale(-1, 1);
+                    break;
+
+                case SKEncodedOrigin.RightTop:
+                    canvas.Translate(command.CanvasWidth, 0);
+                    canvas.RotateDegrees(90);
+                    break;
+
+                case SKEncodedOrigin.RightBottom:
+                    canvas.Translate(command.CanvasWidth, 0);
+                    canvas.RotateDegrees(90);
+                    canvas.Scale(-1, 1);
+                    break;
+
+                case SKEncodedOrigin.LeftBottom:
+                    canvas.Translate(0, command.CanvasHeight);
+                    canvas.RotateDegrees(-90);
+                    break;
             }
+
+            // Bild mit hochwertiger Interpolation zeichnen
+            using var paint = new SKPaint
+            {
+                IsAntialias = true
+            };
+
+            var source = new SKRect(
+                0, 0, original.Width, original.Height);
+
+            // Zielabmessungen vor der Orientierungstransformation
+            int drawWidth = swapDimensions ? newHeight : newWidth;
+            int drawHeight = swapDimensions ? newWidth : newHeight;
+
+            var destination = new SKRect(
+                posX,
+                posY,
+                posX + drawWidth,
+                posY + drawHeight);
+
+            canvas.DrawBitmap(original, source, destination, paint);
+
+            canvas.Restore();
+            canvas.Flush();
         }
 
-        //thumbnail.RotateFlip(RotateFlipType.Rotate90FlipNone);
-        thumbnail.Save(command.SaveTo, info[1], encoderParameters);
+        using var image = SKImage.FromBitmap(thumbnail);
+
+        using var data = image.Encode(SKEncodedImageFormat.Jpeg, 100)
+            ?? throw new InvalidOperationException("Unable to encode JPEG.");
+
+        using var stream = File.Create(command.SaveTo);
+        data.SaveTo(stream);
     }
 }

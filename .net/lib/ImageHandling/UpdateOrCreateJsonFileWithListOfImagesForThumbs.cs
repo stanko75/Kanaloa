@@ -9,9 +9,9 @@ public class UpdateOrCreateJsonFileWithListOfImagesForThumbs(ICommandHandler<Upd
         var jsonFileName = Path.GetFileNameWithoutExtension(command.KmlFileName);
         jsonFileName = string.IsNullOrWhiteSpace(command.KmlFileName) ? "default" : jsonFileName;
         jsonFileName = Path.ChangeExtension($"{jsonFileName}Thumbs", "json");
-        jsonFileName = Path.Join(command.FolderName, jsonFileName);
+        jsonFileName = string.Join("\\", command.FolderName, jsonFileName);
 
-        string imageThumbsFolderName = Path.Join(command.FolderName, "thumbs");
+        string imageThumbsFolderName = string.Join("\\", command.FolderName, "thumbs");
         string imageFileName = $@"..\..\{imageThumbsFolderName}\{command.ImageFileName}";
 
         UpdateJsonIfExistsOrCreateNewIfNotCommand updateJsonIfExistsOrCreateNewIfNotCommand = new UpdateJsonIfExistsOrCreateNewIfNotCommand
