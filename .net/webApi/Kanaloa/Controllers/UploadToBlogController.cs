@@ -12,7 +12,8 @@ namespace Kanaloa.Controllers;
 
 [Route("api/[controller]")]
 [ApiController]
-public class UploadToBlogController(ICommandHandler<DeleteFirstAndLastGeoJsonPointsCommand> deleteFirstAndLastGeoJsonPoints) : ControllerBase
+public class UploadToBlogController(
+    ICommandHandler<DeleteFirstAndLastGeoJsonPointsCommand> deleteFirstAndLastGeoJsonPoints) : ControllerBase
 {
     [HttpPost]
     [Route("UploadToBlog")]
@@ -23,14 +24,15 @@ public class UploadToBlogController(ICommandHandler<DeleteFirstAndLastGeoJsonPoi
             string folder = CommonStaticMethods.GetValue(data, "folderName");
             folder = string.IsNullOrWhiteSpace(folder) ? "default" : folder;
 
-            string kmlFileName = CommonStaticMethods.GetValue(data, "kmlFileName");
-            kmlFileName = string.IsNullOrWhiteSpace(kmlFileName) ? "default" : kmlFileName;
+            string geospatialDataFileName = CommonStaticMethods.GetValue(data, "geospatialDataFileName");
+            geospatialDataFileName =
+                string.IsNullOrWhiteSpace(geospatialDataFileName) ? "default" : geospatialDataFileName;
 
             string host = CommonStaticMethods.GetValue(data, "host");
             string user = CommonStaticMethods.GetValue(data, "user");
             string pass = CommonStaticMethods.GetValue(data, "pass");
-            string strDeleteLastGeoJsonPoints = CommonStaticMethods.GetValue(data, "deleteLastKmlPoints");
-            string strDeleteFirstGeoJsonPoints = CommonStaticMethods.GetValue(data, "deleteFirstKmlPoints");
+            string strDeleteLastGeoJsonPoints = CommonStaticMethods.GetValue(data, "deleteLastGeoJsonPoints");
+            string strDeleteFirstGeoJsonPoints = CommonStaticMethods.GetValue(data, "deleteFirstGeoJsonPoints");
             string prepareForUpload = "prepareForUpload";
 
             string joomlaCategoryId = CommonStaticMethods.GetValue(data, "joomlaCategoryId");
@@ -45,15 +47,20 @@ public class UploadToBlogController(ICommandHandler<DeleteFirstAndLastGeoJsonPoi
 
             string remoteRootFolder = "allWithPics/travelBuddies/";
 
-            var copyHtmlFilesToPrepareForUploadCommand = CopyHtmlFilesToPrepareForUpload(folder, kmlFileName, prepareForUpload, @"html/templateForBlog");
+            var copyHtmlFilesToPrepareForUploadCommand = CopyHtmlFilesToPrepareForUpload(folder, geospatialDataFileName,
+                prepareForUpload, @"html/templateForBlog");
 
-            var automaticallyFillMissingValuesCommand = AutomaticallyFillMissingValues(data, folder, remoteRootFolder, kmlFileName, "jquery-3.6.4.js");
+            var automaticallyFillMissingValuesCommand = AutomaticallyFillMissingValues(data, folder, remoteRootFolder,
+                geospatialDataFileName, "jquery-3.6.4.js");
 
-            var listOfKeyValuesToReplaceInFiles = ListOfKeyValuesToReplaceInFiles(automaticallyFillMissingValuesCommand);
+            var listOfKeyValuesToReplaceInFiles =
+                ListOfKeyValuesToReplaceInFiles(automaticallyFillMissingValuesCommand);
 
-            var albumRoot = ReplaceKeysInFiles(copyHtmlFilesToPrepareForUploadCommand, listOfKeyValuesToReplaceInFiles, folder);
+            var albumRoot = ReplaceKeysInFiles(copyHtmlFilesToPrepareForUploadCommand, listOfKeyValuesToReplaceInFiles,
+                folder);
 
-            DeleteFirstAndLastGeoJsonPoints(prepareForUpload, folder, kmlFileName, strDeleteFirstGeoJsonPoints, strDeleteLastGeoJsonPoints);
+            DeleteFirstAndLastGeoJsonPoints(prepareForUpload, folder, geospatialDataFileName,
+                strDeleteFirstGeoJsonPoints, strDeleteLastGeoJsonPoints);
 
             //MirrorDirAndFileRemoteOnFtp(host, user, pass, albumRoot, remoteRootFolder, folder);
             CopyDirectory(
@@ -91,13 +98,13 @@ public class UploadToBlogController(ICommandHandler<DeleteFirstAndLastGeoJsonPoi
                     , automaticallyFillMissingValuesCommand.OgTitle);
                 if (ok)
                 {
-                    return Ok(@$"Uploaded: {remoteRootFolder}/{folder}/{kmlFileName}");
+                    return Ok(@$"Uploaded: {remoteRootFolder}/{folder}/{geospatialDataFileName}");
                 }
 
                 return BadRequest("Article was not saved successfully.");
             }
 
-            return Ok(@$"Uploaded: {remoteRootFolder}/{folder}/{kmlFileName}");
+            return Ok(@$"Uploaded: {remoteRootFolder}/{folder}/{geospatialDataFileName}");
         }
         catch (Exception e)
         {
@@ -114,15 +121,16 @@ public class UploadToBlogController(ICommandHandler<DeleteFirstAndLastGeoJsonPoi
         , string articleTitle)
     {
         OpenAdminPageAndPostArticleCommand openAdminPageAndPostArticleCommand = new OpenAdminPageAndPostArticleCommand
-            {
-                CategoryId = joomlaCategoryId,
-                LoginUrl = joomlaLoginUrl,
-                PostUrl = joomlaPostUrl,
-                UserName = joomlaUserName,
-                Pass = joomlaPass,
-                ArticleText = await System.IO.File.ReadAllTextAsync(copyHtmlFilesToPrepareForUploadCommand.JoomlaPreviewHtml),
-                Title = articleTitle
-            };
+        {
+            CategoryId = joomlaCategoryId,
+            LoginUrl = joomlaLoginUrl,
+            PostUrl = joomlaPostUrl,
+            UserName = joomlaUserName,
+            Pass = joomlaPass,
+            ArticleText =
+                await System.IO.File.ReadAllTextAsync(copyHtmlFilesToPrepareForUploadCommand.JoomlaPreviewHtml),
+            Title = articleTitle
+        };
 
         OpenAdminPageAndPostArticle openAdminPageAndPostArticle = new OpenAdminPageAndPostArticle();
         await openAdminPageAndPostArticle.Execute(openAdminPageAndPostArticleCommand);
@@ -201,7 +209,8 @@ public class UploadToBlogController(ICommandHandler<DeleteFirstAndLastGeoJsonPoi
         ReplaceKeysInFilesCommand replaceKeysInFilesCommand = new ReplaceKeysInFilesCommand();
 
         string listOfFilesToReplaceAndCopyFileName =
-            Path.Join(copyHtmlFilesToPrepareForUploadCommand.HtmlTemplateFolderWithRelativePath, "listOfFilesToReplaceAndCopy.json");
+            Path.Join(copyHtmlFilesToPrepareForUploadCommand.HtmlTemplateFolderWithRelativePath,
+                "listOfFilesToReplaceAndCopy.json");
         replaceKeysInFilesCommand.ListOfFilesToReplace =
             JsonConvert.DeserializeObject<IEnumerable<string>>(
                 System.IO.File.ReadAllText(listOfFilesToReplaceAndCopyFileName)) ??
@@ -244,17 +253,23 @@ public class UploadToBlogController(ICommandHandler<DeleteFirstAndLastGeoJsonPoi
         automaticallyFillMissingValuesCommand.Kml = $@"kml\{Path.GetFileNameWithoutExtension(kmlFileName)}";
         automaticallyFillMissingValuesCommand.JqueryVersion = jqueryVersion;
 
-        AutomaticallyFillMissingValues automaticallyFillMissingValues = new AutomaticallyFillMissingValues(new PathConverter());
+        AutomaticallyFillMissingValues automaticallyFillMissingValues =
+            new AutomaticallyFillMissingValues(new PathConverter());
         automaticallyFillMissingValues.Execute(automaticallyFillMissingValuesCommand);
         return automaticallyFillMissingValuesCommand;
     }
 
-    private static CopyHtmlFilesCommand CopyHtmlFilesToPrepareForUpload(string folder, string kmlFileName, string prepareForUploadFolder, string htmlTemplateFolderWithRelativePath)
+    private static CopyHtmlFilesCommand CopyHtmlFilesToPrepareForUpload(string folder, string geospatialDataFileName,
+        string prepareForUploadFolder, string htmlTemplateFolderWithRelativePath)
     {
+        string geospatialDataFileNameWithoutExtension = string.Join("/", folder, geospatialDataFileName);
+        var geospatialDataFileNameWithExtension = !geospatialDataFileNameWithoutExtension.EndsWith(".geojson")
+            ? $"{geospatialDataFileNameWithoutExtension}.geojson"
+            : geospatialDataFileNameWithoutExtension;
         CopyHtmlFilesCommand copyHtmlFilesToPrepareForUploadCommand = new CopyHtmlFilesCommand
         {
             HtmlTemplateFolderWithRelativePath = htmlTemplateFolderWithRelativePath,
-            KmlFileName = string.Join("/", folder, kmlFileName) + ".geojson",
+            KmlFileName = geospatialDataFileNameWithExtension,
             NameOfAlbum = folder,
             PrepareForUploadFolder = prepareForUploadFolder
         };
@@ -271,7 +286,7 @@ public class UploadToBlogController(ICommandHandler<DeleteFirstAndLastGeoJsonPoi
 
         return char.ToLower(input[0]) + input.Substring(1);
     }
-    
+
 }
 
 internal class PathConverter : IPathConverter
