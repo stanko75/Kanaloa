@@ -34,6 +34,7 @@ class GalleryFragment : Fragment() {
     private val binding get() = _binding!!
 
     private var uploadViewModel: UploadViewModel? = null
+    private val geospatialDataFileNameExtension = "geojson"
 
     private val galleryLauncher =
         this.registerForActivityResult(ActivityResultContracts.OpenMultipleDocuments()) { images ->
@@ -48,8 +49,8 @@ class GalleryFragment : Fragment() {
                 _binding!!.editTextOgImage.setText("thumbs/${getFileName(firstImage)}")
                 
                 var fileName = _binding!!.editTextFileName.text.toString()
-                if (!fileName.endsWith(".kml", ignoreCase = true)) {
-                    fileName += ".kml"
+                if (!fileName.endsWith(".${geospatialDataFileNameExtension}", ignoreCase = true)) {
+                    fileName += ".${geospatialDataFileNameExtension}"
                 }
                 val folderName = _binding!!.editTextFolderName.text.toString()
 
@@ -78,9 +79,9 @@ class GalleryFragment : Fragment() {
         val sharedPreferences = requireContext().getSharedPreferences(SharedPreferencesGlobal.Settings, Context.MODE_PRIVATE)
 
         val folderNameInitial = sharedPreferences.getString("folderName", "default")
-        var fileNameInitial = sharedPreferences.getString("geospatialDataFileName", "default.kml")
+        var fileNameInitial = sharedPreferences.getString("geospatialDataFileName", "default.${geospatialDataFileNameExtension}")
         // Handle case where it might have been saved as "default" previously
-        if (fileNameInitial == "default") fileNameInitial = "default.kml"
+        if (fileNameInitial == "default") fileNameInitial = "default.${geospatialDataFileNameExtension}"
 
         val localOgImageUri = sharedPreferences.getString("localOgImageUri.$folderNameInitial.$fileNameInitial", null)
         if (localOgImageUri != null) {
@@ -121,7 +122,7 @@ class GalleryFragment : Fragment() {
         _binding!!.btnSaveSettings.setOnClickListener {
 
             fileName = binding.editTextFileName.text.toString()
-            if (!fileName!!.endsWith(".kml", ignoreCase = true)) {
+            if (!fileName!!.endsWith(".${geospatialDataFileNameExtension}", ignoreCase = true)) {
                 fileName += ".kml"
             }
 

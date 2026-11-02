@@ -64,6 +64,9 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
     private var isUiReceiverRegistered = false
 
     private var uploadViewModel: UploadViewModel? = null
+
+    private val geospatialDataFileNameExtension = "geojson"
+
     private val galleryLauncher =
         this.registerForActivityResult(ActivityResultContracts.GetMultipleContents()) { images ->
             uploadViewModel?.uploadPictures?.uploadImages(images)
@@ -226,7 +229,7 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
                 SharedPreferencesGlobal.Settings,
                 Context.MODE_PRIVATE
             )
-        val fileName = sharedPreferences.getString("geospatialDataFileName", "default.kml")
+        val fileName = sharedPreferences.getString("geospatialDataFileName", "default.${geospatialDataFileNameExtension}")
         val folderName = sharedPreferences.getString("folderName", "default")
         val kmlUrl = "$webHost/$folderName/$fileName"
         return kmlUrl
