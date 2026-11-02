@@ -8,7 +8,9 @@ public class ReplaceKeysInFiles: ICommandHandler<ReplaceKeysInFilesCommand>
     {
         foreach (string fileName in replaceKeysInFilesCommand.ListOfFilesToReplace)
         {
-            string fullFileName = Path.Join(replaceKeysInFilesCommand.TemplateRootFolder, fileName);
+            string replaceFileName = fileName.Replace("\\", "/");
+
+            string fullFileName = string.Join("/", replaceKeysInFilesCommand.TemplateRootFolder, replaceFileName);
 
             if (!File.Exists(fullFileName))
             {
@@ -23,7 +25,7 @@ public class ReplaceKeysInFiles: ICommandHandler<ReplaceKeysInFilesCommand>
                 fileContent = fileContent.Replace(keyValuesToReplaceInFiles.Key, keyValuesToReplaceInFiles.Value);
             }
 
-            string saveToFullFileName = Path.Join(replaceKeysInFilesCommand.SaveToPath, fileName);
+            string saveToFullFileName = string.Join("/", replaceKeysInFilesCommand.SaveToPath, replaceFileName);
             string saveToPath = Path.GetDirectoryName(saveToFullFileName);
             if (!Directory.Exists(saveToPath))
             {

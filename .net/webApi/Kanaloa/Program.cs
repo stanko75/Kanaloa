@@ -30,6 +30,9 @@ builder.Services.AddScoped<ICommandHandler<ExtractGpsInfoFromImageCommand>, Extr
 builder.Services.AddScoped<ICommandHandler<UpdateOrCreateJsonFileWithListOfImagesForThumbsCommand>, UpdateOrCreateJsonFileWithListOfImagesForThumbs>();
 builder.Services.AddScoped<ICommandHandler<UpdateJsonIfExistsOrCreateNewIfNotCommand>, UpdateJsonIfExistsOrCreateNewIfNot>();
 builder.Services.AddScoped<ICommandHandler<UpdateOrCreateJsonFileWithListOfImagesCommand>, UpdateOrCreateJsonFileWithListOfImages>();
+builder.Services.AddTransient<
+    ICommandHandler<DeleteFirstAndLastGeoJsonPointsCommand>,
+    DeleteFirstAndLastGeoJsonPointsHandler>();
 
 builder.Services.Configure<KanaloaSettings>(builder.Configuration.GetSection("KanaloaSettings"));
 

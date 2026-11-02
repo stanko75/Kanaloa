@@ -45,7 +45,7 @@ public class UploadToBlogController(ICommandHandler<DeleteFirstAndLastGeoJsonPoi
 
             string remoteRootFolder = "allWithPics/travelBuddies/";
 
-            var copyHtmlFilesToPrepareForUploadCommand = CopyHtmlFilesToPrepareForUpload(folder, kmlFileName, prepareForUpload, @"html\templateForBlog");
+            var copyHtmlFilesToPrepareForUploadCommand = CopyHtmlFilesToPrepareForUpload(folder, kmlFileName, prepareForUpload, @"html/templateForBlog");
 
             var automaticallyFillMissingValuesCommand = AutomaticallyFillMissingValues(data, folder, remoteRootFolder, kmlFileName, "jquery-3.6.4.js");
 
@@ -56,7 +56,12 @@ public class UploadToBlogController(ICommandHandler<DeleteFirstAndLastGeoJsonPoi
             DeleteFirstAndLastGeoJsonPoints(prepareForUpload, folder, kmlFileName, strDeleteFirstGeoJsonPoints, strDeleteLastGeoJsonPoints);
 
             //MirrorDirAndFileRemoteOnFtp(host, user, pass, albumRoot, remoteRootFolder, folder);
+            CopyDirectory(
+                albumRoot,
+                remoteRootFolder,
+                folder);
 
+            /*
             PhpUploadCommand phpUploadCommand = new PhpUploadCommand
             {
                 UserName = phpUserName,
@@ -69,6 +74,7 @@ public class UploadToBlogController(ICommandHandler<DeleteFirstAndLastGeoJsonPoi
             IMirrorDirAndFileStructure mirrorDirAndFileStructureWithPhpScript =
                 new MirrorDirAndFileStructureWithPhpScript(phpUpload, phpUploadCommand);
             await mirrorDirAndFileStructureWithPhpScript.Execute(albumRoot, "");
+            */
 
             if (!string.IsNullOrWhiteSpace(joomlaCategoryId)
                 && !string.IsNullOrWhiteSpace(joomlaLoginUrl)
@@ -85,14 +91,13 @@ public class UploadToBlogController(ICommandHandler<DeleteFirstAndLastGeoJsonPoi
                     , automaticallyFillMissingValuesCommand.OgTitle);
                 if (ok)
                 {
-                    return Ok(@$"Uploaded: {remoteRootFolder}/{folder}/{kmlFileName}, php script result: {phpUploadCommand.Result}");
+                    return Ok(@$"Uploaded: {remoteRootFolder}/{folder}/{kmlFileName}");
                 }
 
                 return BadRequest("Article was not saved successfully.");
             }
 
-            return Ok(@$"Uploaded: {remoteRootFolder}/{folder}/{kmlFileName}, php script result: {phpUploadCommand.Result}");
-
+            return Ok(@$"Uploaded: {remoteRootFolder}/{folder}/{kmlFileName}");
         }
         catch (Exception e)
         {
@@ -151,6 +156,33 @@ public class UploadToBlogController(ICommandHandler<DeleteFirstAndLastGeoJsonPoi
         }
 
         deleteFirstAndLastGeoJsonPoints.Execute(deleteFirstAndLastGeoJsonPointsCommand);
+    }
+
+    private static void CopyDirectory(
+        string albumRoot,
+        string remoteRootFolder,
+        string folder)
+    {
+        string destination = Path.Combine(remoteRootFolder, folder);
+
+        Directory.CreateDirectory(destination);
+
+        foreach (string file in Directory.GetFiles(albumRoot))
+        {
+            string destinationFile = Path.Combine(
+                destination,
+                Path.GetFileName(file));
+
+            System.IO.File.Copy(file, destinationFile, overwrite: true);
+        }
+
+        foreach (string directory in Directory.GetDirectories(albumRoot))
+        {
+            CopyDirectory(
+                directory,
+                destination,
+                Path.GetFileName(directory));
+        }
     }
 
     private static void MirrorDirAndFileRemoteOnFtp(string host, string user, string pass, string albumRoot,
@@ -222,7 +254,7 @@ public class UploadToBlogController(ICommandHandler<DeleteFirstAndLastGeoJsonPoi
         CopyHtmlFilesCommand copyHtmlFilesToPrepareForUploadCommand = new CopyHtmlFilesCommand
         {
             HtmlTemplateFolderWithRelativePath = htmlTemplateFolderWithRelativePath,
-            KmlFileName = Path.Join(folder, kmlFileName),
+            KmlFileName = string.Join("/", folder, kmlFileName) + ".geojson",
             NameOfAlbum = folder,
             PrepareForUploadFolder = prepareForUploadFolder
         };

@@ -68,6 +68,13 @@ public class UploadToBlogHandler(ILogger logger) : ICommandHandler<UploadToBlogC
                 if (!httpResponseMessage.IsSuccessStatusCode)
                 {
                     string errorMessage = await httpResponseMessage.Content.ReadAsStringAsync(cancellationToken);
+
+                    if (string.IsNullOrWhiteSpace(errorMessage))
+                    {
+                        errorMessage = $"{(int)httpResponseMessage.StatusCode} " +
+                                       $"{httpResponseMessage.ReasonPhrase}";
+                    }
+
                     logger.Log(new Exception(errorMessage));
                     throw new Exception(errorMessage);
                 }
