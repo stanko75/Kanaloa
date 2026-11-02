@@ -231,7 +231,8 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
             )
         val fileName = sharedPreferences.getString("geospatialDataFileName", "default.${geospatialDataFileNameExtension}")
         val folderName = sharedPreferences.getString("folderName", "default")
-        val geoJsonUrl = "$webHost/$folderName/$fileName"
+        val separator = if (webHost?.endsWith("/") == true) "" else "/"
+        val geoJsonUrl = "$webHost$separator$folderName/$fileName"
         return geoJsonUrl
     }
 

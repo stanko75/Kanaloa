@@ -7,6 +7,6 @@ import retrofit2.http.POST
 
 interface IUploadToBlogApiService {
     @Headers("Content-Type: text/json")
-    @POST("/api/UploadToBlog/UploadToBlog")
+    @POST("api/UploadToBlog/UploadToBlog")
     fun postMethod(@Body value: String): Call<String>
 }
