@@ -42,7 +42,7 @@ public class AutomaticallyFillMissingValues(IPathConverter pathConverter) : ICom
             ? command.JoomlaThumbsPath
             : "/" + command.JoomlaThumbsPath;
 
-        command.Kml = string.IsNullOrWhiteSpace(command.Kml) ? galleryFullWebPath + "/kml/kml" : galleryFullWebPath + '/' + ConvertWindowsPathToWebPath(command.Kml).TrimEnd('/').TrimStart('/');
+        command.GeospatialDataFileName = string.IsNullOrWhiteSpace(command.GeospatialDataFileName) ? galleryFullWebPath + "/geojson/geojson" : galleryFullWebPath + '/' + ConvertWindowsPathToWebPath(command.GeospatialDataFileName).TrimEnd('/').TrimStart('/');
 
         if (string.IsNullOrWhiteSpace(command.OgImageFullPath))
         {

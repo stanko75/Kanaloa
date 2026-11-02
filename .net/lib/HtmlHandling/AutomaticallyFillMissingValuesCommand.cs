@@ -19,5 +19,5 @@ public class AutomaticallyFillMissingValuesCommand
     public string? JqueryVersion { get; set; }
     public string? OgImageFullPath { get; set; }
     public string? BaseUrl { get; set; }
-    public string? Kml { get; set; }
+    public string? GeospatialDataFileName { get; set; }
 }

@@ -11,11 +11,7 @@
                 zoom: 2
             });
 
-            var kmlLayer = new google.maps.KmlLayer({
-                url: '/*kml*/.kml' + "?dummy=" + (new Date()).getTime()
-                , map: map
-            });
-
+            map.data.loadGeoJson("/*kml*/.geojson");
         }
         catch (e) {
             console.log(e);

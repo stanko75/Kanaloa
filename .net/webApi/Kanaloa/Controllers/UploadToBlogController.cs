@@ -244,13 +244,13 @@ public class UploadToBlogController(
     }
 
     private static AutomaticallyFillMissingValuesCommand AutomaticallyFillMissingValues(JObject data, string folder,
-        string remoteRootFolder, string kmlFileName, string jqueryVersion)
+        string remoteRootFolder, string geospatialDataFileName, string jqueryVersion)
     {
         var automaticallyFillMissingValuesCommand = data.ToObject<AutomaticallyFillMissingValuesCommand>() ??
                                                     throw new InvalidOperationException();
         automaticallyFillMissingValuesCommand.GalleryName = folder;
         automaticallyFillMissingValuesCommand.RootGalleryFolder = remoteRootFolder;
-        automaticallyFillMissingValuesCommand.Kml = $@"kml\{Path.GetFileNameWithoutExtension(kmlFileName)}";
+        automaticallyFillMissingValuesCommand.GeospatialDataFileName = $@"geojson\{Path.GetFileNameWithoutExtension(geospatialDataFileName)}";
         automaticallyFillMissingValuesCommand.JqueryVersion = jqueryVersion;
 
         AutomaticallyFillMissingValues automaticallyFillMissingValues =

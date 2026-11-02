@@ -51,7 +51,7 @@ public class CopyHtmlFiles: ICommandHandler<CopyHtmlFilesCommand>
         string htmlTemplateFolderWithRelativePath //"html\blog\www"
         , string prepareForUploadFolder //"prepareForUpload"
         , string nameOfAlbum
-        , string kmlFileName
+        , string geospatialDataFileName
         , out string joomlaPreviewHtml)
     {
         joomlaPreviewHtml = string.Empty;
@@ -60,10 +60,10 @@ public class CopyHtmlFiles: ICommandHandler<CopyHtmlFilesCommand>
             throw new DirectoryNotFoundException($"The folder {Path.GetFullPath(htmlTemplateFolderWithRelativePath)} does not exist!");
         }
 
-        if (!File.Exists(kmlFileName))
+        if (!File.Exists(geospatialDataFileName))
         {
             throw new FileNotFoundException(
-                $"The file {kmlFileName} does not exist. Absolute path: {Path.GetFullPath(kmlFileName)}");
+                $"The file {geospatialDataFileName} does not exist. Absolute path: {Path.GetFullPath(geospatialDataFileName)}");
         }
 
         if (Directory.Exists(prepareForUploadFolder))
@@ -77,7 +77,7 @@ public class CopyHtmlFiles: ICommandHandler<CopyHtmlFilesCommand>
         Directory.CreateDirectory(Path.Join(wwwFolder, "script"));
         Directory.CreateDirectory(Path.Join(wwwFolder, "css"));
         Directory.CreateDirectory(Path.Join(wwwFolder, "lib"));
-        Directory.CreateDirectory(Path.Join(prepareForUploadFolder, "kml"));
+        Directory.CreateDirectory(Path.Join(prepareForUploadFolder, "geojson"));
         Directory.CreateDirectory(Path.Join(prepareForUploadFolder, "pics"));
         Directory.CreateDirectory(Path.Join(prepareForUploadFolder, "thumbs"));
 
@@ -120,30 +120,30 @@ public class CopyHtmlFiles: ICommandHandler<CopyHtmlFilesCommand>
             File.Copy(sourceFileName, Path.Join(wwwFolder, $"{nameOfAlbum}.json"));
         }
 
-        string kmlFileNameSaveTo = Path.GetFileName(kmlFileName);
-        string kmlFolder = Path.Join(prepareForUploadFolder, "kml");
-        kmlFileNameSaveTo = Path.Join(kmlFolder, kmlFileNameSaveTo);
-        if (File.Exists(kmlFileName))
+        string geospatialDataFileNameSaveTo = Path.GetFileName(geospatialDataFileName);
+        string geoJson = string.Join("/", prepareForUploadFolder, "geojson");
+        geospatialDataFileNameSaveTo = string.Join("/", geoJson, geospatialDataFileNameSaveTo);
+        if (File.Exists(geospatialDataFileName))
         {
-            File.Copy(kmlFileName, kmlFileNameSaveTo);
+            File.Copy(geospatialDataFileName, geospatialDataFileNameSaveTo);
         }
 
-        string pics = Path.Join(nameOfAlbum, "pics");
+        string pics = string.Join("/", nameOfAlbum, "pics");
         if (Directory.Exists(pics))
         {
             string[] picsFiles = Directory.GetFiles(pics);
-            string picsDestination = Path.Join(prepareForUploadFolder, "pics");
+            string picsDestination = string.Join("/", prepareForUploadFolder, "pics");
             foreach (string picsFile in picsFiles)
             {
-                File.Copy(picsFile, Path.Join(picsDestination, Path.GetFileName(picsFile)));
+                File.Copy(picsFile, string.Join("/", picsDestination, Path.GetFileName(picsFile)));
             }
         }
 
-        string thumbs = Path.Join(nameOfAlbum, "thumbs");
+        string thumbs = string.Join("/", nameOfAlbum, "thumbs");
         if (Directory.Exists(thumbs))
         {
             string[] thumbsFiles = Directory.GetFiles(thumbs);
-            string thumbsDestination = Path.Join(prepareForUploadFolder, "thumbs");
+            string thumbsDestination = string.Join("/", prepareForUploadFolder, "thumbs");
             foreach (string thumbsFile in thumbsFiles)
             {
                 File.Copy(thumbsFile, Path.Join(thumbsDestination, Path.GetFileName(thumbsFile)));
