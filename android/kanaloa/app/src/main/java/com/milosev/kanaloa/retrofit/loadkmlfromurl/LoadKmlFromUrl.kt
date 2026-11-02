@@ -3,7 +3,10 @@ package com.milosev.kanaloa.retrofit.loadkmlfromurl
 import android.content.Context
 import android.util.Log
 import com.google.android.gms.maps.GoogleMap
-import com.google.maps.android.data.kml.KmlLayer
+import com.google.maps.android.data.parser.geojson.GeoJsonParser
+import com.google.maps.android.data.renderer.UrlIconProvider
+import com.google.maps.android.data.renderer.mapper.GeoJsonMapper
+import com.google.maps.android.data.renderer.mapview.MapViewRenderer
 import com.milosev.kanaloa.logger.ILogger
 import com.milosev.kanaloa.logger.LogEntry
 import com.milosev.kanaloa.logger.LoggingEventType
@@ -15,7 +18,7 @@ import java.util.Locale
 class LoadKmlFromUrl(private var getKml: IGetKml, var logViewModelLogger: ILogger) :
     ILoadKmlFromUrl {
 
-    private var kmlLayer: KmlLayer? = null
+    private var renderer: MapViewRenderer? = null
 
     override suspend fun loadKml(
         url: String?,
@@ -34,7 +37,7 @@ class LoadKmlFromUrl(private var getKml: IGetKml, var logViewModelLogger: ILogge
             loadKmlFromWeb(getKml, strUrl, googleMap, context)
         } catch (ex: Exception) {
 
-            Log.e("KML ERROR", ex.message.toString())
+            Log.e("GeoJSON ERROR", ex.message.toString())
 
             logViewModelLogger.Log(
                 LogEntry(
@@ -69,19 +72,11 @@ class LoadKmlFromUrl(private var getKml: IGetKml, var logViewModelLogger: ILogge
                         bytes
                     )
 
-                } catch (ex: org.xmlpull.v1.XmlPullParserException) {
-                    logViewModelLogger.Log(
-                        LogEntry(
-                            LoggingEventType.Error,
-                            "KML-Parsing failed (possible not completely loaded): ${ex.message}",
-                            ex
-                        )
-                    )
                 } catch (ex: Exception) {
                     logViewModelLogger.Log(
                         LogEntry(
                             LoggingEventType.Error,
-                            "Error by loading or parsing: ${ex.message}",
+                            "GeoJSON-Parsing failed (possible not completely loaded): ${ex.message}",
                             ex
                         )
                     )
@@ -117,7 +112,7 @@ class LoadKmlFromUrl(private var getKml: IGetKml, var logViewModelLogger: ILogge
             logViewModelLogger.Log(
                 LogEntry(
                     LoggingEventType.Error,
-                    "KML is empty (body==null)!"
+                    "GeoJSON is empty (body==null)!"
                 )
             )
             return Pair(false, null)
@@ -127,7 +122,7 @@ class LoadKmlFromUrl(private var getKml: IGetKml, var logViewModelLogger: ILogge
                 logViewModelLogger.Log(
                     LogEntry(
                         LoggingEventType.Error,
-                        "KML is empty (0 Bytes)!"
+                        "GeoJSON is empty (0 Bytes)!"
                     )
                 )
 
@@ -135,11 +130,11 @@ class LoadKmlFromUrl(private var getKml: IGetKml, var logViewModelLogger: ILogge
             } else {
                 val head =
                     bytes.copyOfRange(0, minOf(bytes.size, 200)).decodeToString()
-                if (!head.contains("<kml", ignoreCase = true)) {
+                if (!head.trim().startsWith("{")) {
                     logViewModelLogger.Log(
                         LogEntry(
                             LoggingEventType.Warning,
-                            "KML-Header unexpected: ${head.replace("\n", " ")}"
+                            "GeoJSON-Header unexpected: ${head.replace("\n", " ")}"
                         )
                     )
                     return Pair(false, null)
@@ -160,8 +155,9 @@ class LoadKmlFromUrl(private var getKml: IGetKml, var logViewModelLogger: ILogge
 
         val input = java.io.ByteArrayInputStream(bytes)
 
-        val parsedLayer = withContext(Dispatchers.Default) {
-            KmlLayer(googleMap, input, context)
+        val parsedScene = withContext(Dispatchers.Default) {
+            val geoJsonObject = GeoJsonParser().parse(input)
+            geoJsonObject?.let { GeoJsonMapper.toScene(it) }
         }
 
         withContext(Dispatchers.Main) {
@@ -174,16 +170,16 @@ class LoadKmlFromUrl(private var getKml: IGetKml, var logViewModelLogger: ILogge
             logViewModelLogger.Log(
                 LogEntry(
                     LoggingEventType.Information,
-                    "KML: $strUrl loaded (${formattedSize})"
+                    "GeoJSON: $strUrl loaded (${formattedSize})"
                 )
             )
 
             try {
-                kmlLayer?.removeLayerFromMap()
-                kmlLayer = parsedLayer
-                kmlLayer?.addLayerToMap()
+                renderer?.clear()
+                renderer = MapViewRenderer(googleMap, UrlIconProvider())
+                parsedScene?.let { renderer?.render(it) }
             } catch (uiEx: Exception) {
-                Log.e("KML ERROR", uiEx.message.toString())
+                Log.e("GeoJSON ERROR", uiEx.message.toString())
                 logViewModelLogger.Log(
                     LogEntry(
                         LoggingEventType.Error,
