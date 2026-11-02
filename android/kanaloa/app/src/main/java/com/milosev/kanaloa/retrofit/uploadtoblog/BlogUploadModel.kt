@@ -9,8 +9,8 @@ class BlogUploadModel: FileFolderLocationModel() {
     var host: String? = null
     var user: String? = null
     var pass: String? = null
-    var deleteFirstKmlPoints: String? = null
-    var deleteLastKmlPoints: String? = null
+    var deleteFirstGeoJsonPoints: String? = null
+    var deleteLastGeoJsonPoints: String? = null
     var joomlaCategoryId: String? = null
     var joomlaLoginUrl: String? = null
     var joomlaPostUrl: String? = null

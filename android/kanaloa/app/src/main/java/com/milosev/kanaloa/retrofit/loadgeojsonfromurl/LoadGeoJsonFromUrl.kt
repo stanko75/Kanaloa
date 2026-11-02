@@ -1,4 +1,4 @@
-package com.milosev.kanaloa.retrofit.loadkmlfromurl
+package com.milosev.kanaloa.retrofit.loadgeojsonfromurl
 
 import android.content.Context
 import android.util.Log
@@ -15,12 +15,12 @@ import kotlinx.coroutines.withContext
 import okhttp3.ResponseBody
 import java.util.Locale
 
-class LoadKmlFromUrl(private var getKml: IGetKml, var logViewModelLogger: ILogger) :
-    ILoadKmlFromUrl {
+class LoadGeoJsonFromUrl(private var getGeoJson: IGetGeoJson, var logViewModelLogger: ILogger) :
+    ILoadGeoJson {
 
     private var renderer: MapViewRenderer? = null
 
-    override suspend fun loadKml(
+    override suspend fun loadGeoJson(
         url: String?,
         googleMap: GoogleMap,
         context: Context?
@@ -34,7 +34,7 @@ class LoadKmlFromUrl(private var getKml: IGetKml, var logViewModelLogger: ILogge
         )
 
         try {
-            loadKmlFromWeb(getKml, strUrl, googleMap, context)
+            loadGeoJsonFromWeb(getGeoJson, strUrl, googleMap, context)
         } catch (ex: Exception) {
 
             Log.e("GeoJSON ERROR", ex.message.toString())
@@ -49,13 +49,13 @@ class LoadKmlFromUrl(private var getKml: IGetKml, var logViewModelLogger: ILogge
         }
     }
 
-    suspend fun loadKmlFromWeb(
-        getKml: IGetKml,
+    suspend fun loadGeoJsonFromWeb(
+        getGeoJson: IGetGeoJson,
         strUrl: String,
         googleMap: GoogleMap,
         context: Context?
     ) {
-        val webApiRequest = getKml.getKml(strUrl)
+        val webApiRequest = getGeoJson.getGeoJson(strUrl)
 
         if (webApiRequest.isSuccessful) {
 
@@ -65,7 +65,7 @@ class LoadKmlFromUrl(private var getKml: IGetKml, var logViewModelLogger: ILogge
             if (isValid) {
                 try {
 
-                    actualLoadKml(
+                    actualLoadGeoJson(
                         strUrl,
                         googleMap,
                         context,
@@ -145,7 +145,7 @@ class LoadKmlFromUrl(private var getKml: IGetKml, var logViewModelLogger: ILogge
         }
     }
 
-    suspend fun actualLoadKml(
+    suspend fun actualLoadGeoJson(
         strUrl: String,
         googleMap: GoogleMap,
         context: Context?,

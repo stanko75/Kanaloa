@@ -41,9 +41,9 @@ import com.milosev.kanaloa.logger.LoggingEventType
 import com.milosev.kanaloa.retrofit.CreateRetrofitBuilder
 import com.milosev.kanaloa.retrofit.fetchlivelocation.FetchLiveLocation
 import com.milosev.kanaloa.retrofit.fetchlivelocation.IGetLiveLocationApiService
-import com.milosev.kanaloa.retrofit.loadkmlfromurl.IGetKml
-import com.milosev.kanaloa.retrofit.loadkmlfromurl.ILoadKmlFromUrl
-import com.milosev.kanaloa.retrofit.loadkmlfromurl.LoadKmlFromUrl
+import com.milosev.kanaloa.retrofit.loadgeojsonfromurl.IGetGeoJson
+import com.milosev.kanaloa.retrofit.loadgeojsonfromurl.ILoadGeoJson
+import com.milosev.kanaloa.retrofit.loadgeojsonfromurl.LoadGeoJsonFromUrl
 import com.milosev.kanaloa.ui.UploadViewModel
 import com.milosev.kanaloa.ui.log.LogViewModel
 import kotlinx.coroutines.Job
@@ -57,7 +57,7 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
     private lateinit var logViewModel: LogViewModel
     private lateinit var logViewModelLogger: LogViewModelLogger
     private lateinit var liveUpdater: LiveLocationUpdater
-    private lateinit var loadKmlFromUrl: ILoadKmlFromUrl
+    private lateinit var loadGeoJsonFromUrl: ILoadGeoJson
     private lateinit var bottomNavigationView: BottomNavigationView
     private lateinit var fetchLiveLocation: FetchLiveLocation
     private var updateJob: Job? = null
@@ -132,11 +132,11 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
             CreateRetrofitBuilder().createRetrofitBuilder(Config(context).webHost)
                 .create(IGetLiveLocationApiService::class.java), logViewModelLogger
         )
-        loadKmlFromUrl = LoadKmlFromUrl(
+        loadGeoJsonFromUrl = LoadGeoJsonFromUrl(
             CreateRetrofitBuilder().createRetrofitBuilder(Config(context).webHost)
-                .create(IGetKml::class.java), logViewModelLogger
+                .create(IGetGeoJson::class.java), logViewModelLogger
         )
-        liveUpdater = LiveLocationUpdater(fetchLiveLocation, loadKmlFromUrl)
+        liveUpdater = LiveLocationUpdater(fetchLiveLocation, loadGeoJsonFromUrl)
 
         uploadViewModel = ViewModelProvider(requireActivity())[UploadViewModel::class.java]
         uploadViewModel?.initialize(logViewModel)
@@ -223,7 +223,7 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
         mapView.onLowMemory()
     }
 
-    private fun getKmlUrl(webHost: String?): String {
+    private fun getGeoJsonUrl(webHost: String?): String {
         val sharedPreferences =
             requireContext().getSharedPreferences(
                 SharedPreferencesGlobal.Settings,
@@ -231,8 +231,8 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
             )
         val fileName = sharedPreferences.getString("geospatialDataFileName", "default.${geospatialDataFileNameExtension}")
         val folderName = sharedPreferences.getString("folderName", "default")
-        val kmlUrl = "$webHost/$folderName/$fileName"
-        return kmlUrl
+        val geoJsonUrl = "$webHost/$folderName/$fileName"
+        return geoJsonUrl
     }
 
     private fun setStarted(isStarted: Boolean) {
@@ -258,7 +258,7 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
 
     private fun startLiveUpdaterIfNeeded() {
         val webHost = context?.let { Config(it).webHost }
-        val kmlUrl = getKmlUrl(webHost)
+        val geoJsonUrl = getGeoJsonUrl(webHost)
         if (checkIfLiveAlreadyStarted()) {
             bottomNavigationView.menu[0].isChecked = true
 
@@ -269,12 +269,12 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
 
             liveUpdater.marker = marker
             updateJob =
-                liveUpdater.start(googleMap, context, logViewModelLogger, kmlUrl, webHost)
+                liveUpdater.start(googleMap, context, logViewModelLogger, geoJsonUrl, webHost)
         }
         else {
             lifecycleScope.launch {
                 fetchLiveLocation.fetchLiveLocation(webHost, googleMap)
-                loadKmlFromUrl.loadKml(kmlUrl, googleMap, context)
+                loadGeoJsonFromUrl.loadGeoJson(geoJsonUrl, googleMap, context)
             }
         }
     }

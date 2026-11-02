@@ -9,7 +9,7 @@ import com.milosev.kanaloa.logger.LogEntry
 import com.milosev.kanaloa.logger.LogViewModelLogger
 import com.milosev.kanaloa.logger.LoggingEventType
 import com.milosev.kanaloa.retrofit.fetchlivelocation.IFetchLiveLocation
-import com.milosev.kanaloa.retrofit.loadkmlfromurl.ILoadKmlFromUrl
+import com.milosev.kanaloa.retrofit.loadgeojsonfromurl.ILoadGeoJson
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -19,7 +19,7 @@ import kotlinx.coroutines.launch
 
 
 class LiveLocationUpdater(
-    private val fetchLiveLocation: IFetchLiveLocation, private val loadKmlFromUrl: ILoadKmlFromUrl
+    private val fetchLiveLocation: IFetchLiveLocation, private val loadGeoJsonFromUrl: ILoadGeoJson
 ) {
     var marker: Marker? = null
 
@@ -27,7 +27,7 @@ class LiveLocationUpdater(
         googleMap: GoogleMap,
         context: Context?,
         logViewModelLogger: LogViewModelLogger,
-        kmlUrl: String,
+        geoJsonUrl: String,
         url: String?
     ): Job {
 
@@ -40,7 +40,7 @@ class LiveLocationUpdater(
 
         val updateJob = Job()
         CoroutineScope(Dispatchers.Main).launch(updateJob) {
-            updateLocationOnUi(googleMap, context, logViewModelLogger, url, kmlUrl)
+            updateLocationOnUi(googleMap, context, logViewModelLogger, url, geoJsonUrl)
         }
 
         return updateJob
@@ -72,13 +72,13 @@ class LiveLocationUpdater(
         context: Context?,
         logViewModelLogger: LogViewModelLogger,
         url: String?,
-        kmlUrl: String
+        geoJsonUrl: String
     ) {
         while (isActive) {
             try {
                 if (context != null) {
                     fetchLiveLocation.fetchLiveLocation(url, googleMap)
-                    loadKmlFromUrl.loadKml(kmlUrl, googleMap, context)
+                    loadGeoJsonFromUrl.loadGeoJson(geoJsonUrl, googleMap, context)
                 } else {
                     logViewModelLogger.Log(LogEntry(LoggingEventType.Error, "Context is null"))
                 }

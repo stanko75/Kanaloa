@@ -47,13 +47,13 @@
                 app:layout_constraintVertical_bias="0.481" />
 
             <EditText
-                android:id="@+id/editTextDeleteFirstKmlPoints"
+                android:id="@+id/editTextDeleteFirstGeoJsonPoints"
                 android:layout_width="150dp"
                 android:layout_height="48dp"
                 android:layout_marginTop="16dp"
                 android:autofillHints=""
                 android:ems="10"
-                android:hint="@string/defaultDeleteFirstKmlPoints"
+                android:hint="@string/defaultDeleteFirstGeoJsonPoints"
                 android:inputType="textUri"
                 android:textColorHint="#757575"
                 app:layout_constraintEnd_toEndOf="@+id/editTextBaseUrl"
@@ -62,40 +62,40 @@
                 app:layout_constraintTop_toBottomOf="@+id/editTextBaseUrl" />
 
             <TextView
-                android:id="@+id/textViewDeleteFirstKmlPoints"
+                android:id="@+id/textViewDeleteFirstGeoJsonPoints"
                 android:layout_width="150dp"
                 android:layout_height="21dp"
-                android:text="@string/deleteFirstKmlPoints"
-                app:layout_constraintBottom_toBottomOf="@+id/editTextDeleteFirstKmlPoints"
+                android:text="@string/deleteFirstGeoJsonPoints"
+                app:layout_constraintBottom_toBottomOf="@+id/editTextDeleteFirstGeoJsonPoints"
                 app:layout_constraintHorizontal_bias="1.0"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="@+id/editTextDeleteFirstKmlPoints"
+                app:layout_constraintTop_toTopOf="@+id/editTextDeleteFirstGeoJsonPoints"
                 app:layout_constraintVertical_bias="0.481" />
 
             <EditText
-                android:id="@+id/editTextDeleteLastKmlPoints"
+                android:id="@+id/editTextDeleteLastGeoJsonPoints"
                 android:layout_width="150dp"
                 android:layout_height="48dp"
                 android:layout_marginTop="16dp"
                 android:autofillHints=""
                 android:ems="10"
-                android:hint="@string/defaultDeleteLastKmlPoints"
+                android:hint="@string/defaultDeleteLastGeoJsonPoints"
                 android:inputType="textUri"
                 android:textColorHint="#757575"
-                app:layout_constraintEnd_toEndOf="@+id/editTextDeleteFirstKmlPoints"
+                app:layout_constraintEnd_toEndOf="@+id/editTextDeleteFirstGeoJsonPoints"
                 app:layout_constraintHorizontal_bias="0.0"
-                app:layout_constraintStart_toStartOf="@+id/editTextDeleteFirstKmlPoints"
-                app:layout_constraintTop_toBottomOf="@+id/editTextDeleteFirstKmlPoints" />
+                app:layout_constraintStart_toStartOf="@+id/editTextDeleteFirstGeoJsonPoints"
+                app:layout_constraintTop_toBottomOf="@+id/editTextDeleteFirstGeoJsonPoints" />
 
             <TextView
-                android:id="@+id/textViewDeleteLastKmlPoints"
+                android:id="@+id/textViewDeleteLastGeoJsonPoints"
                 android:layout_width="150dp"
                 android:layout_height="21dp"
-                android:text="@string/deleteLastKmlPoints"
-                app:layout_constraintBottom_toBottomOf="@+id/editTextDeleteLastKmlPoints"
+                android:text="@string/deleteLastGeoJsonPoints"
+                app:layout_constraintBottom_toBottomOf="@+id/editTextDeleteLastGeoJsonPoints"
                 app:layout_constraintHorizontal_bias="1.0"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="@+id/editTextDeleteLastKmlPoints"
+                app:layout_constraintTop_toTopOf="@+id/editTextDeleteLastGeoJsonPoints"
                 app:layout_constraintVertical_bias="0.481" />
 
             <EditText

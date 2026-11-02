@@ -108,22 +108,22 @@ class GalleryFragment : Fragment() {
         val ogTitle = sharedPreferences.getString("ogTitle", "default")
         val ogImage = sharedPreferences.getString("ogImage", "default")
         val baseUrl = sharedPreferences.getString("baseUrl", "default")
-        val deleteLastKmlPoints = sharedPreferences.getString("deleteLastKmlPoints", "100")
-        val deleteFirstKmlPoints = sharedPreferences.getString("deleteFirstKmlPoints", "100")
+        val deleteLastGeoJsonPoints = sharedPreferences.getString("deleteLastGeoJsonPoints", "100")
+        val deleteFirstGeoJsonPoints = sharedPreferences.getString("deleteFirstGeoJsonPoints", "100")
 
         _binding!!.editTextFileName.setText(fileName)
         _binding!!.editTextFolderName.setText(folderNameInitial)
         _binding!!.editTextOgTitle.setText(ogTitle)
         _binding!!.editTextOgImage.setText(ogImage)
         _binding!!.editTextBaseUrl.setText(baseUrl)
-        _binding!!.editTextDeleteLastKmlPoints.setText(deleteLastKmlPoints)
-        _binding!!.editTextDeleteFirstKmlPoints.setText(deleteFirstKmlPoints)
+        _binding!!.editTextDeleteLastGeoJsonPoints.setText(deleteLastGeoJsonPoints)
+        _binding!!.editTextDeleteFirstGeoJsonPoints.setText(deleteFirstGeoJsonPoints)
 
         _binding!!.btnSaveSettings.setOnClickListener {
 
             fileName = binding.editTextFileName.text.toString()
             if (!fileName!!.endsWith(".${geospatialDataFileNameExtension}", ignoreCase = true)) {
-                fileName += ".kml"
+                fileName += ".${geospatialDataFileNameExtension}"
             }
 
             sharedPreferences.edit {
@@ -132,8 +132,8 @@ class GalleryFragment : Fragment() {
                 putString("ogTitle", binding.editTextOgTitle.text.toString())
                 putString("ogImage", binding.editTextOgImage.text.toString())
                 putString("baseUrl", binding.editTextBaseUrl.text.toString())
-                putString("deleteLastKmlPoints", binding.editTextDeleteLastKmlPoints.text.toString())
-                putString("deleteFirstKmlPoints", binding.editTextDeleteFirstKmlPoints.text.toString())
+                putString("deleteLastGeoJsonPoints", binding.editTextDeleteLastGeoJsonPoints.text.toString())
+                putString("deleteFirstGeoJsonPoints", binding.editTextDeleteFirstGeoJsonPoints.text.toString())
             }
             requireActivity().onBackPressedDispatcher.onBackPressed()
         }
@@ -168,8 +168,8 @@ class GalleryFragment : Fragment() {
             blogUploadModel.ogTitle = fileAndFolderNameSharedPreferences?.getString("ogTitle", "")
             blogUploadModel.ogImage = fileAndFolderNameSharedPreferences?.getString("ogImage","")
             blogUploadModel.baseUrl = fileAndFolderNameSharedPreferences?.getString("baseUrl","")
-            blogUploadModel.deleteLastKmlPoints = fileAndFolderNameSharedPreferences?.getString("deleteLastKmlPoints","")
-            blogUploadModel.deleteFirstKmlPoints = fileAndFolderNameSharedPreferences?.getString("deleteFirstKmlPoints","")
+            blogUploadModel.deleteLastGeoJsonPoints = fileAndFolderNameSharedPreferences?.getString("deleteLastGeoJsonPoints","")
+            blogUploadModel.deleteFirstGeoJsonPoints = fileAndFolderNameSharedPreferences?.getString("deleteFirstGeoJsonPoints","")
 
             blogUploadModel.joomlaCategoryId = joomlaSharedPreferences?.getString("categoryId", "")
             blogUploadModel.joomlaLoginUrl = joomlaSharedPreferences?.getString("loginUrl", "")
