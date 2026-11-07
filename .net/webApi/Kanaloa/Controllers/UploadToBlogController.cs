@@ -196,14 +196,6 @@ public class UploadToBlogController(
 
         foreach (string file in Directory.GetFiles(albumRoot))
         {
-            /*
-            if (!listOfFilesToReplace.Contains(Path.GetFileName(file)))
-            {
-                Trace.WriteLine($"Skipping file: {file}");
-                continue;
-            }
-            */
-
             string destinationFile = Path.Combine(
                 destination,
                 Path.GetFileName(file));

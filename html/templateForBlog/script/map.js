@@ -11,7 +11,7 @@
                 zoom: 2
             });
 
-            map.data.loadGeoJson("/*kml*/.geojson");
+            map.data.loadGeoJson("/*geospatialDataFileName*/.geojson");
         }
         catch (e) {
             console.log(e);
