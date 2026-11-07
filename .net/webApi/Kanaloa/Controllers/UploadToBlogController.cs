@@ -47,6 +47,11 @@ public class UploadToBlogController(
 
             string remoteRootFolder = "allWithPics/travelBuddies/";
 
+
+            geospatialDataFileName = !geospatialDataFileName.EndsWith(".geojson")
+                ? $"{geospatialDataFileName}.geojson"
+                : geospatialDataFileName;
+
             var copyHtmlFilesToPrepareForUploadCommand = CopyHtmlFilesToPrepareForUpload(folder, geospatialDataFileName,
                 prepareForUpload, @"html/templateForBlog");
 
@@ -56,8 +61,12 @@ public class UploadToBlogController(
             var listOfKeyValuesToReplaceInFiles =
                 ListOfKeyValuesToReplaceInFiles(automaticallyFillMissingValuesCommand);
 
+            string listOfFilesToReplaceAndCopyFileName =
+                Path.Join(copyHtmlFilesToPrepareForUploadCommand.HtmlTemplateFolderWithRelativePath,
+                    "listOfFilesToReplaceAndCopy.json");
+
             var albumRoot = ReplaceKeysInFiles(copyHtmlFilesToPrepareForUploadCommand, listOfKeyValuesToReplaceInFiles,
-                folder);
+                folder, listOfFilesToReplaceAndCopyFileName);
 
             DeleteFirstAndLastGeoJsonPoints(prepareForUpload, folder, geospatialDataFileName,
                 strDeleteFirstGeoJsonPoints, strDeleteLastGeoJsonPoints);
@@ -66,7 +75,8 @@ public class UploadToBlogController(
             CopyDirectory(
                 albumRoot,
                 remoteRootFolder,
-                folder);
+                folder,
+                listOfFilesToReplaceAndCopyFileName);
 
             /*
             PhpUploadCommand phpUploadCommand = new PhpUploadCommand
@@ -138,13 +148,13 @@ public class UploadToBlogController(
         return openAdminPageAndPostArticleCommand.IsSaved;
     }
 
-    private void DeleteFirstAndLastGeoJsonPoints(string prepareForUpload, string folder, string kmlFileName,
+    private void DeleteFirstAndLastGeoJsonPoints(string prepareForUpload, string folder, string geospatialDataFileName,
         string strDeleteFirstGeoJsonPoints, string strDeleteLastGeoJsonPoints)
     {
         DeleteFirstAndLastGeoJsonPointsCommand deleteFirstAndLastGeoJsonPointsCommand =
             new DeleteFirstAndLastGeoJsonPointsCommand();
         deleteFirstAndLastGeoJsonPointsCommand.Folder = Path.Join(Path.Join(prepareForUpload, folder), "geojson");
-        deleteFirstAndLastGeoJsonPointsCommand.GeoJsonFileName = kmlFileName;
+        deleteFirstAndLastGeoJsonPointsCommand.GeoJsonFileName = geospatialDataFileName;
         if (int.TryParse(strDeleteFirstGeoJsonPoints, out int intDeleteFirstGeoJsonPoints))
         {
             deleteFirstAndLastGeoJsonPointsCommand.DeleteFirstGeoJsonPoints = intDeleteFirstGeoJsonPoints;
@@ -169,14 +179,23 @@ public class UploadToBlogController(
     private static void CopyDirectory(
         string albumRoot,
         string remoteRootFolder,
-        string folder)
+        string folder,
+        string listOfFilesToReplaceAndCopyFileName)
     {
+
+        IEnumerable<string> listOfFilesToReplace =
+            JsonConvert.DeserializeObject<IEnumerable<string>>(
+                System.IO.File.ReadAllText(listOfFilesToReplaceAndCopyFileName)) ??
+            throw new InvalidOperationException();
+
         string destination = Path.Combine(remoteRootFolder, folder);
+        destination = Path.Combine("/var/www/html/gallery", destination);
 
         Directory.CreateDirectory(destination);
 
         foreach (string file in Directory.GetFiles(albumRoot))
         {
+            if (!listOfFilesToReplace.Contains(Path.GetFileName(file))) continue;
             string destinationFile = Path.Combine(
                 destination,
                 Path.GetFileName(file));
@@ -189,7 +208,8 @@ public class UploadToBlogController(
             CopyDirectory(
                 directory,
                 destination,
-                Path.GetFileName(directory));
+                Path.GetFileName(directory), 
+                listOfFilesToReplaceAndCopyFileName);
         }
     }
 
@@ -204,13 +224,10 @@ public class UploadToBlogController(
     }
 
     private static string ReplaceKeysInFiles(CopyHtmlFilesCommand copyHtmlFilesToPrepareForUploadCommand,
-        Dictionary<string, string> listOfKeyValuesToReplaceInFiles, string folder)
+        Dictionary<string, string> listOfKeyValuesToReplaceInFiles, string folder, string listOfFilesToReplaceAndCopyFileName)
     {
         ReplaceKeysInFilesCommand replaceKeysInFilesCommand = new ReplaceKeysInFilesCommand();
 
-        string listOfFilesToReplaceAndCopyFileName =
-            Path.Join(copyHtmlFilesToPrepareForUploadCommand.HtmlTemplateFolderWithRelativePath,
-                "listOfFilesToReplaceAndCopy.json");
         replaceKeysInFilesCommand.ListOfFilesToReplace =
             JsonConvert.DeserializeObject<IEnumerable<string>>(
                 System.IO.File.ReadAllText(listOfFilesToReplaceAndCopyFileName)) ??
@@ -269,7 +286,7 @@ public class UploadToBlogController(
         CopyHtmlFilesCommand copyHtmlFilesToPrepareForUploadCommand = new CopyHtmlFilesCommand
         {
             HtmlTemplateFolderWithRelativePath = htmlTemplateFolderWithRelativePath,
-            KmlFileName = geospatialDataFileNameWithExtension,
+            GeospatialDataFileName = geospatialDataFileNameWithExtension,
             NameOfAlbum = folder,
             PrepareForUploadFolder = prepareForUploadFolder
         };
