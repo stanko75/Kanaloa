@@ -11,7 +11,7 @@ public class UploadToBlogHandler(ILogger logger) : ICommandHandler<UploadToBlogC
 
     public async Task Execute(UploadToBlogCommand command)
     {
-        string kmlFileName = command.GeospatialDataFileName;
+        string geospatialDataFileName = command.GeospatialDataFileName;
         string folderName = command.FolderName;
         string addressText = command.AddressText;
         string ftpHost = command.FtpHost;
@@ -33,15 +33,15 @@ public class UploadToBlogHandler(ILogger logger) : ICommandHandler<UploadToBlogC
             var jObjectKmlFileFolder = new JObject
             {
                 ["folderName"] = folderName,
-                ["kmlFileName"] = kmlFileName,
+                ["geospatialDataFileName"] = geospatialDataFileName,
                 ["host"] = ftpHost,
                 ["user"] = ftpUser,
                 ["pass"] = ftpPass,
                 ["ogTitle"] = ogTitle,
                 ["ogImage"] = ogImage,
                 ["baseUrl"] = baseUrl,
-                ["deleteLastKmlPoints"] = deleteLastKmlPoints,
-                ["deleteFirstKmlPoints"] = deleteFirstKmlPoints,
+                ["deleteLastGeoJsonPoints"] = deleteLastKmlPoints,
+                ["deleteFirstGeoJsonPoints"] = deleteFirstKmlPoints,
                 ["joomlaCategoryId"] = command.JoomlaCategoryId,
                 ["joomlaLoginUrl"] = command.JoomlaLoginUrl,
                 ["joomlaPostUrl"] = command.JoomlaPostUrl,

@@ -14,8 +14,8 @@ public class UpdateOrCreateJsonFileWithListOfImages(ICommandHandler<UpdateJsonIf
         string jsonFileName;
         if (command.JsonThumbsFileName is null) //live
         {
-            jsonFileName = Path.GetFileNameWithoutExtension(command.KmlFileName);
-            jsonFileName = string.IsNullOrWhiteSpace(command.KmlFileName) ? "default" : jsonFileName;
+            jsonFileName = Path.GetFileNameWithoutExtension(command.GeospatialDataFileName);
+            jsonFileName = string.IsNullOrWhiteSpace(command.GeospatialDataFileName) ? "default" : jsonFileName;
             jsonFileName = Path.ChangeExtension(jsonFileName, "json");
             jsonFileName = Path.Join(command.FolderName, jsonFileName);
             imageThumbsFileName = $"../../{imageThumbsFolderName.Replace('\\', '/')}/{command.ImageFileName}";

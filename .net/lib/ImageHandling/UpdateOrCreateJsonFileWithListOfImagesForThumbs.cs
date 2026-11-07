@@ -6,8 +6,8 @@ public class UpdateOrCreateJsonFileWithListOfImagesForThumbs(ICommandHandler<Upd
 {
     public void Execute(UpdateOrCreateJsonFileWithListOfImagesForThumbsCommand command)
     {
-        var jsonFileName = Path.GetFileNameWithoutExtension(command.KmlFileName);
-        jsonFileName = string.IsNullOrWhiteSpace(command.KmlFileName) ? "default" : jsonFileName;
+        var jsonFileName = Path.GetFileNameWithoutExtension(command.GeospatialDataFileName);
+        jsonFileName = string.IsNullOrWhiteSpace(command.GeospatialDataFileName) ? "default" : jsonFileName;
         jsonFileName = Path.ChangeExtension($"{jsonFileName}Thumbs", "json");
         jsonFileName = string.Join("\\", command.FolderName, jsonFileName);
 

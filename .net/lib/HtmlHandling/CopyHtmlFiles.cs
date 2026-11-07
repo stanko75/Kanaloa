@@ -12,7 +12,7 @@ public class CopyHtmlFiles: ICommandHandler<CopyHtmlFilesCommand>
             command.HtmlTemplateFolderWithRelativePath //"html\blog\www"
             , command.PrepareForUploadFolder //"prepareForUpload"
             , command.NameOfAlbum
-            , command.KmlFileName
+            , command.GeospatialDataFileName
             , out joomlaPreviewHtml);
         command.JoomlaPreviewHtml = joomlaPreviewHtml;
     }

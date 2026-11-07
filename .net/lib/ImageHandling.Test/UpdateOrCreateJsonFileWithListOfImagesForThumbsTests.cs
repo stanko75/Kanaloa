@@ -21,14 +21,14 @@ public class UpdateOrCreateJsonFileWithListOfImagesForThumbsTests
         var updateOrCreateJsonFileWithListOfImagesForThumbsCommand =
             new UpdateOrCreateJsonFileWithListOfImagesForThumbsCommand
             {
-                KmlFileName = "test.kml",
+                GeospatialDataFileName = "test.kml",
                 FolderName = "testFolderName",
                 LatLngModel = latLngModel,
                 ImageFileName = "testImageFileName.jpg"
             };
 
         string jsonFileNameWithoutExtension =
-            Path.GetFileNameWithoutExtension(updateOrCreateJsonFileWithListOfImagesForThumbsCommand.KmlFileName);
+            Path.GetFileNameWithoutExtension(updateOrCreateJsonFileWithListOfImagesForThumbsCommand.GeospatialDataFileName);
         string jsonFileName = Path.Join(updateOrCreateJsonFileWithListOfImagesForThumbsCommand.FolderName,
             Path.ChangeExtension($"{jsonFileNameWithoutExtension}Thumbs", "json"));
         if (File.Exists(jsonFileName))
