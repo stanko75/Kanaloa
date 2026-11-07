@@ -25,7 +25,7 @@ public class UploadImagesController(
     {
         try
         {
-            string kmlFileName = CommonStaticMethods.GetValue(data, "kmlFileName");
+            string geospatialDataFileName = CommonStaticMethods.GetValue(data, "geospatialDataFileName");
 
             var prepareToResizeImageDecoratorCommand = new PrepareToResizeImageDecoratorCommand
             {
@@ -42,7 +42,7 @@ public class UploadImagesController(
             var updateOrCreateJsonFileWithListOfImagesForThumbsCommand =
                 new UpdateOrCreateJsonFileWithListOfImagesForThumbsCommand
                 {
-                    KmlFileName = kmlFileName,
+                    GeospatialDataFileName = geospatialDataFileName,
                     FolderName = prepareToResizeImageDecoratorCommand.FolderName,
                     LatLngModel = extractGpsInfoFromImageCommand.LatLngModel,
                     ImageFileName = prepareToResizeImageDecoratorCommand.ImageFileName
@@ -52,7 +52,7 @@ public class UploadImagesController(
 
             var updateOrCreateJsonFileWithListOfImagesCommand = new UpdateOrCreateJsonFileWithListOfImagesCommand
             {
-                KmlFileName = kmlFileName,
+                GeospatialDataFileName = geospatialDataFileName,
                 FolderName = prepareToResizeImageDecoratorCommand.FolderName,
                 LatLngModel = extractGpsInfoFromImageCommand.LatLngModel,
                 ImageFileName = prepareToResizeImageDecoratorCommand.ImageFileName
