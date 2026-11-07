@@ -1,4 +1,5 @@
-﻿using Common;
+﻿using System.Diagnostics;
+using Common;
 using FtpHandling;
 using GeoJsonHandling;
 using HtmlHandling;
@@ -195,10 +196,19 @@ public class UploadToBlogController(
 
         foreach (string file in Directory.GetFiles(albumRoot))
         {
-            if (!listOfFilesToReplace.Contains(Path.GetFileName(file))) continue;
+            /*
+            if (!listOfFilesToReplace.Contains(Path.GetFileName(file)))
+            {
+                Trace.WriteLine($"Skipping file: {file}");
+                continue;
+            }
+            */
+
             string destinationFile = Path.Combine(
                 destination,
                 Path.GetFileName(file));
+
+            Trace.WriteLine($"Copying file: {destinationFile}");
 
             System.IO.File.Copy(file, destinationFile, overwrite: true);
         }

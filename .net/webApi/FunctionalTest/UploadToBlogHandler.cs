@@ -110,7 +110,7 @@ public class UploadToBlogHandler(ILogger logger) : ICommandHandler<UploadToBlogC
                 }
                 else
                 {
-                    prepareForUploadUri = new Uri(new Uri(addressText.TrimEnd('/')), prepareForUpload);
+                    prepareForUploadUri = new Uri(new Uri(addressText), prepareForUpload);
                 }
                 if (!prepareForUploadUri.AbsoluteUri.EndsWith("/"))
                 {
