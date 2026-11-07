@@ -84,12 +84,16 @@ if ($hostKey -like "HIER_*") {
 $scriptFile = Join-Path $env:TEMP "kanaloa-upload.txt"
 $encUser = [uri]::EscapeDataString($user)
 $encPassword = [uri]::EscapeDataString($password)
+# sudo reads the password from stdin (-S) since there is no terminal
+$shellPassword = $password.Replace("'", "'\''")
+$restartCommand = "echo '$shellPassword' | sudo -S -p '' systemctl restart kanaloa"
 
 @"
 option batch abort
 option confirm off
 open sftp://${encUser}:${encPassword}@${server}/ -hostkey="$hostKey"
 synchronize remote "$publishFolder" "$remoteFolder"
+call $restartCommand
 exit
 "@ | Set-Content $scriptFile -Encoding UTF8
 
