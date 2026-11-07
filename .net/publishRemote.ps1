@@ -9,10 +9,10 @@ $settings = [ordered]@{
     publishFolder = "Local publish folder"
     server        = "Server address"
     user          = "Server user"
+    password      = "Server password"
     remoteFolder  = "Remote folder"
     hostKey       = "SSH host key fingerprint"
     winscp        = "Path to WinSCP.com"
-    sessionName   = "WinSCP saved session name"
 }
 
 $config = @{}
@@ -21,13 +21,22 @@ if (Test-Path $configFile) {
     foreach ($p in $loaded.PSObject.Properties) { $config[$p.Name] = $p.Value }
 }
 
+# The password is stored encrypted (Windows DPAPI, current user only)
 $changed = $false
 foreach ($key in $settings.Keys) {
     if ([string]::IsNullOrWhiteSpace($config[$key])) {
-        do {
-            $answer = Read-Host $settings[$key]
-        } while ([string]::IsNullOrWhiteSpace($answer))
-        $config[$key] = $answer
+        if ($key -eq "password") {
+            do {
+                $secure = Read-Host $settings[$key] -AsSecureString
+            } while ($secure.Length -eq 0)
+            $config[$key] = ConvertFrom-SecureString $secure
+        }
+        else {
+            do {
+                $answer = Read-Host $settings[$key]
+            } while ([string]::IsNullOrWhiteSpace($answer))
+            $config[$key] = $answer
+        }
         $changed = $true
     }
 }
@@ -43,7 +52,8 @@ $user = $config.user
 $remoteFolder = $config.remoteFolder
 $hostKey = $config.hostKey
 $winscp = $config.winscp
-$sessionName = $config.sessionName
+$securePassword = ConvertTo-SecureString $config.password
+$password = [System.Net.NetworkCredential]::new("", $securePassword).Password
 
 # 1. Publish
 Write-Host "Publishing .NET 10 application..."
@@ -70,14 +80,15 @@ if ($hostKey -like "HIER_*") {
     throw "Please configure the SSH host key fingerprint!"
 }
 
-# Uses an existing WinSCP saved session for authentication.
-# Save a session named KanaloaServer in WinSCP first.
+# Authenticates with the stored user and password.
 $scriptFile = Join-Path $env:TEMP "kanaloa-upload.txt"
+$encUser = [uri]::EscapeDataString($user)
+$encPassword = [uri]::EscapeDataString($password)
 
 @"
 option batch abort
 option confirm off
-open "$sessionName" -hostkey="$hostKey"
+open sftp://${encUser}:${encPassword}@${server}/ -hostkey="$hostKey"
 synchronize remote "$publishFolder" "$remoteFolder"
 exit
 "@ | Set-Content $scriptFile -Encoding UTF8
