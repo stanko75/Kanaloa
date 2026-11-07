@@ -5,6 +5,8 @@ $ErrorActionPreference = "Stop"
 $configFile = Join-Path $PSScriptRoot "publishRemote.config.json"
 
 $settings = [ordered]@{
+    librarySolution = "Path to library solution (.sln, built first)"
+    appSolution   = "Path to application solution (.sln, built second)"
     project       = "Path to .csproj"
     publishFolder = "Local publish folder"
     server        = "Server address"
@@ -46,6 +48,8 @@ if ($changed) {
 }
 
 $project = $config.project
+$librarySolution = $config.librarySolution
+$appSolution = $config.appSolution
 $publishFolder = $config.publishFolder
 $server = $config.server
 $user = $config.user
@@ -55,7 +59,19 @@ $winscp = $config.winscp
 $securePassword = ConvertTo-SecureString $config.password
 $password = [System.Net.NetworkCredential]::new("", $securePassword).Password
 
-# 1. Publish
+# 1. Build solutions (library first, then application)
+foreach ($solution in @($librarySolution, $appSolution)) {
+    Write-Host "Building $solution..."
+
+    dotnet build $solution `
+        -c Release
+
+    if ($LASTEXITCODE -ne 0) {
+        throw "Build failed: $solution"
+    }
+}
+
+# 2. Publish
 Write-Host "Publishing .NET 10 application..."
 
 dotnet publish $project `
@@ -69,7 +85,7 @@ if ($LASTEXITCODE -ne 0) {
     throw "Publish failed!"
 }
 
-# 2. Upload via SFTP
+# 3. Upload via SFTP
 Write-Host "Uploading to server..."
 
 if (!(Test-Path $winscp)) {
