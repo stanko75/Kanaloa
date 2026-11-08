@@ -87,7 +87,7 @@ public class AutomaticallyFillMissingValues(IPathConverter pathConverter) : ICom
         if (!baseUrl.StartsWith("http://", StringComparison.OrdinalIgnoreCase) &&
             !baseUrl.StartsWith("https://", StringComparison.OrdinalIgnoreCase))
         {
-            baseUrl = "http://" + baseUrl;
+            baseUrl = "https://" + baseUrl;
         }
 
         return baseUrl;
