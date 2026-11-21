@@ -1,6 +1,6 @@
 [versions]
-agp = "9.5.1"
-androidMapsUtils = "7.0.0"
+agp = "9.5.2"
+androidMapsUtils = "7.0.1"
 converterGson = "3.0.0"
 converterScalars = "3.0.0"
 gson = "2.15.0"
